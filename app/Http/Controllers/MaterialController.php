@@ -276,4 +276,132 @@ class MaterialController extends Controller
 
         return back()->with('flash_success', "Material '{$name}' deleted.");
     }
+
+    public function updateMovement(Request $request, $id)
+    {
+        if (! Auth::user()->canEdit('materials')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $movement = MaterialMovement::findOrFail($id);
+
+        $validated = $request->validate([
+            'qty' => 'required|numeric|min:0.01',
+            'date' => 'required|date',
+            'issued_by' => 'nullable|string|max:255',
+            'issued_to' => 'nullable|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'vehicle_id' => 'nullable|exists:vehicles,id',
+            'note' => 'nullable|string',
+        ]);
+
+        $oldQty = (float) $movement->qty;
+        $newQty = (float) $validated['qty'];
+        $qtyDiff = $newQty - $oldQty;
+
+        try {
+            DB::transaction(function () use ($movement, $validated, $newQty, $qtyDiff) {
+                $material = Material::where('id', $movement->material_id)->lockForUpdate()->first();
+
+                if ($movement->type === 'out') {
+                    if ($material && $qtyDiff > 0 && (float) $material->qty < $qtyDiff) {
+                        throw new \Exception("Insufficient inventory stock: only {$material->qty} {$material->unit} available to cover adjustment.");
+                    }
+
+                    if ($material) {
+                        $material->decrement('qty', $qtyDiff);
+                    }
+
+                    $targetVehicleId = $validated['vehicle_id'] ?? $movement->vehicle_id;
+                    if ($targetVehicleId) {
+                        $part = VehiclePart::where('vehicle_id', $targetVehicleId)
+                            ->where('material_id', $movement->material_id)
+                            ->latest('id')
+                            ->first();
+
+                        if ($part) {
+                            $unitCost = (float) ($material ? $material->unit_cost : $part->unit_cost);
+                            $part->update([
+                                'qty' => $newQty,
+                                'cost' => round($newQty * $unitCost, 2),
+                                'issued_by' => $validated['issued_by'] ?? $movement->issued_by,
+                                'issued_to' => $validated['issued_to'] ?? $movement->issued_to,
+                            ]);
+                        }
+                    }
+                } elseif ($movement->type === 'in') {
+                    if ($material) {
+                        $material->increment('qty', $qtyDiff);
+                    }
+                }
+
+                $vehicleLabel = null;
+                $targetVehicleId = $validated['vehicle_id'] ?? $movement->vehicle_id;
+                if (! empty($targetVehicleId)) {
+                    $v = Vehicle::find($targetVehicleId);
+                    if ($v) {
+                        $vehicleLabel = "{$v->plate} — {$v->make} {$v->model}";
+                    }
+                }
+
+                $issuedBy = $validated['issued_by'] ?? ($movement->issued_by ?: Auth::user()->name);
+                $issuedTo = $validated['issued_to'] ?? ($validated['person'] ?? $movement->issued_to);
+
+                $movement->update([
+                    'qty' => $newQty,
+                    'date' => $validated['date'],
+                    'person' => $issuedTo,
+                    'issued_by' => $issuedBy,
+                    'issued_to' => $issuedTo,
+                    'vehicle_id' => $targetVehicleId,
+                    'vehicle_label' => $vehicleLabel ?: $movement->vehicle_label,
+                    'note' => $validated['note'] ?? $movement->note,
+                ]);
+
+                ActivityLog::record(Auth::user()->name, "Corrected material issuance record #{$movement->id} for '{$movement->material_name}' (New Qty: {$newQty}).");
+            });
+        } catch (\Exception $e) {
+            return back()->with('flash_danger', $e->getMessage())->withInput();
+        }
+
+        return back()->with('flash_success', 'Material issuance record updated successfully.');
+    }
+
+    public function destroyMovement($id)
+    {
+        if (! Auth::user()->canEdit('materials')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $movement = MaterialMovement::findOrFail($id);
+
+        DB::transaction(function () use ($movement) {
+            $material = Material::find($movement->material_id);
+
+            if ($movement->type === 'out') {
+                if ($material) {
+                    $material->increment('qty', (float) $movement->qty);
+                }
+
+                if ($movement->vehicle_id) {
+                    VehiclePart::where('vehicle_id', $movement->vehicle_id)
+                        ->where('material_id', $movement->material_id)
+                        ->latest('id')
+                        ->first()?->delete();
+                }
+            } elseif ($movement->type === 'in') {
+                if ($material) {
+                    $material->decrement('qty', (float) $movement->qty);
+                }
+            }
+
+            $name = $movement->material_name;
+            $qty = $movement->qty;
+            $movement->delete();
+
+            ActivityLog::record(Auth::user()->name, "Deleted material movement record of {$qty} for '{$name}'. Stock reverted.");
+        });
+
+        return back()->with('flash_success', 'Issuance record deleted and store stock reverted.');
+    }
 }

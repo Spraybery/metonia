@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/materials', [MaterialController::class, 'store'])->name('materials.store');
     Route::put('/materials/{id}', [MaterialController::class, 'update'])->name('materials.update');
     Route::post('/materials/{id}/movement', [MaterialController::class, 'stockMovement'])->name('materials.movement');
+    Route::put('/materials/movement/{id}', [MaterialController::class, 'updateMovement'])->name('materials.movement.update');
+    Route::delete('/materials/movement/{id}', [MaterialController::class, 'destroyMovement'])->name('materials.movement.destroy');
     Route::get('/materials/{id}/movements', [MaterialController::class, 'movements'])->name('materials.movements');
     Route::delete('/materials/{id}', [MaterialController::class, 'destroy'])->name('materials.destroy');
 
