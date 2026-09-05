@@ -35,8 +35,8 @@
                 <a href="{{ route('materials.restock') }}" class="btn btn-outline-success btn-sm font-weight-semibold mr-1">
                     <i class="icon-arrow-down5 mr-1"></i> Supplier Restock Data
                 </a>
-                <a href="{{ route('materials.safety_stock') }}" class="btn btn-outline-warning btn-sm font-weight-semibold text-dark mr-1">
-                    <i class="icon-warning2 mr-1 text-warning"></i> Safety Stock Alerts
+                <a href="{{ route('materials.safety_stock') }}" class="btn btn-outline-primary btn-sm font-weight-semibold text-dark mr-1">
+                    <i class="icon-shield-check mr-1 text-primary"></i> Worker Safety &amp; PPE Stock
                 </a>
                 @if(Auth::user()->canEdit('materials'))
                     <button type="button" class="btn btn-primary btn-sm mr-1 font-weight-semibold" data-toggle="modal" data-target="#modal-add-material">

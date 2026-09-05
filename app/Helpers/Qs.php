@@ -96,6 +96,7 @@ class Qs
             'Bolts & Fasteners',
             'Rubbers',
             'Fibreglass',
+            'Worker Safety & PPE',
             'Reflecting & Safety',
         ];
     }
@@ -104,7 +105,10 @@ class Qs
     {
         return [
             'Pieces',
+            'Pairs',
+            'Sets',
             'Rolls',
+            'Boxes',
             'Liters',
             'Kilograms',
         ];

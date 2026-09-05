@@ -169,7 +169,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('materials.safety_stock') }}" class="nav-link {{ request()->routeIs('materials.safety_stock') ? 'active' : '' }}">
-                                        <i class="icon-warning2 mr-2 text-warning"></i> Safety Stock Alerts
+                                        <i class="icon-shield-check mr-2 text-primary"></i> Worker Safety &amp; PPE Stock
                                     </a>
                                 </li>
                             </ul>

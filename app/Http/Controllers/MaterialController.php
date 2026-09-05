@@ -99,14 +99,20 @@ class MaterialController extends Controller
 
     public function safetyStock(Request $request)
     {
-        $allMaterials = Material::orderBy('name')->get();
         $categories = Qs::getMaterialCategories();
 
-        $query = Material::orderBy('name');
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->query('category'));
-        }
+        $query = Material::where(function ($q) {
+            $q->where('category', 'Worker Safety & PPE')
+                ->orWhere('category', 'Reflecting & Safety')
+                ->orWhere('name', 'like', '%Safety%')
+                ->orWhere('name', 'like', '%PPE%')
+                ->orWhere('name', 'like', '%Helmet%')
+                ->orWhere('name', 'like', '%Glove%')
+                ->orWhere('name', 'like', '%Boot%')
+                ->orWhere('name', 'like', '%Goggle%')
+                ->orWhere('name', 'like', '%Mask%')
+                ->orWhere('name', 'like', '%First Aid%');
+        })->orderBy('name');
 
         if ($request->filled('search')) {
             $s = '%'.$request->query('search').'%';
@@ -116,19 +122,23 @@ class MaterialController extends Controller
             });
         }
 
-        $materials = $query->get()->filter(fn (Material $m) => $m->isLowStock());
+        $materials = $query->get();
 
-        $lowStockCount = $allMaterials->filter(fn (Material $m) => $m->isLowStock())->count();
-        $outOfStockCount = $allMaterials->filter(fn (Material $m) => (float) $m->qty <= 0)->count();
-        $criticalDeficitCount = $allMaterials->filter(fn (Material $m) => (float) $m->qty <= (float) ($m->low_stock / 2))->count();
+        $totalSafetyItems = $materials->count();
+        $totalUnitsOnHand = (float) $materials->sum('qty');
+        $lowStockSafetyItems = $materials->filter(fn (Material $m) => $m->isLowStock())->count();
+        $outOfStockCount = $materials->filter(fn (Material $m) => (float) $m->qty <= 0)->count();
+
+        $allCatalogMaterials = Material::orderBy('name')->get();
 
         return view('materials.safety_stock', compact(
             'materials',
             'categories',
-            'allMaterials',
-            'lowStockCount',
-            'outOfStockCount',
-            'criticalDeficitCount'
+            'allCatalogMaterials',
+            'totalSafetyItems',
+            'totalUnitsOnHand',
+            'lowStockSafetyItems',
+            'outOfStockCount'
         ));
     }
 
