@@ -15,6 +15,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('materials.issuance.print', request()->query()) }}" target="_blank" class="btn btn-light font-weight-semibold shadow-xs mr-1">
+                <i class="icon-printer mr-1"></i> Print Register
+            </a>
             @if(Auth::user()->canEdit('materials'))
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-item">
                 <i class="icon-plus2 mr-1"></i> Add Item

@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     // Vehicle Build & Job Cards
     Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
     Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+    Route::get('/vehicles/print', [VehicleController::class, 'printRegister'])->name('vehicles.print_register');
     Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
     Route::get('/vehicles/{id}', [VehicleController::class, 'show'])->name('vehicles.show');
     Route::get('/vehicles/{id}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
@@ -44,9 +45,13 @@ Route::middleware('auth')->group(function () {
 
     // Materials & Store Inventory
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materials/print', [MaterialController::class, 'printIndex'])->name('materials.print');
     Route::get('/materials/issuance', [MaterialController::class, 'issuance'])->name('materials.issuance');
+    Route::get('/materials/issuance/print', [MaterialController::class, 'printIssuance'])->name('materials.issuance.print');
     Route::get('/materials/restock', [MaterialController::class, 'restock'])->name('materials.restock');
+    Route::get('/materials/restock/print', [MaterialController::class, 'printRestock'])->name('materials.restock.print');
     Route::get('/materials/safety-stock', [MaterialController::class, 'safetyStock'])->name('materials.safety_stock');
+    Route::get('/materials/safety-stock/print', [MaterialController::class, 'printSafetyStock'])->name('materials.safety_stock.print');
     Route::post('/materials', [MaterialController::class, 'store'])->name('materials.store');
     Route::put('/materials/{id}', [MaterialController::class, 'update'])->name('materials.update');
     Route::post('/materials/{id}/movement', [MaterialController::class, 'stockMovement'])->name('materials.movement');
@@ -57,12 +62,14 @@ Route::middleware('auth')->group(function () {
 
     // Supervisors Roster
     Route::get('/supervisors', [SupervisorController::class, 'index'])->name('supervisors.index');
+    Route::get('/supervisors/print', [SupervisorController::class, 'printRegister'])->name('supervisors.print');
     Route::post('/supervisors', [SupervisorController::class, 'store'])->name('supervisors.store');
     Route::put('/supervisors/{id}', [SupervisorController::class, 'update'])->name('supervisors.update');
     Route::delete('/supervisors/{id}', [SupervisorController::class, 'destroy'])->name('supervisors.destroy');
 
     // Tools & Equipment Asset Register
     Route::get('/tools', [ToolController::class, 'index'])->name('tools.index');
+    Route::get('/tools/print', [ToolController::class, 'printRegister'])->name('tools.print');
     Route::post('/tools', [ToolController::class, 'store'])->name('tools.store');
     Route::put('/tools/{id}', [ToolController::class, 'update'])->name('tools.update');
     Route::delete('/tools/{id}', [ToolController::class, 'destroy'])->name('tools.destroy');

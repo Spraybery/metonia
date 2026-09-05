@@ -56,6 +56,28 @@ class MaterialController extends Controller
         ));
     }
 
+    public function printIndex(Request $request)
+    {
+        $query = Material::orderBy('name');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->query('category'));
+        }
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', $s)
+                    ->orWhere('item_code', 'like', $s)
+                    ->orWhere('supplier', 'like', $s);
+            });
+        }
+
+        $materials = $query->get();
+
+        return view('print.materials_register', compact('materials'));
+    }
+
     public function issuance(Request $request)
     {
         $materials = Material::orderBy('name')->get();
@@ -80,6 +102,25 @@ class MaterialController extends Controller
         return view('materials.issuance', compact('materials', 'categories', 'units', 'activeVehicles', 'outwardMovements'));
     }
 
+    public function printIssuance(Request $request)
+    {
+        $query = MaterialMovement::where('type', 'out')->with(['material', 'vehicle']);
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('material_name', 'like', $s)
+                    ->orWhere('vehicle_label', 'like', $s)
+                    ->orWhere('issued_by', 'like', $s)
+                    ->orWhere('issued_to', 'like', $s);
+            });
+        }
+
+        $outwardMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
+
+        return view('print.issuance_register', compact('outwardMovements'));
+    }
+
     public function restock(Request $request)
     {
         $materials = Material::orderBy('name')->get();
@@ -100,6 +141,24 @@ class MaterialController extends Controller
         $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
 
         return view('materials.restock', compact('materials', 'categories', 'units', 'restockMovements'));
+    }
+
+    public function printRestock(Request $request)
+    {
+        $query = MaterialMovement::where('type', 'in')->with('material');
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('material_name', 'like', $s)
+                    ->orWhere('note', 'like', $s)
+                    ->orWhere('person', 'like', $s);
+            });
+        }
+
+        $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
+
+        return view('print.restock_register', compact('restockMovements'));
     }
 
     public function safetyStock(Request $request)
@@ -150,6 +209,35 @@ class MaterialController extends Controller
             'lowStockSafetyItems',
             'outOfStockCount'
         ));
+    }
+
+    public function printSafetyStock(Request $request)
+    {
+        $query = Material::where(function ($q) {
+            $q->where('category', 'Worker Safety & PPE')
+                ->orWhere('category', 'Reflecting & Safety')
+                ->orWhere('name', 'like', '%Safety%')
+                ->orWhere('name', 'like', '%PPE%')
+                ->orWhere('name', 'like', '%Helmet%')
+                ->orWhere('name', 'like', '%Glove%')
+                ->orWhere('name', 'like', '%Boot%')
+                ->orWhere('name', 'like', '%Goggle%')
+                ->orWhere('name', 'like', '%Mask%')
+                ->orWhere('name', 'like', '%First Aid%');
+        })->orderBy('name');
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', $s)
+                    ->orWhere('item_code', 'like', $s)
+                    ->orWhere('supplier', 'like', $s);
+            });
+        }
+
+        $materials = $query->get();
+
+        return view('print.safety_stock_register', compact('materials'));
     }
 
     public function store(Request $request)

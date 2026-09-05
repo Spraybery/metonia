@@ -15,6 +15,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('vehicles.print_register', request()->query()) }}" target="_blank" class="btn btn-light font-weight-semibold shadow-xs mr-1">
+                <i class="icon-printer mr-1"></i> Print Register
+            </a>
             @if(Auth::user()->canEdit('vehicles'))
             <a href="{{ route('vehicles.create') }}" class="btn btn-primary font-weight-semibold shadow-xs">
                 <i class="icon-plus2 mr-1"></i> New Job Card

@@ -22,6 +22,13 @@ class SupervisorController extends Controller
         return view('supervisors.index', compact('supervisors', 'stages'));
     }
 
+    public function printRegister()
+    {
+        $supervisors = Supervisor::orderBy('name')->get();
+
+        return view('print.supervisors_roster', compact('supervisors'));
+    }
+
     public function store(Request $request)
     {
         if (! Auth::user()->canEdit('supervisors')) {

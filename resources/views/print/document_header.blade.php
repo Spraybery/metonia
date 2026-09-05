@@ -8,8 +8,8 @@
         </div>
     </div>
     <div style="text-align: right; font-size: 10px; color: #64748b;">
-        <div>Document Ref: <strong>MET-JC-{{ $vehicle->id ?? '001' }}</strong></div>
+        <div>Document Ref: <strong>MET-{{ $docRefCode ?? 'JC-'.($vehicle->id ?? '001') }}</strong></div>
         <div>Generated: {{ now()->format('d M Y, H:i') }} EAT</div>
-        <div>Status: <strong style="color: #10B981;">OFFICIAL DISPATCH</strong></div>
+        <div>Status: <strong style="color: #10B981;">{{ $docStatusLabel ?? 'OFFICIAL DISPATCH' }}</strong></div>
     </div>
 </div>
