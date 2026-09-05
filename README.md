@@ -99,5 +99,14 @@ vendor/bin/pint --format agent
 
 ---
 
+## 🤝 Multi-Developer & AI Agent Protocol
+
+This repository is maintained concurrently by multiple developers and AI coding agents. All contributors must follow the **[Collaboration Protocol](COLLABORATION.md)**:
+- Always `git pull --rebase origin main` before starting work.
+- Validate formatting (`vendor/bin/pint --format agent`) and tests (`php artisan test --compact`).
+- **Always commit and push immediately upon completion of any task.**
+
+---
+
 ## 📄 License
 Proprietary software developed for Metonia Enterprise Limited. All rights reserved.
