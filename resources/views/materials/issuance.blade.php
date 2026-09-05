@@ -75,6 +75,7 @@
                     <thead class="bg-light">
                         <tr>
                             <th style="width: 50px;">#</th>
+                            <th style="width: 120px;">Item Code</th>
                             <th>Material Description</th>
                             <th class="text-center">Quantity</th>
                             <th>Vehicle Name / Destination</th>
@@ -88,6 +89,11 @@
                         @forelse($outwardMovements as $m)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="badge badge-dark font-weight-bold font-size-xs px-2 py-1" style="letter-spacing: 0.5px;">
+                                    {{ $m->material?->item_code ?: ('MAT-' . str_pad($m->material_id, 4, '0', STR_PAD_LEFT)) }}
+                                </span>
+                            </td>
                             <td>
                                 <span class="font-weight-semibold text-dark">{{ $m->material_name }}</span>
                             </td>
