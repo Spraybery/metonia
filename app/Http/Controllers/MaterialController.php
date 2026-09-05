@@ -124,6 +124,9 @@ class MaterialController extends Controller
 
         $materials = $query->get();
 
+        $categories = Qs::getMaterialCategories();
+        $units = Qs::getMaterialUnits();
+
         $totalSafetyItems = $materials->count();
         $totalUnitsOnHand = (float) $materials->sum('qty');
         $lowStockSafetyItems = $materials->filter(fn (Material $m) => $m->isLowStock())->count();
@@ -134,6 +137,7 @@ class MaterialController extends Controller
         return view('materials.safety_stock', compact(
             'materials',
             'categories',
+            'units',
             'allCatalogMaterials',
             'totalSafetyItems',
             'totalUnitsOnHand',

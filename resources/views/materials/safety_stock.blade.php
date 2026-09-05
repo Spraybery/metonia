@@ -285,14 +285,13 @@
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Unit <span class="text-danger">*</span></label>
+                                                            <label class="font-weight-semibold">Unit Quantity Measure <span class="text-danger">*</span></label>
                                                             <select name="unit" class="form-control" required>
-                                                                <option value="Pieces" {{ $row->unit === 'Pieces' ? 'selected' : '' }}>Pieces</option>
-                                                                <option value="Pairs" {{ $row->unit === 'Pairs' ? 'selected' : '' }}>Pairs</option>
-                                                                <option value="Sets" {{ $row->unit === 'Sets' ? 'selected' : '' }}>Sets</option>
-                                                                <option value="Boxes" {{ $row->unit === 'Boxes' ? 'selected' : '' }}>Boxes</option>
-                                                                <option value="Rolls" {{ $row->unit === 'Rolls' ? 'selected' : '' }}>Rolls</option>
+                                                                @foreach($units as $u)
+                                                                    <option value="{{ $u }}" {{ $row->unit === $u ? 'selected' : '' }}>{{ $u }}</option>
+                                                                @endforeach
                                                             </select>
+                                                            <small class="form-text text-muted">Choose unit: e.g. <strong>Pieces</strong> (Helmets, Vests) or <strong>Pairs</strong> (Gloves, Boots).</small>
                                                         </div>
                                                     </div>
 
@@ -361,14 +360,13 @@
                             </select>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Unit <span class="text-danger">*</span></label>
+                            <label class="font-weight-semibold">Unit Quantity Measure <span class="text-danger">*</span></label>
                             <select name="unit" class="form-control" required>
-                                <option value="Pieces">Pieces</option>
-                                <option value="Pairs" selected>Pairs</option>
-                                <option value="Sets">Sets</option>
-                                <option value="Boxes">Boxes</option>
-                                <option value="Rolls">Rolls</option>
+                                @foreach($units as $u)
+                                    <option value="{{ $u }}" {{ $u === 'Pairs' ? 'selected' : '' }}>{{ $u }}</option>
+                                @endforeach
                             </select>
+                            <small class="form-text text-muted">Choose unit: e.g. <strong>Pieces</strong> (Helmets, Vests) or <strong>Pairs</strong> (Gloves, Boots).</small>
                         </div>
                     </div>
 
