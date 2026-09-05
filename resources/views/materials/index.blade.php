@@ -76,6 +76,7 @@
                     <thead>
                         <tr class="bg-light">
                             <th style="width: 50px;">#</th>
+                            <th style="width: 120px;">Item Code</th>
                             <th>Description</th>
                             <th>Category</th>
                             <th>Unit</th>
@@ -89,6 +90,11 @@
                         @foreach($materials as $row)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="badge badge-dark font-weight-bold font-size-xs px-2 py-1" style="letter-spacing: 0.5px;">
+                                    {{ $row->item_code }}
+                                </span>
+                            </td>
                             <td>
                                 <a href="{{ route('materials.movements', $row->id) }}" class="font-weight-semibold text-dark">
                                     {{ $row->name }}
@@ -153,9 +159,15 @@
                                             <form action="{{ route('materials.update', $row->id) }}" method="POST">
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Item Name <span class="text-danger">*</span></label>
-                                                        <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
+                                                    <div class="form-row">
+                                                        <div class="col-md-5 form-group">
+                                                            <label class="font-weight-semibold">Item Code / SKU</label>
+                                                            <input type="text" name="item_code" class="form-control" value="{{ $row->item_code }}" placeholder="e.g. MAT-0012">
+                                                        </div>
+                                                        <div class="col-md-7 form-group">
+                                                            <label class="font-weight-semibold">Item Name <span class="text-danger">*</span></label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
+                                                        </div>
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="col-md-6 form-group">
@@ -340,9 +352,16 @@
             <form action="{{ route('materials.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Item Name / Specification <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. Heavy Duty Structural Steel Beam 100x50mm" required>
+                    <div class="form-row">
+                        <div class="col-md-5 form-group">
+                            <label class="font-weight-semibold">Item Code / SKU</label>
+                            <input type="text" name="item_code" class="form-control" placeholder="e.g. MAT-0012">
+                            <small class="form-text text-muted">Auto-generated if left blank</small>
+                        </div>
+                        <div class="col-md-7 form-group">
+                            <label class="font-weight-semibold">Item Name / Specification <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Heavy Duty Structural Steel Beam 100x50mm" required>
+                        </div>
                     </div>
 
                     <div class="form-row">

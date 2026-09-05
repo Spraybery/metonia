@@ -27,6 +27,7 @@ class MaterialController extends Controller
             $s = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($s) {
                 $q->where('name', 'like', $s)
+                    ->orWhere('item_code', 'like', $s)
                     ->orWhere('supplier', 'like', $s);
             });
         }
@@ -122,6 +123,7 @@ class MaterialController extends Controller
             $s = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($s) {
                 $q->where('name', 'like', $s)
+                    ->orWhere('item_code', 'like', $s)
                     ->orWhere('supplier', 'like', $s);
             });
         }
@@ -157,6 +159,7 @@ class MaterialController extends Controller
         }
 
         $validated = $request->validate([
+            'item_code' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
             'category' => 'required|string|in:'.implode(',', Qs::getMaterialCategories()),
             'unit' => 'required|string|in:'.implode(',', Qs::getMaterialUnits()),
@@ -210,6 +213,7 @@ class MaterialController extends Controller
         $material = Material::findOrFail($id);
 
         $validated = $request->validate([
+            'item_code' => 'nullable|string|max:50',
             'name' => 'required|string|max:255',
             'category' => 'required|string|in:'.implode(',', Qs::getMaterialCategories()),
             'unit' => 'required|string|in:'.implode(',', Qs::getMaterialUnits()),

@@ -11,6 +11,7 @@ class Material extends Model
     use HasFactory;
 
     protected $fillable = [
+        'item_code',
         'name',
         'category',
         'unit',
@@ -19,6 +20,17 @@ class Material extends Model
         'unit_cost',
         'supplier',
     ];
+
+    public function getItemCodeAttribute(): string
+    {
+        if (! empty($this->attributes['item_code'])) {
+            return $this->attributes['item_code'];
+        }
+
+        $prefix = $this->isSafetyStock() ? 'SAF' : 'MAT';
+
+        return $prefix.'-'.str_pad((string) $this->id, 4, '0', STR_PAD_LEFT);
+    }
 
     protected function casts(): array
     {

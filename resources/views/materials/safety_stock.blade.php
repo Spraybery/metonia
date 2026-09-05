@@ -70,6 +70,7 @@
                     <thead class="bg-light">
                         <tr>
                             <th style="width: 50px;">#</th>
+                            <th style="width: 120px;">Item Code</th>
                             <th>Safety Equipment / PPE Description</th>
                             <th>Category</th>
                             <th>Unit</th>
@@ -88,6 +89,11 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="badge badge-dark font-weight-bold font-size-xs px-2 py-1" style="letter-spacing: 0.5px;">
+                                    {{ $row->item_code }}
+                                </span>
+                            </td>
                             <td>
                                 <a href="{{ route('materials.movements', $row->id) }}" class="font-weight-bold text-dark">
                                     {{ $row->name }}
@@ -252,9 +258,15 @@
                                                 @csrf @method('PUT')
                                                 <input type="hidden" name="unit_cost" value="0.00">
                                                 <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Equipment Name <span class="text-danger">*</span></label>
-                                                        <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
+                                                    <div class="form-row">
+                                                        <div class="col-md-5 form-group">
+                                                            <label class="font-weight-semibold">Item Code / SKU</label>
+                                                            <input type="text" name="item_code" class="form-control" value="{{ $row->item_code }}" placeholder="e.g. SAF-0005">
+                                                        </div>
+                                                        <div class="col-md-7 form-group">
+                                                            <label class="font-weight-semibold">Equipment Name <span class="text-danger">*</span></label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
+                                                        </div>
                                                     </div>
 
                                                     <div class="form-row">
@@ -328,9 +340,16 @@
                 @csrf
                 <input type="hidden" name="unit_cost" value="0.00">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Equipment / PPE Description <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. EN388 Heavy Leather Welding Gloves" required>
+                    <div class="form-row">
+                        <div class="col-md-5 form-group">
+                            <label class="font-weight-semibold">Item Code / SKU</label>
+                            <input type="text" name="item_code" class="form-control" placeholder="e.g. SAF-0005">
+                            <small class="form-text text-muted">Auto-generated if left blank</small>
+                        </div>
+                        <div class="col-md-7 form-group">
+                            <label class="font-weight-semibold">Equipment / PPE Description <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. EN388 Heavy Leather Welding Gloves" required>
+                        </div>
                     </div>
 
                     <div class="form-row">
