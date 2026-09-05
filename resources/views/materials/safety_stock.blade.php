@@ -19,16 +19,10 @@
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-safety-item">
                 <i class="icon-plus2 mr-1"></i> Add Item
             </button>
-            <button type="button" class="btn btn-success font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-restock-safety">
+            <button type="button" class="btn btn-success font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-restock-safety">
                 <i class="icon-arrow-down5 mr-1"></i> Restock Safety Gear
             </button>
             @endif
-            <a href="{{ route('materials.issuance') }}" class="btn btn-outline-danger font-weight-semibold mr-1">
-                <i class="icon-arrow-up5 mr-1"></i> Issue to Worker
-            </a>
-            <a href="{{ route('materials.index') }}" class="btn btn-light font-weight-semibold">
-                <i class="icon-boxes mr-1"></i> All Store Inventory
-            </a>
         </div>
     </div>
 

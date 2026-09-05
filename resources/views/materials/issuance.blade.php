@@ -23,9 +23,6 @@
                 <i class="icon-arrow-up5 mr-1"></i> Issue Material Out of Store
             </button>
             @endif
-            <a href="{{ route('materials.index') }}" class="btn btn-light ml-1 font-weight-semibold">
-                <i class="icon-boxes mr-1"></i> Store Catalog
-            </a>
         </div>
     </div>
 

@@ -23,23 +23,14 @@
     </div>
 
     {{-- Main Container Card --}}
-    <div class="card">
-        <div class="card-header header-elements-inline">
+    <div class="card border">
+        <div class="card-header header-elements-inline bg-light">
             <h6 class="card-title font-weight-bold">
                 <i class="icon-boxes mr-2 text-primary"></i> Store Materials &amp; Parts Register
             </h6>
             <div class="header-elements">
-                <a href="{{ route('materials.issuance') }}" class="btn btn-outline-danger btn-sm font-weight-semibold mr-1">
-                    <i class="icon-arrow-up5 mr-1"></i> Outward Material Issuance
-                </a>
-                <a href="{{ route('materials.restock') }}" class="btn btn-outline-success btn-sm font-weight-semibold mr-1">
-                    <i class="icon-arrow-down5 mr-1"></i> Supplier Restock Data
-                </a>
-                <a href="{{ route('materials.safety_stock') }}" class="btn btn-outline-primary btn-sm font-weight-semibold text-dark mr-1">
-                    <i class="icon-shield-check mr-1 text-primary"></i> Worker Safety &amp; PPE Stock
-                </a>
                 @if(Auth::user()->canEdit('materials'))
-                    <button type="button" class="btn btn-primary btn-sm mr-1 font-weight-semibold" data-toggle="modal" data-target="#modal-add-material">
+                    <button type="button" class="btn btn-primary btn-sm mr-2 font-weight-semibold" data-toggle="modal" data-target="#modal-add-material">
                         <i class="icon-plus2 mr-1"></i> Add Material SKU
                     </button>
                 @endif

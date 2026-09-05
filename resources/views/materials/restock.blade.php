@@ -23,9 +23,6 @@
                 <i class="icon-arrow-down5 mr-1"></i> Record Supplier Restock
             </button>
             @endif
-            <a href="{{ route('materials.index') }}" class="btn btn-light ml-1 font-weight-semibold">
-                <i class="icon-boxes mr-1"></i> Store Catalog
-            </a>
         </div>
     </div>
 
