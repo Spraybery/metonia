@@ -157,13 +157,16 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 === multi-developer & git workflow rules ===
 
-# Mandatory Immediate Git Commit & Push Rule
+# Mandatory Immediate Git Commit, Push & Branching Rule
 
 - TWO human developers are collaborating on this repository simultaneously, and BOTH are actively working with AI coding agents (LLMs).
-- MANDATORY INSTRUCTION: At the completion of EVERY task or change, the AI agent MUST commit all modifications with a concise descriptive message and IMMEDIATELY PUSH to the remote repository (`git push origin main`).
+- BRANCHING STRATEGY:
+  - For new features, complex tasks, or major refactors, ALWAYS create a dedicated feature branch from fresh `main` (`feat/<slug>`, `fix/<slug>`) and publish it immediately (`git push -u origin <branch>`).
+  - Small doc tweaks or minor fixes may be committed directly to `main`.
+- MANDATORY INSTRUCTION: At the completion of EVERY task, subtask, or change, the AI agent MUST commit all modifications with a concise descriptive message and IMMEDIATELY PUSH to the remote branch or main (`git push origin <branch>` or `git push origin main`).
 - NEVER leave uncommitted or unpushed work on the local environment.
-- BEFORE starting any new task, always run `git pull --rebase origin main` to ensure the local workspace is fully in sync with the remote.
-- If a push is rejected due to concurrent remote changes, run `git pull --rebase origin main`, ensure tests pass (`php artisan test --compact`), and push immediately.
+- BEFORE starting any new task, always run `git pull --rebase origin main` (or `git rebase origin/main` on a feature branch) to ensure the local workspace is fully in sync with the remote.
+- If a push is rejected due to concurrent remote changes, rebase on latest remote, ensure tests pass (`php artisan test --compact`), and push immediately.
 - Refer to `COLLABORATION.md` for the complete multi-developer protocol.
 
 </laravel-boost-guidelines>
