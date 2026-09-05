@@ -86,6 +86,7 @@
                             <th>Received By</th>
                             <th>Delivery Date</th>
                             <th>Note / Consignment Ref</th>
+                            <th class="text-center" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,10 +111,88 @@
                             <td class="font-size-sm text-muted">
                                 {{ $m->note ?: 'Supplier consignment verified & received into stock.' }}
                             </td>
+                            <td class="text-center">
+                                <div class="list-icons">
+                                    <div class="dropdown">
+                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                            <i class="icon-menu9"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            @if(Auth::user()->canEdit('materials'))
+                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-restock-{{ $m->id }}">
+                                                <i class="icon-pencil text-success"></i> Edit Restock
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <form method="POST" action="{{ route('materials.movement.destroy', $m->id) }}" id="del-restock-{{ $m->id }}">
+                                                @csrf @method('DELETE')
+                                            </form>
+                                            <a href="#" onclick="if(confirm('Delete restock record of {{ $m->material_name }}? Received stock quantity will be deducted.')) { document.getElementById('del-restock-{{ $m->id }}').submit(); }" class="dropdown-item text-danger">
+                                                <i class="icon-trash text-danger"></i> Delete Restock
+                                            </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Edit Restock Modal --}}
+                                @if(Auth::user()->canEdit('materials'))
+                                <div id="modal-edit-restock-{{ $m->id }}" class="modal fade" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content text-left">
+                                            <div class="modal-header bg-success text-white">
+                                                <h6 class="modal-title font-weight-bold">
+                                                    <i class="icon-pencil mr-1"></i> Edit Restock Delivery: {{ $m->material_name }}
+                                                </h6>
+                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <form action="{{ route('materials.movement.update', $m->id) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Material Description</label>
+                                                        <input type="text" class="form-control" value="{{ $m->material_name }}" disabled>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Supplier / Vendor Name <span class="text-danger">*</span></label>
+                                                        <input type="text" name="supplier" class="form-control" value="{{ $m->material?->supplier ?: 'Apex Steel Kenya Ltd' }}" required>
+                                                    </div>
+
+                                                    <div class="form-row">
+                                                        <div class="col-6 form-group">
+                                                            <label class="font-weight-semibold">Quantity Received <span class="text-danger">*</span></label>
+                                                            <input type="number" step="0.01" min="0.01" name="qty" class="form-control" value="{{ $m->qty }}" required>
+                                                        </div>
+                                                        <div class="col-6 form-group">
+                                                            <label class="font-weight-semibold">Delivery Date <span class="text-danger">*</span></label>
+                                                            <input type="date" name="date" class="form-control" value="{{ $m->date ? $m->date->format('Y-m-d') : date('Y-m-d') }}" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Receiving Manager / Staff <span class="text-danger">*</span></label>
+                                                        <input type="text" name="issued_by" class="form-control" value="{{ $m->issued_by ?: ($m->person ?: Auth::user()->name) }}" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Delivery Note / Invoice Note</label>
+                                                        <textarea name="note" class="form-control" rows="2" placeholder="Delivery note details...">{{ $m->note }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success font-weight-semibold">Save Restock Corrections</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted p-4">
+                            <td colspan="8" class="text-center text-muted p-4">
                                 No supplier restock deliveries logged in the register yet.
                             </td>
                         </tr>
