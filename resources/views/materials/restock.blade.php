@@ -50,16 +50,10 @@
 
     {{-- Main Container Card --}}
     <div class="card border">
-        <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold">
+        <div class="card-header bg-light">
+            <h6 class="card-title font-weight-bold mb-0">
                 <i class="icon-list mr-2 text-success"></i> Incoming Supplier Consignments Log
             </h6>
-            <div class="header-elements">
-                <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
-                    <i class="icon-printer mr-1"></i> Print Log
-                </button>
-                {!! Qs::getPanelOptions() !!}
-            </div>
         </div>
 
         <div class="card-body">

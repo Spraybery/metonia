@@ -4,6 +4,25 @@
 @section('content')
 <div class="content">
 
+    {{-- Header Action & Page Overview --}}
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 12px;">
+        <div>
+            <h5 class="font-weight-bold mb-1 text-dark">
+                <i class="icon-boxes text-primary mr-2"></i> Store Inventory &amp; Raw Materials Catalog
+            </h5>
+            <p class="text-muted mb-0 font-size-sm">
+                Manage workshop raw material inventory catalog, stock quantities, and reorder thresholds.
+            </p>
+        </div>
+        <div>
+            @if(Auth::user()->canEdit('materials'))
+            <button type="button" class="btn btn-primary font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-add-material">
+                <i class="icon-plus2 mr-1"></i> Add Material SKU
+            </button>
+            @endif
+        </div>
+    </div>
+
     {{-- Summary KPI Stat Bars (Section 5 Standard) --}}
     <div class="row mb-3">
         <div class="col-md-6 col-sm-6 mb-2">
@@ -24,20 +43,10 @@
 
     {{-- Main Container Card --}}
     <div class="card border">
-        <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold">
+        <div class="card-header bg-light">
+            <h6 class="card-title font-weight-bold mb-0">
                 <i class="icon-boxes mr-2 text-primary"></i> Store Materials &amp; Parts Register
             </h6>
-            <div class="header-elements">
-                @if(Auth::user()->canEdit('materials'))
-                    <button type="button" class="btn btn-primary btn-sm mr-2 font-weight-semibold" data-toggle="modal" data-target="#modal-add-material">
-                        <i class="icon-plus2 mr-1"></i> Add Material SKU
-                    </button>
-                @endif
-                <button onclick="window.print()" class="btn btn-light btn-sm">
-                    <i class="icon-printer mr-1"></i> Print Catalog
-                </button>
-            </div>
         </div>
 
         <div class="card-body">

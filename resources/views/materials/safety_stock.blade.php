@@ -52,15 +52,10 @@
 
     {{-- Main Container Card --}}
     <div class="card border">
-        <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold">
+        <div class="card-header bg-light">
+            <h6 class="card-title font-weight-bold mb-0">
                 <i class="icon-shield-notice mr-2 text-primary"></i> Worker Protective Equipment (PPE) Inventory Log
             </h6>
-            <div class="header-elements">
-                <button onclick="window.print()" class="btn btn-light btn-sm">
-                    <i class="icon-printer mr-1"></i> Print Safety Inventory
-                </button>
-            </div>
         </div>
 
         <div class="card-body">
