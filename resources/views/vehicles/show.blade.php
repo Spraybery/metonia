@@ -282,35 +282,75 @@
 
                 {{-- Tab 3: Stage History Timeline --}}
                 <div class="tab-pane fade" id="tab-history">
-                    <h6 class="font-weight-bold mb-3">Vehicle Stage Transition Audit Trail</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="font-weight-bold mb-0">
+                            <i class="icon-history text-primary mr-1"></i> Full 8-Stage Build Pipeline History
+                        </h6>
+                        <span class="badge badge-light border font-size-xs">
+                            Current: <strong class="text-primary">{{ $vehicle->stage }}</strong>
+                        </span>
+                    </div>
+
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table class="table table-striped table-hover border">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Stage</th>
-                                    <th>Entered</th>
-                                    <th>Left</th>
-                                    <th class="text-center">Duration</th>
+                                    <th style="width: 60px;">Stage #</th>
+                                    <th>Build Stage Name</th>
+                                    <th class="text-center">Status</th>
+                                    <th>Entered Stage</th>
+                                    <th>Exited Stage</th>
+                                    <th class="text-center">Dwell Time</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($stageTimeline as $row)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>
-                                        <span class="badge badge-primary font-weight-semibold">{{ $row['stage'] }}</span>
+                                <tr class="{{ $row['is_current'] ? 'bg-light font-weight-bold' : '' }}">
+                                    <td class="text-center">
+                                        <span class="badge badge-pill {{ $row['is_current'] ? 'badge-primary' : ($row['is_completed'] ? 'badge-success' : 'badge-light border') }}">
+                                            {{ $row['stage_number'] }}
+                                        </span>
                                     </td>
-                                    <td class="text-muted font-monospace">{{ $row['entered_at']->format('d M Y, H:i:s') }}</td>
-                                    <td class="text-muted font-monospace">
+                                    <td>
+                                        <span class="font-weight-semibold {{ $row['is_current'] ? 'text-primary' : 'text-dark' }}">
+                                            {{ $row['stage'] }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
                                         @if($row['is_current'])
-                                            <span class="badge badge-success">Still here</span>
+                                            <span class="badge badge-primary p-1">
+                                                <i class="icon-spinner11 spinner mr-1"></i> Active Stage
+                                            </span>
+                                        @elseif($row['is_completed'])
+                                            <span class="badge badge-success p-1">
+                                                <i class="icon-checkmark mr-1"></i> Completed
+                                            </span>
                                         @else
-                                            {{ $row['left_at']->format('d M Y, H:i:s') }}
+                                            <span class="badge badge-light border text-muted p-1">
+                                                <i class="icon-hour-glass mr-1"></i> Pending
+                                            </span>
                                         @endif
                                     </td>
-                                    <td class="text-center font-weight-bold">
-                                        {{ $row['duration_days'] }} day{{ $row['duration_days'] === 1 ? '' : 's' }}
+                                    <td class="text-muted font-size-xs">
+                                        {{ $row['entered_at'] ? $row['entered_at']->format('d M Y, H:i:s') : '—' }}
+                                    </td>
+                                    <td class="text-muted font-size-xs">
+                                        @if($row['is_current'])
+                                            <span class="text-primary font-weight-bold">Currently in this stage <span class="badge badge-success ml-1">Still here</span></span>
+                                        @elseif($row['left_at'])
+                                            {{ $row['left_at']->format('d M Y, H:i:s') }}
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($row['entered_at'])
+                                            <span class="badge {{ $row['is_current'] ? ($vehicle->isStuck() ? 'badge-danger' : 'badge-primary') : 'badge-light border' }}">
+                                                {{ $row['duration_days'] }} day{{ $row['duration_days'] === 1 ? '' : 's' }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted font-size-xs">—</span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

@@ -117,29 +117,65 @@ class VehicleController extends Controller
     }
 
     /**
-     * Pair each stage-history entry with when the vehicle left it (the next
-     * entry's timestamp, or now() if it's the current stage) and how long it
-     * stayed, so the Transition History tab can show real dwell time per stage.
+     * Pair each stage of the 8-stage build pipeline with entry/exit timestamps,
+     * calculated duration in days, and visual status (completed, current, pending).
      *
-     * @return array<int, array{stage: string, entered_at: Carbon, left_at: ?Carbon, duration_days: int, is_current: bool}>
+     * @return array<int, array{stage_number: int, stage: string, status: string, entered_at: ?Carbon, left_at: ?Carbon, duration_days: int, is_current: bool, is_completed: bool}>
      */
     private function buildStageTimeline(Vehicle $vehicle): array
     {
-        $histories = $vehicle->stageHistories->values();
+        $allStages = Qs::getStages();
+        $histories = $vehicle->stageHistories->sortBy('transitioned_at')->values();
+        $historiesByStage = [];
+
+        foreach ($histories as $h) {
+            if (! isset($historiesByStage[$h->stage])) {
+                $historiesByStage[$h->stage] = $h;
+            }
+        }
+
+        $currentStageIndex = array_search($vehicle->stage, $allStages, true);
+        if ($currentStageIndex === false) {
+            $currentStageIndex = 0;
+        }
+
         $timeline = [];
 
-        foreach ($histories as $index => $history) {
-            $nextHistory = $histories->get($index + 1);
-            $leftAt = $nextHistory?->transitioned_at;
-            $endPoint = $leftAt ?? Carbon::now();
+        foreach ($allStages as $index => $stageName) {
+            $history = $historiesByStage[$stageName] ?? null;
+            $isCurrent = ($vehicle->stage === $stageName);
+            $isCompleted = ($index < $currentStageIndex) || ($stageName === '8. Completed & Dispatched' && $vehicle->completed_at);
+            $isPending = ($index > $currentStageIndex && ! $isCompleted);
+
+            $enteredAt = $history?->transitioned_at;
+            $leftAt = null;
+
+            // Find entry timestamp of the subsequent stage to calculate exit time
+            for ($nextIdx = $index + 1; $nextIdx < count($allStages); $nextIdx++) {
+                $nextStageName = $allStages[$nextIdx];
+                if (isset($historiesByStage[$nextStageName])) {
+                    $leftAt = $historiesByStage[$nextStageName]->transitioned_at;
+                    break;
+                }
+            }
+
+            $durationDays = 0;
+            if ($enteredAt) {
+                $endPoint = $leftAt ?? Carbon::now();
+                $durationDays = (int) floor($enteredAt->diffInDays($endPoint));
+            }
+
+            $status = $isCurrent ? 'current' : ($isCompleted ? 'completed' : 'pending');
 
             $timeline[] = [
-                'stage' => $history->stage,
-                'entered_at' => $history->transitioned_at,
+                'stage_number' => $index + 1,
+                'stage' => $stageName,
+                'status' => $status,
+                'entered_at' => $enteredAt,
                 'left_at' => $leftAt,
-                // Carbon 3's diffInDays() returns a float; whole elapsed days is what the UI shows.
-                'duration_days' => (int) floor($history->transitioned_at->diffInDays($endPoint)),
-                'is_current' => $leftAt === null,
+                'duration_days' => $durationDays,
+                'is_current' => $isCurrent,
+                'is_completed' => $isCompleted,
             ];
         }
 

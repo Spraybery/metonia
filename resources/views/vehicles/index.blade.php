@@ -120,11 +120,21 @@
                                             <a href="{{ route('vehicles.print', $row->id) }}" target="_blank" class="dropdown-item">
                                                 <i class="icon-printer"></i> Print Job Sheet
                                             </a>
-                                            @if(Auth::user()->canEdit('vehicles'))
-                                            <a href="{{ route('vehicles.edit', $row->id) }}" class="dropdown-item">
-                                                <i class="icon-pencil"></i> Edit Details
-                                            </a>
-                                            @endif
+                                             @if(Auth::user()->canEdit('vehicles'))
+                                                @php $nextSt = Qs::getNextStage($row->stage); @endphp
+                                                @if($nextSt)
+                                                <form method="POST" action="{{ route('vehicles.update_stage', $row->id) }}" id="adv-veh-{{ $row->id }}">
+                                                    @csrf @method('PUT')
+                                                    <input type="hidden" name="stage" value="{{ $nextSt }}">
+                                                </form>
+                                                <a href="#" onclick="event.preventDefault(); document.getElementById('adv-veh-{{ $row->id }}').submit();" class="dropdown-item text-success font-weight-bold">
+                                                    <i class="icon-arrow-right8 text-success"></i> Advance to: {{ $nextSt }}
+                                                </a>
+                                                @endif
+                                                <a href="{{ route('vehicles.edit', $row->id) }}" class="dropdown-item">
+                                                    <i class="icon-pencil"></i> Edit Details
+                                                </a>
+                                             @endif
                                             @if(Auth::user()->canDelete())
                                             <div class="dropdown-divider"></div>
                                             <form method="POST" action="{{ route('vehicles.destroy', $row->id) }}" id="del-veh-{{ $row->id }}">
