@@ -58,7 +58,8 @@
                             <th>Date</th>
                             <th class="text-center">Type</th>
                             <th class="text-center">Quantity</th>
-                            <th>Staff / Receiver</th>
+                            <th>Issued By</th>
+                            <th>Issued To / Staff</th>
                             <th>Linked Vehicle Job Card</th>
                             <th>Notes</th>
                         </tr>
@@ -82,7 +83,12 @@
                             <td class="text-center font-weight-bold {{ $m->type === 'in' ? 'text-success' : 'text-danger' }}">
                                 {{ $m->type === 'in' ? '+' : '-' }}{{ number_format($m->qty, 2) }} {{ $m->unit }}
                             </td>
-                            <td>{{ $m->person }}</td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $m->issued_by ?: 'David Omondi' }}</span>
+                            </td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $m->issued_to ?: ($m->person ?: 'Eng. Peter Kimani') }}</span>
+                            </td>
                             <td>
                                 @if($m->vehicle_id)
                                     <a href="{{ route('vehicles.show', $m->vehicle_id) }}" class="font-weight-semibold text-primary">
@@ -96,7 +102,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted p-4">No movement history recorded yet for this material.</td>
+                            <td colspan="8" class="text-center text-muted p-4">No movement history recorded yet for this material.</td>
                         </tr>
                         @endforelse
                     </tbody>

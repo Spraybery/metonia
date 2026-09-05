@@ -35,6 +35,7 @@ class MaterialController extends Controller
         $categories = Qs::getMaterialCategories();
         $units = Qs::getMaterialUnits();
         $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
+        $outwardMovements = MaterialMovement::where('type', 'out')->with('vehicle')->orderByDesc('date')->orderByDesc('id')->get();
 
         $totalStockValue = $materials->sum(fn (Material $m) => $m->totalValue());
         $lowStockCount = $materials->filter(fn (Material $m) => $m->isLowStock())->count();
@@ -48,6 +49,7 @@ class MaterialController extends Controller
             'categories',
             'units',
             'activeVehicles',
+            'outwardMovements',
             'totalStockValue',
             'lowStockCount'
         ));
@@ -80,6 +82,8 @@ class MaterialController extends Controller
                 'unit' => $material->unit,
                 'date' => Carbon::now()->toDateString(),
                 'person' => Auth::user()->name,
+                'issued_by' => Auth::user()->name,
+                'issued_to' => Auth::user()->name,
                 'note' => 'Initial stock on item creation.',
             ]);
         }
@@ -132,19 +136,23 @@ class MaterialController extends Controller
             'type' => 'required|in:in,out',
             'qty' => 'required|numeric|min:0.01',
             'date' => 'required|date',
-            'person' => 'required|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'issued_by' => 'nullable|string|max:255',
+            'issued_to' => 'nullable|string|max:255',
             'supplier' => 'nullable|string|max:255',
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'note' => 'nullable|string',
         ]);
 
         $qty = (float) $validated['qty'];
+        $issuedBy = $validated['issued_by'] ?? Auth::user()->name;
+        $issuedTo = $validated['issued_to'] ?? ($validated['person'] ?? Auth::user()->name);
 
         if ($validated['type'] === 'out' && (float) $material->qty < $qty) {
             return back()->with('flash_danger', "Insufficient stock: only {$material->qty} {$material->unit} available.")->withInput();
         }
 
-        DB::transaction(function () use ($material, $validated, $qty) {
+        DB::transaction(function () use ($material, $validated, $qty, $issuedBy, $issuedTo) {
             $vehicleLabel = null;
             if (! empty($validated['vehicle_id'])) {
                 $vehicle = Vehicle::find($validated['vehicle_id']);
@@ -171,6 +179,8 @@ class MaterialController extends Controller
                         'qty' => $qty,
                         'unit_cost' => $material->unit_cost,
                         'cost' => $cost,
+                        'issued_by' => $issuedBy,
+                        'issued_to' => $issuedTo,
                         'issued_at' => Carbon::now(),
                     ]);
                 }
@@ -188,14 +198,16 @@ class MaterialController extends Controller
                 'qty' => $qty,
                 'unit' => $material->unit,
                 'date' => $validated['date'],
-                'person' => $validated['person'],
+                'person' => $issuedTo,
+                'issued_by' => $issuedBy,
+                'issued_to' => $issuedTo,
                 'vehicle_id' => $validated['vehicle_id'] ?? null,
                 'vehicle_label' => $vehicleLabel,
                 'note' => $note,
             ]);
 
             $action = $validated['type'] === 'in' ? 'Restocked from supplier' : 'Issued/Dispatched';
-            ActivityLog::record(Auth::user()->name, "{$action} {$qty} {$material->unit} of '{$material->name}' (Staff: {$validated['person']}".($vehicleLabel ? " to {$vehicleLabel}" : '').').');
+            ActivityLog::record(Auth::user()->name, "{$action} {$qty} {$material->unit} of '{$material->name}' (Issued By: {$issuedBy}, Issued To: {$issuedTo}".($vehicleLabel ? " for {$vehicleLabel}" : '').').');
         });
 
         return back()->with('flash_success', 'Stock movement recorded successfully.');

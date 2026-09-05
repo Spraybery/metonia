@@ -20,6 +20,8 @@ class MaterialMovement extends Model
         'unit',
         'date',
         'person',
+        'issued_by',
+        'issued_to',
         'vehicle_id',
         'vehicle_label',
         'note',

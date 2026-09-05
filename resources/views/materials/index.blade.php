@@ -277,6 +277,72 @@
         </div>
     </div>
 
+    {{-- Outward Material Issuance Register Log Card --}}
+    <div class="card mt-4 border">
+        <div class="card-header header-elements-inline bg-light">
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-arrow-up5 mr-2 text-danger"></i> Outward Store Material Issuance Register
+            </h6>
+            <div class="header-elements">
+                <span class="badge badge-primary font-weight-bold">Store Keeper Issuance Register</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover border">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Material Description</th>
+                            <th class="text-center">Quantity</th>
+                            <th>Vehicle Name / Destination</th>
+                            <th>Issued By</th>
+                            <th>Issued To</th>
+                            <th>Date Issued</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($outwardMovements as $m)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $m->material_name }}</span>
+                            </td>
+                            <td class="text-center font-weight-bold text-danger">
+                                -{{ number_format($m->qty, 2) }} {{ $m->unit }}
+                            </td>
+                            <td>
+                                @if($m->vehicle_id)
+                                    <a href="{{ route('vehicles.show', $m->vehicle_id) }}" class="font-weight-semibold text-primary">
+                                        {{ $m->vehicle_label ?: ('Job Card #' . $m->vehicle_id) }}
+                                    </a>
+                                @else
+                                    <span class="text-muted">{{ $m->vehicle_label ?: 'General Store Deduction' }}</span>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $m->issued_by ?: 'David Omondi' }}</span>
+                            </td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $m->issued_to ?: ($m->person ?: 'Eng. Peter Kimani') }}</span>
+                            </td>
+                            <td class="font-size-sm text-muted">
+                                {{ $m->date ? $m->date->format('d M Y') : $m->created_at->format('d M Y') }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center text-muted p-4">
+                                No outward material issuances logged in the store register yet.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {{-- Add Material Modal --}}
@@ -487,13 +553,13 @@
     </div>
 </div>
 
-{{-- Shopkeeper Modal: Issue Material to Vehicle --}}
+{{-- Shopkeeper Modal: Issue Material Out of Store --}}
 <div id="modal-issue-vehicle" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h6 class="modal-title font-weight-bold">
-                    <i class="icon-arrow-up5 mr-2"></i> Issue Material to Vehicle (Shopkeeper)
+                    <i class="icon-arrow-up5 mr-2"></i> Issue Store Material Out of Inventory (Storekeeper)
                 </h6>
                 <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
             </div>
@@ -502,13 +568,13 @@
                 <input type="hidden" name="type" value="out">
                 <div class="modal-body">
                     <div class="alert alert-info py-2 font-size-sm">
-                        <i class="icon-info22 mr-1"></i> Material is immediately deducted from store stock and registered to the vehicle's Job Card.
+                        <i class="icon-info22 mr-1"></i> Record outward material issuance. Stock is immediately deducted and registered to the target vehicle's Job Card.
                     </div>
 
                     <div class="form-group">
-                        <label class="font-weight-semibold">Select Store Material <span class="text-danger">*</span></label>
+                        <label class="font-weight-semibold">Material Description <span class="text-danger">*</span></label>
                         <select id="issue-mat-select" class="form-control select-search" required onchange="updateIssueAction(this.value)">
-                            <option value="">-- Choose Store Item --</option>
+                            <option value="">-- Select Material Description --</option>
                             @foreach($materials as $m)
                                 <option value="{{ $m->id }}" {{ $m->qty <= 0 ? 'disabled' : '' }}>
                                     {{ $m->name }} (Available: {{ $m->qty }} {{ $m->unit }})
@@ -518,12 +584,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="font-weight-semibold">Target Vehicle / Job Card <span class="text-danger">*</span></label>
+                        <label class="font-weight-semibold">Vehicle Name / Destination <span class="text-danger">*</span></label>
                         <select name="vehicle_id" class="form-control" required id="issue-vehicle-select" onchange="autoFillTechnician(this)">
-                            <option value="">-- Select Active Vehicle --</option>
+                            <option value="">-- Choose Target Vehicle --</option>
                             @foreach($activeVehicles as $v)
                                 <option value="{{ $v->id }}" data-lead="{{ $v->assigned_to }}">
-                                    {{ $v->plate }} — {{ $v->make }} {{ $v->model }} ({{ $v->stage }})
+                                    {{ $v->plate }} — {{ $v->make }} {{ $v->model }} (Stage: {{ $v->stage }})
                                 </option>
                             @endforeach
                         </select>
@@ -531,29 +597,36 @@
 
                     <div class="form-row">
                         <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Quantity to Issue <span class="text-danger">*</span></label>
+                            <label class="font-weight-semibold">Quantity <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
                         </div>
                         <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Date of Issuance <span class="text-danger">*</span></label>
+                            <label class="font-weight-semibold">Date Materials Issued <span class="text-danger">*</span></label>
                             <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Technician / Person Taking Material <span class="text-danger">*</span></label>
-                        <input type="text" name="person" id="technician-person-input" class="form-control" placeholder="e.g. Eng. Peter Kimani" required>
+                    <div class="form-row">
+                        <div class="col-6 form-group">
+                            <label class="font-weight-semibold">Issued By (Storekeeper) <span class="text-danger">*</span></label>
+                            <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}" required>
+                        </div>
+                        <div class="col-6 form-group">
+                            <label class="font-weight-semibold">Issued To (Technician) <span class="text-danger">*</span></label>
+                            <input type="text" name="issued_to" id="technician-person-input" class="form-control" placeholder="e.g. Eng. Peter Kimani" required>
+                            <input type="hidden" name="person" id="person-fallback-input">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="font-weight-semibold">Workshop Purpose / Note</label>
-                        <textarea name="note" class="form-control" rows="2" placeholder="e.g. Chassis cross-member welding assembly"></textarea>
+                        <label class="font-weight-semibold">Issuance Purpose / Workshop Note</label>
+                        <textarea name="note" class="form-control" rows="2" placeholder="e.g. Chassis cross-member structural fabrication"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary font-weight-semibold">
-                        <i class="icon-checkmark mr-1"></i> Issue Material &amp; Deduct Stock
+                        <i class="icon-checkmark mr-1"></i> Confirm Outward Store Issuance
                     </button>
                 </div>
             </form>
