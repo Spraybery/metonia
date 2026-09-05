@@ -232,10 +232,6 @@
                         @endif
                     </div>
 
-                    {{-- Company Logo on Top of List --}}
-                    <div class="mb-2">
-                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 38px; max-width: 220px; object-fit: contain;">
-                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-striped table-hover border">
@@ -328,10 +324,6 @@
                         </div>
                     </div>
 
-                    {{-- Company Logo on Top of List --}}
-                    <div class="mb-2">
-                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 38px; max-width: 220px; object-fit: contain;">
-                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-striped table-hover border">

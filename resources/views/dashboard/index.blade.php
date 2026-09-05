@@ -140,10 +140,6 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    {{-- Company Logo on Top of List --}}
-                    <div class="p-2 pb-0">
-                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 32px; max-width: 180px; object-fit: contain;">
-                    </div>
 
                     @if(count($stuckVehicles) > 0)
                     <div class="table-responsive">
@@ -207,10 +203,6 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    {{-- Company Logo on Top of List --}}
-                    <div class="p-2 pb-0">
-                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 28px; max-width: 150px; object-fit: contain;">
-                    </div>
 
                     @if(count($lowStockMaterials) > 0)
                     <div class="table-responsive">
@@ -292,10 +284,6 @@
             </div>
         </div>
         <div class="card-body p-0">
-            {{-- Company Logo on Top of List --}}
-            <div class="p-2 pb-0">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 34px; max-width: 200px; object-fit: contain;">
-            </div>
 
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">

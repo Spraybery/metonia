@@ -18,11 +18,6 @@
         </div>
 
         <div class="card-body">
-            {{-- Company Logo on Top of List --}}
-            <div class="mb-2">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
-            </div>
-
             <div class="table-responsive">
                 <table class="table datatable-button-html5-columns table-striped table-hover">
                     <thead>
