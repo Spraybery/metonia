@@ -21,8 +21,12 @@ class Material extends Model
         'supplier',
     ];
 
-    public function getItemCodeAttribute(): string
+    public function getItemCodeAttribute(?string $value = null): string
     {
+        if (! empty($value)) {
+            return $value;
+        }
+
         if (! empty($this->attributes['item_code'])) {
             return $this->attributes['item_code'];
         }

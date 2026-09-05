@@ -180,6 +180,13 @@ class MaterialController extends Controller
 
         $material = Material::create($validated);
 
+        if (empty($validated['item_code'])) {
+            $prefix = $material->isSafetyStock() ? 'SAF' : 'MAT';
+            $material->update([
+                'item_code' => $prefix.'-'.str_pad((string) $material->id, 4, '0', STR_PAD_LEFT),
+            ]);
+        }
+
         if ((float) $material->qty > 0) {
             MaterialMovement::create([
                 'material_id' => $material->id,
