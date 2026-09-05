@@ -4,23 +4,31 @@
 @section('content')
 <div class="content">
 
+    {{-- Header Action & Page Overview --}}
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 12px;">
+        <div>
+            <h5 class="font-weight-bold mb-1 text-dark">
+                <i class="icon-truck text-primary mr-2"></i> Vehicle Build Pipeline &amp; Job Cards
+            </h5>
+            <p class="text-muted mb-0 font-size-sm">
+                Track vehicle chassis intake, build stages, assigned lead supervisors, and job card status.
+            </p>
+        </div>
+        <div>
+            @if(Auth::user()->canEdit('vehicles'))
+            <a href="{{ route('vehicles.create') }}" class="btn btn-primary font-weight-semibold shadow-xs">
+                <i class="icon-plus2 mr-1"></i> New Job Card
+            </a>
+            @endif
+        </div>
+    </div>
+
     {{-- Main Container Card --}}
-    <div class="card">
-        <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold">
-                <i class="icon-truck mr-2 text-primary"></i> Vehicle Build &amp; Stage Board Register
+    <div class="card border">
+        <div class="card-header bg-light">
+            <h6 class="card-title font-weight-bold mb-0">
+                <i class="icon-truck mr-2 text-primary"></i> Vehicle Build &amp; Job Cards Register
             </h6>
-            <div class="header-elements">
-                @if(Auth::user()->canEdit('vehicles'))
-                <a href="{{ route('vehicles.create') }}" class="btn btn-primary btn-sm font-weight-semibold mr-1">
-                    <i class="icon-plus2 mr-1"></i> New Job Card
-                </a>
-                @endif
-                <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
-                    <i class="icon-printer mr-1"></i> Print Register
-                </button>
-                {!! Qs::getPanelOptions() !!}
-            </div>
         </div>
 
         <div class="card-body">
@@ -35,26 +43,26 @@
                         @endforeach
                     </select>
 
-                    <input type="text" name="search" class="form-control form-control-sm mr-2" placeholder="Search plate, model, client..." value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-light btn-sm">Filter</button>
+                    <input type="text" name="search" class="form-control form-control-sm mr-2" placeholder="Search chassis, vehicle, supervisor..." value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-light btn-sm font-weight-semibold">Filter Job Cards</button>
                     @if(request('stage') || request('search'))
                         <a href="{{ route('vehicles.index') }}" class="btn btn-link btn-sm text-danger">Reset</a>
                     @endif
                 </form>
             </div>
 
-            {{-- Standard DataTables (Section 3) --}}
+            {{-- Job Cards DataTables --}}
             <div class="table-responsive">
-                <table class="table datatable-button-html5-columns table-striped table-hover">
-                    <thead>
-                        <tr class="bg-light">
+                <table class="table datatable-button-html5-columns table-striped table-hover border">
+                    <thead class="bg-light">
+                        <tr>
                             <th style="width: 50px;">#</th>
-                            <th>Plate / VIN</th>
-                            <th>Make &amp; Model</th>
-                            <th>Client / Account</th>
-                            <th>Current Stage</th>
+                            <th>Chassis Number</th>
+                            <th>Vehicle Name</th>
+                            <th>Job Number</th>
+                            <th>Date of Intake</th>
+                            <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
-                            <th class="text-center">Days in Stage</th>
                             <th class="text-center" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
@@ -64,7 +72,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 <a href="{{ route('vehicles.show', $row->id) }}" class="font-weight-bold text-primary">
-                                    <span class="badge badge-secondary">{{ $row->plate }}</span>
+                                    <span class="badge badge-secondary font-weight-bold">{{ $row->plate }}</span>
                                 </a>
                             </td>
                             <td>
@@ -76,10 +84,10 @@
                                 @endif
                             </td>
                             <td>
-                                <div>{{ $row->customer_name ?: '—' }}</div>
-                                @if($row->customer_phone)
-                                    <span class="font-size-xs text-muted">{{ $row->customer_phone }}</span>
-                                @endif
+                                <span class="badge badge-light border font-weight-semibold text-primary">#JC-{{ str_pad($row->id, 5, '0', STR_PAD_LEFT) }}</span>
+                            </td>
+                            <td class="font-size-sm text-muted">
+                                {{ $row->intake_date ? $row->intake_date->format('d M Y') : $row->created_at->format('d M Y') }}
                             </td>
                             <td>
                                 @php
@@ -89,19 +97,10 @@
                                         default => 'badge-primary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badge }}">{{ $row->stage }}</span>
+                                <span class="badge {{ $badge }} px-2 py-1">{{ $row->stage }}</span>
                             </td>
-                            <td>{{ $row->assigned_to ?: 'Unassigned' }}</td>
-                            <td class="text-center">
-                                @if($row->stage === '8. Completed & Dispatched')
-                                    <span class="badge badge-success">Completed</span>
-                                @elseif($row->isStuck())
-                                    <span class="badge badge-danger font-weight-bold" title="Vehicle stuck &ge; 10 days!">
-                                        <i class="icon-warning mr-1"></i> {{ $row->days_in_current_stage }}d (Stuck)
-                                    </span>
-                                @else
-                                    <span class="badge badge-light border">{{ $row->days_in_current_stage }} days</span>
-                                @endif
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $row->assigned_to ?: 'Unassigned' }}</span>
                             </td>
                             <td class="text-center">
                                 <div class="list-icons">
@@ -111,10 +110,10 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a href="{{ route('vehicles.show', $row->id) }}" class="dropdown-item">
-                                                <i class="icon-eye"></i> View Job Card
+                                                <i class="icon-eye text-primary"></i> View Job Card
                                             </a>
                                             <a href="{{ route('vehicles.print', $row->id) }}" target="_blank" class="dropdown-item">
-                                                <i class="icon-printer"></i> Print Job Sheet
+                                                <i class="icon-printer text-muted"></i> Print Job Sheet
                                             </a>
                                              @if(Auth::user()->canEdit('vehicles'))
                                                 @php $nextSt = Qs::getNextStage($row->stage); @endphp
@@ -128,7 +127,7 @@
                                                 </a>
                                                 @endif
                                                 <a href="{{ route('vehicles.edit', $row->id) }}" class="dropdown-item">
-                                                    <i class="icon-pencil"></i> Edit Details
+                                                    <i class="icon-pencil text-muted"></i> Edit Details
                                                 </a>
                                              @endif
                                             @if(Auth::user()->canDelete())
