@@ -65,7 +65,10 @@ class Vehicle extends Model
             return 0;
         }
 
-        return (int) floor(Carbon::now()->diffInSeconds(Carbon::parse($date)) / 86400);
+        // Carbon 3's diffInSeconds() returns a signed value (negative when $date
+        // is in the past relative to now), unlike Carbon 2's always-positive
+        // default — abs() keeps this a plain elapsed-time count either way.
+        return (int) floor(abs(Carbon::now()->diffInSeconds(Carbon::parse($date))) / 86400);
     }
 
     public function isStuck(): bool

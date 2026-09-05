@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Material;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Models\VehicleStageHistory;
+use Carbon\Carbon;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -229,5 +231,97 @@ class WorkshopSystemTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Official Vehicle Job Card &amp; Build Dossier', false);
         $response->assertSee('MET-2026-8849102');
+    }
+
+    public function test_transitioning_a_vehicle_removes_it_from_its_previous_stage_filtered_list(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
+        $oldStage = $vehicle->stage;
+        $newStage = '3. Powertrain & Mechanical';
+
+        $this->actingAs($admin)
+            ->get(route('vehicles.index', ['stage' => $oldStage]))
+            ->assertSee($vehicle->plate);
+
+        $this->actingAs($admin)->put("/vehicles/{$vehicle->id}/stage", [
+            'stage' => $newStage,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('vehicles.index', ['stage' => $oldStage]))
+            ->assertDontSee($vehicle->plate);
+
+        $this->actingAs($admin)
+            ->get(route('vehicles.index', ['stage' => $newStage]))
+            ->assertSee($vehicle->plate);
+    }
+
+    public function test_advance_to_next_stage_action_moves_vehicle_forward_one_step(): void
+    {
+        $supervisor = User::where('username', 'supervisor')->first();
+        $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
+        $expectedNextStage = '3. Powertrain & Mechanical';
+
+        $response = $this->actingAs($supervisor)->put("/vehicles/{$vehicle->id}/stage", [
+            'stage' => $expectedNextStage,
+        ]);
+
+        $response->assertSessionHas('flash_success');
+
+        $vehicle->refresh();
+        $this->assertEquals($expectedNextStage, $vehicle->stage);
+        $this->assertEquals(0, $vehicle->checklist_done);
+
+        $this->assertDatabaseHas('vehicle_stage_histories', [
+            'vehicle_id' => $vehicle->id,
+            'stage' => $expectedNextStage,
+        ]);
+    }
+
+    public function test_stage_history_tab_shows_computed_duration_for_each_completed_stage(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
+
+        $this->travelTo(Carbon::parse('2026-01-01 08:00:00'));
+        $vehicle->stageHistories()->delete();
+        VehicleStageHistory::create([
+            'vehicle_id' => $vehicle->id,
+            'stage' => '2. Structural & Frame',
+            'transitioned_at' => Carbon::now(),
+        ]);
+        $vehicle->update(['stage' => '2. Structural & Frame']);
+
+        // Deliberately not a whole number of days: Carbon 3's diffInDays() returns
+        // a float, so this catches a regression that would print "3.29... days".
+        $this->travelTo(Carbon::parse('2026-01-04 15:00:00'));
+        $this->actingAs($admin)->put("/vehicles/{$vehicle->id}/stage", [
+            'stage' => '3. Powertrain & Mechanical',
+        ]);
+
+        $response = $this->actingAs($admin)->get("/vehicles/{$vehicle->id}");
+
+        $response->assertSee('3 days');
+        $response->assertDontSee('3.2');
+        $response->assertSee('Still here');
+
+        $this->travelBack();
+    }
+
+    public function test_days_in_current_stage_is_a_positive_elapsed_count_and_flags_stuck_vehicles(): void
+    {
+        $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
+        $vehicle->stageHistories()->delete();
+
+        VehicleStageHistory::create([
+            'vehicle_id' => $vehicle->id,
+            'stage' => $vehicle->stage,
+            'transitioned_at' => Carbon::now()->subDays(12),
+        ]);
+
+        $vehicle->refresh();
+        $this->assertEquals(12, $vehicle->days_in_current_stage);
+        $this->assertTrue($vehicle->isStuck());
     }
 }

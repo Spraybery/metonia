@@ -110,8 +110,40 @@ class VehicleController extends Controller
         $stages = Qs::getStages();
         $materials = Material::where('qty', '>', 0)->orderBy('name')->get();
         $supervisors = Supervisor::orderBy('name')->get();
+        $nextStage = Qs::getNextStage($vehicle->stage);
+        $stageTimeline = $this->buildStageTimeline($vehicle);
 
-        return view('vehicles.show', compact('vehicle', 'stages', 'materials', 'supervisors'));
+        return view('vehicles.show', compact('vehicle', 'stages', 'materials', 'supervisors', 'nextStage', 'stageTimeline'));
+    }
+
+    /**
+     * Pair each stage-history entry with when the vehicle left it (the next
+     * entry's timestamp, or now() if it's the current stage) and how long it
+     * stayed, so the Transition History tab can show real dwell time per stage.
+     *
+     * @return array<int, array{stage: string, entered_at: Carbon, left_at: ?Carbon, duration_days: int, is_current: bool}>
+     */
+    private function buildStageTimeline(Vehicle $vehicle): array
+    {
+        $histories = $vehicle->stageHistories->values();
+        $timeline = [];
+
+        foreach ($histories as $index => $history) {
+            $nextHistory = $histories->get($index + 1);
+            $leftAt = $nextHistory?->transitioned_at;
+            $endPoint = $leftAt ?? Carbon::now();
+
+            $timeline[] = [
+                'stage' => $history->stage,
+                'entered_at' => $history->transitioned_at,
+                'left_at' => $leftAt,
+                // Carbon 3's diffInDays() returns a float; whole elapsed days is what the UI shows.
+                'duration_days' => (int) floor($history->transitioned_at->diffInDays($endPoint)),
+                'is_current' => $leftAt === null,
+            ];
+        }
+
+        return $timeline;
     }
 
     public function edit($id)

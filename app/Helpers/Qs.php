@@ -71,6 +71,22 @@ class Qs
         ];
     }
 
+    /**
+     * The stage immediately following the given stage in the sequential build
+     * pipeline, or null if the vehicle is already on the final stage.
+     */
+    public static function getNextStage(string $currentStage): ?string
+    {
+        $stages = self::getStages();
+        $index = array_search($currentStage, $stages, true);
+
+        if ($index === false || ! isset($stages[$index + 1])) {
+            return null;
+        }
+
+        return $stages[$index + 1];
+    }
+
     public static function getMaterialCategories(): array
     {
         return [

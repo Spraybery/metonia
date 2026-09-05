@@ -114,41 +114,75 @@
                                 </div>
 
                                 @if(Auth::user()->canEdit('vehicles'))
-                                <form action="{{ route('vehicles.update_stage', $vehicle->id) }}" method="POST" class="border-top pt-3">
-                                    @csrf @method('PUT')
-                                    <h6 class="font-weight-semibold mb-2 text-dark">
-                                        <i class="icon-git-branch mr-1 text-primary"></i> General Supervisor: Transition Stage &amp; Assign Lead
-                                    </h6>
-                                    <div class="form-row mb-2">
-                                        <div class="col-md-7 mb-2">
-                                            <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Vehicle Build Stage (1-8):</label>
-                                            <select name="stage" class="form-control" required>
-                                                @foreach($stages as $st)
-                                                    <option value="{{ $st }}" {{ $vehicle->stage === $st ? 'selected' : '' }}>
-                                                        {{ $st }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                <div class="border-top pt-3">
+                                    @if($nextStage)
+                                    <form action="{{ route('vehicles.update_stage', $vehicle->id) }}" method="POST">
+                                        @csrf @method('PUT')
+                                        <input type="hidden" name="stage" value="{{ $nextStage }}">
+                                        <h6 class="font-weight-semibold mb-2 text-dark">
+                                            <i class="icon-git-branch mr-1 text-primary"></i> Advance Build Pipeline
+                                        </h6>
+                                        <div class="form-row mb-2">
+                                            <div class="col-md-7 mb-2">
+                                                <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Lead Supervisor / Technician:</label>
+                                                <select name="assigned_to" class="form-control">
+                                                    <option value="">-- Select Assigned Lead --</option>
+                                                    @foreach($supervisors as $sup)
+                                                        <option value="{{ $sup->name }}" {{ $vehicle->assigned_to === $sup->name ? 'selected' : '' }}>
+                                                            {{ $sup->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-5 mb-2">
-                                            <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Lead Supervisor / Technician:</label>
-                                            <select name="assigned_to" class="form-control">
-                                                <option value="">-- Select Assigned Lead --</option>
-                                                @foreach($supervisors as $sup)
-                                                    <option value="{{ $sup->name }}" {{ $vehicle->assigned_to === $sup->name ? 'selected' : '' }}>
-                                                        {{ $sup->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        <button type="submit" class="btn btn-success font-weight-bold">
+                                            <i class="icon-arrow-right8 mr-1"></i> Advance to: {{ $nextStage }}
+                                        </button>
+                                        <span class="font-size-xs text-muted mt-1 d-block">
+                                            Moves the vehicle to the next stage in sequence and records an audit timestamp in the Stage History timeline.
+                                        </span>
+                                    </form>
+                                    @else
+                                    <div class="alert alert-success mb-0 d-flex align-items-center">
+                                        <i class="icon-checkmark-circle mr-2"></i> Build Complete &amp; Dispatched — this vehicle has finished the pipeline.
                                     </div>
-                                    <button type="submit" class="btn btn-primary font-weight-semibold btn-sm">
-                                        <i class="icon-checkmark mr-1"></i> Update Stage &amp; Assignee
-                                    </button>
-                                    <span class="font-size-xs text-muted mt-1 d-block">
-                                        Transitioning stage records an audit timestamp in the Stage History timeline.
-                                    </span>
-                                </form>
+                                    @endif
+
+                                    <a href="#override-stage" data-toggle="collapse" class="d-inline-block font-size-xs text-muted mt-3">
+                                        <i class="icon-tools mr-1"></i> Manual override / correction (jump to a specific stage)
+                                    </a>
+                                    <div class="collapse mt-2" id="override-stage">
+                                        <form action="{{ route('vehicles.update_stage', $vehicle->id) }}" method="POST" class="border-top pt-2">
+                                            @csrf @method('PUT')
+                                            <div class="form-row mb-2">
+                                                <div class="col-md-7 mb-2">
+                                                    <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Vehicle Build Stage (1-8):</label>
+                                                    <select name="stage" class="form-control" required>
+                                                        @foreach($stages as $st)
+                                                            <option value="{{ $st }}" {{ $vehicle->stage === $st ? 'selected' : '' }}>
+                                                                {{ $st }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5 mb-2">
+                                                    <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Lead Supervisor / Technician:</label>
+                                                    <select name="assigned_to" class="form-control">
+                                                        <option value="">-- Select Assigned Lead --</option>
+                                                        @foreach($supervisors as $sup)
+                                                            <option value="{{ $sup->name }}" {{ $vehicle->assigned_to === $sup->name ? 'selected' : '' }}>
+                                                                {{ $sup->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-light border font-weight-semibold btn-sm">
+                                                <i class="icon-checkmark mr-1"></i> Set Stage &amp; Assignee
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                                 @endif
                             </div>
                         </div>
@@ -254,18 +288,30 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>Stage Transitioned Into</th>
-                                    <th>Timestamp</th>
+                                    <th>Stage</th>
+                                    <th>Entered</th>
+                                    <th>Left</th>
+                                    <th class="text-center">Duration</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($vehicle->stageHistories as $hist)
+                                @foreach($stageTimeline as $row)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
-                                        <span class="badge badge-primary font-weight-semibold">{{ $hist->stage }}</span>
+                                        <span class="badge badge-primary font-weight-semibold">{{ $row['stage'] }}</span>
                                     </td>
-                                    <td class="text-muted font-monospace">{{ $hist->transitioned_at->format('d M Y, H:i:s') }}</td>
+                                    <td class="text-muted font-monospace">{{ $row['entered_at']->format('d M Y, H:i:s') }}</td>
+                                    <td class="text-muted font-monospace">
+                                        @if($row['is_current'])
+                                            <span class="badge badge-success">Still here</span>
+                                        @else
+                                            {{ $row['left_at']->format('d M Y, H:i:s') }}
+                                        @endif
+                                    </td>
+                                    <td class="text-center font-weight-bold">
+                                        {{ $row['duration_days'] }} day{{ $row['duration_days'] === 1 ? '' : 's' }}
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
