@@ -86,7 +86,7 @@
                             <th class="text-center">On Hand</th>
                             <th class="text-center">Reorder Level</th>
                             <th>Supplier</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

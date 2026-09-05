@@ -89,7 +89,7 @@
                             <th class="text-center">Status</th>
                             <th>Issued By</th>
                             <th>Issued To</th>
-                            <th class="text-center" style="width: 100px;">Action</th>
+                            <th class="text-center no-export" style="width: 100px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

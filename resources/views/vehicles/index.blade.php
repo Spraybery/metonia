@@ -66,7 +66,7 @@
                             <th>Date of Intake</th>
                             <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

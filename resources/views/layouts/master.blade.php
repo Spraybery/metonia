@@ -325,12 +325,15 @@
                             className: 'btn btn-light btn-sm'
                         }
                     },
+                    // Raw data export only (spreadsheet use). Officially printing a
+                    // document goes through each page's own themed "Print Register"
+                    // action (see resources/views/print/*), not a generic PDF/Print
+                    // export here — that used to dump the hidden Action column's
+                    // dropdown/modal markup straight into the file.
                     buttons: [
-                        { extend: 'copyHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-copy3 mr-1"></i> Copy' },
-                        { extend: 'csvHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-spreadsheet mr-1"></i> CSV' },
-                        { extend: 'excelHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-excel mr-1"></i> Excel' },
-                        { extend: 'pdfHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-pdf mr-1"></i> PDF' },
-                        { extend: 'print', className: 'btn btn-light btn-sm', text: '<i class="icon-printer mr-1"></i> Print' }
+                        { extend: 'copyHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-copy3 mr-1"></i> Copy', exportOptions: { columns: ':not(.no-export)' } },
+                        { extend: 'csvHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-spreadsheet mr-1"></i> CSV', exportOptions: { columns: ':not(.no-export)' } },
+                        { extend: 'excelHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-excel mr-1"></i> Excel', exportOptions: { columns: ':not(.no-export)' } }
                     ]
                 }
             });

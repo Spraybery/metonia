@@ -81,7 +81,7 @@
                             <th class="text-center">Safety Reorder Level</th>
                             <th class="text-center">Stock Status</th>
                             <th>Primary Supplier</th>
-                            <th class="text-center" style="width: 100px;">Action</th>
+                            <th class="text-center no-export" style="width: 100px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

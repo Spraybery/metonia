@@ -85,7 +85,7 @@
                             <th>Received By</th>
                             <th>Delivery Date</th>
                             <th>Note / Consignment Ref</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -28,7 +28,7 @@
                             <th>Email Address</th>
                             <th class="text-center">Assigned Role</th>
                             <th class="text-center">Registered</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
