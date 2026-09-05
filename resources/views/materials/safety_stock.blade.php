@@ -57,10 +57,9 @@
                 <i class="icon-shield-notice mr-2 text-primary"></i> Worker Protective Equipment (PPE) Inventory Log
             </h6>
             <div class="header-elements">
-                <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
+                <button onclick="window.print()" class="btn btn-light btn-sm">
                     <i class="icon-printer mr-1"></i> Print Safety Inventory
                 </button>
-                {!! Qs::getPanelOptions() !!}
             </div>
         </div>
 

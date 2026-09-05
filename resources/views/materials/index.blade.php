@@ -34,10 +34,9 @@
                         <i class="icon-plus2 mr-1"></i> Add Material SKU
                     </button>
                 @endif
-                <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
+                <button onclick="window.print()" class="btn btn-light btn-sm">
                     <i class="icon-printer mr-1"></i> Print Catalog
                 </button>
-                {!! Qs::getPanelOptions() !!}
             </div>
         </div>
 

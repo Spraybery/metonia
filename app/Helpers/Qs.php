@@ -24,11 +24,7 @@ class Qs
 
     public static function getPanelOptions(): string
     {
-        return '<div class="list-icons">
-                    <a class="list-icons-item" data-action="collapse"></a>
-                    <a class="list-icons-item" data-action="reload"></a>
-                    <a class="list-icons-item" data-action="remove"></a>
-                </div>';
+        return '';
     }
 
     public static function format_money($amount, int $decimals = 2, string $currency = 'KES'): string
