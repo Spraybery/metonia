@@ -19,6 +19,7 @@ class VehiclePart extends Model
         'qty',
         'unit_cost',
         'cost',
+        'issued_by',
         'issued_at',
     ];
 

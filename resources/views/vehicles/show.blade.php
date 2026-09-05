@@ -233,15 +233,13 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table class="table table-striped table-hover border">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>#</th>
+                                    <th style="width: 50px;">#</th>
                                     <th>Material Description</th>
                                     <th class="text-center">Quantity</th>
-                                    <th class="text-right">Unit Cost (KES)</th>
-                                    <th class="text-right">Total Cost (KES)</th>
-                                    <th class="text-center">Issued At</th>
+                                    <th>Issued By</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -254,28 +252,22 @@
                                             <span class="badge badge-light border ml-1">{{ $part->material->category }}</span>
                                         @endif
                                     </td>
-                                    <td class="text-center font-weight-bold">{{ number_format($part->qty, 2) }}</td>
-                                    <td class="text-right">{{ number_format($part->unit_cost, 2) }}</td>
-                                    <td class="text-right font-weight-bold text-dark">{{ number_format($part->cost, 2) }}</td>
-                                    <td class="text-center text-muted font-size-xs">{{ $part->issued_at->format('d M Y, H:i') }}</td>
+                                    <td class="text-center font-weight-bold">{{ number_format($part->qty, 2) }} {{ $part->material?->unit }}</td>
+                                    <td>
+                                        <span class="font-weight-semibold text-dark">{{ $part->issued_by ?? 'David Omondi' }}</span>
+                                        @if($part->issued_at)
+                                            <span class="d-block text-muted font-size-xs">{{ $part->issued_at->format('d M Y, H:i') }}</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted p-4">
+                                    <td colspan="4" class="text-center text-muted p-4">
                                         No materials or spare parts have been issued to this job card yet.
                                     </td>
                                 </tr>
                                 @endforelse
                             </tbody>
-                            @if($vehicle->parts->count() > 0)
-                            <tfoot>
-                                <tr class="bg-light font-weight-bold">
-                                    <td colspan="4" class="text-right text-uppercase">Cumulative Parts Cost:</td>
-                                    <td class="text-right text-primary h6 mb-0">{{ Qs::format_money($vehicle->totalPartsCost()) }}</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                            @endif
                         </table>
                     </div>
                 </div>
