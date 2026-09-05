@@ -195,11 +195,11 @@
                                     </td>
                                     <td class="text-center">
                                         <span class="badge badge-danger font-weight-bold px-2 py-1">
-                                            {{ number_format($m->qty, 2) }} {{ $m->unit }}
+                                            {{ (float)$m->qty == (int)$m->qty ? number_format($m->qty) : number_format($m->qty, 2) }} {{ $m->unit }}
                                         </span>
                                     </td>
                                     <td class="text-center text-muted font-size-xs">
-                                        {{ number_format($m->low_stock, 2) }} {{ $m->unit }}
+                                        {{ (float)$m->low_stock == (int)$m->low_stock ? number_format($m->low_stock) : number_format($m->low_stock, 2) }} {{ $m->unit }}
                                     </td>
                                 </tr>
                                 @endforeach

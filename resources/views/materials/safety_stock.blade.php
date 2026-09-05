@@ -37,7 +37,7 @@
         <div class="col-md-4 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Total Safety Units On-Hand</div>
-                <div class="h4 font-weight-bold text-dark mb-0">{{ number_format($totalUnitsOnHand, 2) }}</div>
+                <div class="h4 font-weight-bold text-dark mb-0">{{ (float)$totalUnitsOnHand == (int)$totalUnitsOnHand ? number_format($totalUnitsOnHand) : number_format($totalUnitsOnHand, 2) }}</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6 mb-2">
@@ -103,11 +103,11 @@
                             <td><span class="badge badge-secondary">{{ $row->unit }}</span></td>
                             <td class="text-center">
                                 <span class="badge {{ $isDepleted ? 'badge-danger' : ($isLow ? 'badge-warning' : 'badge-success') }} font-weight-bold px-2 py-1">
-                                    {{ number_format($row->qty, 2) }}
+                                    {{ (float)$row->qty == (int)$row->qty ? number_format($row->qty) : number_format($row->qty, 2) }}
                                 </span>
                             </td>
                             <td class="text-center text-muted font-size-xs">
-                                {{ number_format($row->low_stock, 2) }}
+                                {{ (float)$row->low_stock == (int)$row->low_stock ? number_format($row->low_stock) : number_format($row->low_stock, 2) }}
                             </td>
                             <td class="text-center">
                                 @if($isDepleted)
@@ -166,12 +166,12 @@
                                                 <input type="hidden" name="type" value="out">
                                                 <div class="modal-body">
                                                     <div class="alert alert-info py-2 font-size-sm">
-                                                        <i class="icon-info22 mr-1"></i> Available On-Hand: <strong>{{ number_format($row->qty, 2) }} {{ $row->unit }}</strong>
+                                                        <i class="icon-info22 mr-1"></i> Available On-Hand: <strong>{{ (float)$row->qty == (int)$row->qty ? number_format($row->qty) : number_format($row->qty, 2) }} {{ $row->unit }}</strong>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">Quantity to Issue ({{ $row->unit }}) <span class="text-danger">*</span></label>
-                                                        <input type="number" step="0.01" min="0.01" max="{{ $row->qty }}" name="qty" class="form-control" value="1.00" required>
+                                                        <input type="number" step="1" min="1" max="{{ (int)$row->qty }}" name="qty" class="form-control" value="1" required>
                                                     </div>
 
                                                     <div class="form-group">
@@ -215,12 +215,12 @@
                                                 <input type="hidden" name="type" value="in">
                                                 <div class="modal-body">
                                                     <div class="alert alert-info py-2 font-size-sm">
-                                                        <i class="icon-info22 mr-1"></i> Current On-Hand: <strong>{{ number_format($row->qty, 2) }} {{ $row->unit }}</strong>
+                                                        <i class="icon-info22 mr-1"></i> Current On-Hand: <strong>{{ (float)$row->qty == (int)$row->qty ? number_format($row->qty) : number_format($row->qty, 2) }} {{ $row->unit }}</strong>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">Restock Quantity ({{ $row->unit }}) <span class="text-danger">*</span></label>
-                                                        <input type="number" step="0.01" min="0.01" name="qty" class="form-control" value="10.00" required>
+                                                        <input type="number" step="1" min="1" name="qty" class="form-control" value="10" required>
                                                     </div>
 
                                                     <div class="form-group">
@@ -285,7 +285,7 @@
 
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">Safety Reorder Threshold <span class="text-danger">*</span></label>
-                                                        <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
+                                                        <input type="number" step="1" name="low_stock" class="form-control" value="{{ (int)$row->low_stock }}" required>
                                                     </div>
 
                                                     <div class="form-group">
@@ -361,11 +361,11 @@
                     <div class="form-row">
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Initial Stock On-Hand <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="qty" class="form-control" value="10.00" required>
+                            <input type="number" step="1" min="0" name="qty" class="form-control" value="10" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Safety Reorder Threshold <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="low_stock" class="form-control" value="5.00" required>
+                            <input type="number" step="1" min="0" name="low_stock" class="form-control" value="5" required>
                         </div>
                     </div>
 
@@ -409,7 +409,7 @@
                             <option value="">-- Select Safety Item --</option>
                             @foreach($materials as $m)
                                 <option value="{{ $m->id }}">
-                                    {{ $m->name }} (Current: {{ number_format($m->qty, 2) }} {{ $m->unit }})
+                                    {{ $m->name }} (Current: {{ (float)$m->qty == (int)$m->qty ? number_format($m->qty) : number_format($m->qty, 2) }} {{ $m->unit }})
                                 </option>
                             @endforeach
                         </select>
@@ -417,7 +417,7 @@
 
                     <div class="form-group">
                         <label class="font-weight-semibold">Quantity Restocked <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0.01" name="qty" class="form-control" value="10.00" required>
+                        <input type="number" step="1" min="1" name="qty" class="form-control" value="10" required>
                     </div>
 
                     <div class="form-group">
