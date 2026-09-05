@@ -63,9 +63,7 @@
             <tr>
                 <th style="width: 40px;">#</th>
                 <th>Material / Component Description</th>
-                <th class="text-center" style="width: 100px;">Quantity</th>
-                <th class="text-right" style="width: 140px;">Unit Rate (KES)</th>
-                <th class="text-right" style="width: 140px;">Total Cost (KES)</th>
+                <th class="text-center" style="width: 120px;">Quantity</th>
             </tr>
         </thead>
         <tbody>
@@ -74,35 +72,15 @@
                 <td>{{ $loop->iteration }}</td>
                 <td><strong>{{ $part->material_name }}</strong></td>
                 <td class="text-center">{{ number_format($part->qty, 2) }}</td>
-                <td class="text-right">{{ number_format($part->unit_cost, 2) }}</td>
-                <td class="text-right font-weight-bold">{{ number_format($part->cost, 2) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="text-center" style="padding: 16px; color: #64748b;">
-                    No billable store materials or parts logged to this job card.
+                <td colspan="3" class="text-center" style="padding: 16px; color: #64748b;">
+                    No store materials or parts logged to this job card.
                 </td>
             </tr>
             @endforelse
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="4" class="text-right font-weight-bold text-uppercase">Cumulative Materials Cost:</td>
-                <td class="text-right font-weight-bold" style="color: #0f172a;">{{ number_format($vehicle->totalPartsCost(), 2) }}</td>
-            </tr>
-            <tr>
-                <td colspan="4" class="text-right font-weight-bold text-uppercase">Direct Labor Allocation:</td>
-                <td class="text-right font-weight-bold" style="color: #0f172a;">{{ number_format($vehicle->labor_cost, 2) }}</td>
-            </tr>
-            <tr style="background-color: #f1f5f9;">
-                <td colspan="4" class="text-right font-weight-bold text-uppercase">Total Cost of Production (KES):</td>
-                <td class="text-right font-weight-bold" style="font-size: 13px;">{{ number_format($vehicle->totalCost(), 2) }}</td>
-            </tr>
-            <tr style="background-color: #ecfdf5; border-top: 2px solid #10B981;">
-                <td colspan="4" class="text-right font-weight-bold text-uppercase" style="color: #065f46;">Customer Invoiced Value (KES):</td>
-                <td class="text-right font-weight-bold" style="color: #065f46; font-size: 14px;">{{ number_format($vehicle->invoice_total, 2) }}</td>
-            </tr>
-        </tfoot>
     </table>
 
     {{-- Technical Intake Remarks --}}

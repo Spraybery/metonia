@@ -4,39 +4,7 @@
 @section('content')
 <div class="content">
 
-    {{-- 1. Financial & Build Summary Stat Bars --}}
-    <div class="row mb-3">
-        <div class="col-md-3 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Customer Invoice</div>
-                <div class="h4 font-weight-bold text-dark mb-0">{{ Qs::format_money($vehicle->invoice_total) }}</div>
-            </div>
-        </div>
 
-        <div class="col-md-3 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Labor Cost</div>
-                <div class="h4 font-weight-bold text-dark mb-0">{{ Qs::format_money($vehicle->labor_cost) }}</div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Issued Parts Cost</div>
-                <div class="h4 font-weight-bold text-dark mb-0">{{ Qs::format_money($vehicle->totalPartsCost()) }}</div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-2">
-            @php $margin = $vehicle->grossMargin(); @endphp
-            <div class="bg-light border rounded p-3 text-center {{ $margin >= 0 ? 'border-success' : 'border-danger' }}">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Job Gross Margin</div>
-                <div class="h4 font-weight-bold {{ $margin >= 0 ? 'text-success' : 'text-danger' }} mb-0">
-                    {{ Qs::format_money($margin) }}
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- Main Container Card --}}
     <div class="card">
@@ -484,7 +452,7 @@
                             <option value="">-- Choose Item --</option>
                             @foreach($materials as $mat)
                                 <option value="{{ $mat->id }}" data-unit="{{ $mat->unit }}" data-qty="{{ $mat->qty }}" data-cost="{{ $mat->unit_cost }}">
-                                    {{ $mat->name }} (Available: {{ $mat->qty }} {{ $mat->unit }} | KES {{ number_format($mat->unit_cost, 2) }}/{{ $mat->unit }})
+                                    {{ $mat->name }} (Available: {{ $mat->qty }} {{ $mat->unit }})
                                 </option>
                             @endforeach
                         </select>

@@ -76,7 +76,7 @@
                     <div class="col-md-6">
                         <fieldset>
                             <legend class="font-weight-semibold text-uppercase font-size-sm border-bottom pb-1 mb-3">
-                                <i class="icon-user mr-2"></i> Client Account &amp; Financials
+                                <i class="icon-user mr-2"></i> Client Account Information
                             </legend>
 
                             <div class="form-group">
@@ -87,17 +87,8 @@
                             <div class="form-group">
                                 <label class="font-weight-semibold">Customer Contact Phone</label>
                                 <input type="text" name="customer_phone" class="form-control" placeholder="+254 700 000 000" value="{{ old('customer_phone') }}">
-                            </div>
-
-                            <div class="form-row">
-                                <div class="col-md-6 form-group">
-                                    <label class="font-weight-semibold">Estimated Labor Cost (KES)</label>
-                                    <input type="number" step="0.01" name="labor_cost" class="form-control" placeholder="0.00" value="{{ old('labor_cost', '0.00') }}">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label class="font-weight-semibold">Billable Invoice Total (KES)</label>
-                                    <input type="number" step="0.01" name="invoice_total" class="form-control" placeholder="0.00" value="{{ old('invoice_total', '0.00') }}">
-                                </div>
+                                <input type="hidden" name="labor_cost" value="0.00">
+                                <input type="hidden" name="invoice_total" value="0.00">
                             </div>
 
                             <div class="form-group">

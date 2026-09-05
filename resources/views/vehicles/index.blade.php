@@ -55,7 +55,6 @@
                             <th>Current Stage</th>
                             <th>Supervisor</th>
                             <th class="text-center">Days in Stage</th>
-                            <th class="text-right">Invoice (KES)</th>
                             <th class="text-center" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
@@ -103,9 +102,6 @@
                                 @else
                                     <span class="badge badge-light border">{{ $row->days_in_current_stage }} days</span>
                                 @endif
-                            </td>
-                            <td class="text-right font-weight-bold text-dark">
-                                {{ number_format($row->invoice_total, 2) }}
                             </td>
                             <td class="text-center">
                                 <div class="list-icons">

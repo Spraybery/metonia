@@ -6,7 +6,7 @@
 
     {{-- 1. Executive KPI Metric Stat Bars (Section 5 Standard) --}}
     <div class="row mb-3">
-        <div class="col-xl-3 col-sm-6 mb-2">
+        <div class="col-xl-4 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Active Vehicles on Floor</div>
                 <div class="h3 font-weight-bold text-dark mb-0">{{ number_format($totalActiveVehicles) }}</div>
@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-sm-6 mb-2">
+        <div class="col-xl-4 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stuck Vehicles (&ge; 10 Days)</div>
                 <div class="h3 font-weight-bold {{ count($stuckVehicles) > 0 ? 'text-danger' : 'text-success' }} mb-0">
@@ -24,64 +24,13 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-sm-6 mb-2">
+        <div class="col-xl-4 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Low-Stock Alert Items</div>
                 <div class="h3 font-weight-bold {{ count($lowStockMaterials) > 0 ? 'text-warning' : 'text-success' }} mb-0">
                     {{ count($lowStockMaterials) }}
                 </div>
                 <div class="text-muted font-size-xs mt-1">Below safety reorder threshold</div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center h-100">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Stock Valuation</div>
-                <div class="h3 font-weight-bold text-success mb-0">{{ Qs::format_money($totalStockValue) }}</div>
-                <div class="text-muted font-size-xs mt-1">Store on-hand balance</div>
-            </div>
-        </div>
-    </div>
-
-    {{-- 2. Store Stock Valuation & Monthly Inventory Analytics --}}
-    <div class="card mb-3">
-        <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold">
-                <i class="icon-boxes mr-2 text-primary"></i> Stock Valuation &amp; Monthly Inventory Performance
-            </h6>
-            <div class="header-elements">
-                <span class="badge badge-light border">{{ now()->format('F Y') }}</span>
-                {!! Qs::getPanelOptions() !!}
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Total Stock Valuation</div>
-                        <div class="h4 font-weight-bold text-success mb-0">{{ Qs::format_money($totalStockValue) }}</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Stock Value Issued (MTD)</div>
-                        <div class="h4 font-weight-bold text-danger mb-0">{{ Qs::format_money($monthlyStockIssuedValue) }}</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Stock Restocked Value (MTD)</div>
-                        <div class="h4 font-weight-bold text-primary mb-0">{{ Qs::format_money($monthlyStockRestockedValue) }}</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="border rounded p-2 text-center {{ $monthlyNetStockValuationChange >= 0 ? 'bg-success-light' : 'bg-danger-light' }} border">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Net Stock Valuation Change (MTD)</div>
-                        <div class="h4 font-weight-bold {{ $monthlyNetStockValuationChange >= 0 ? 'text-success' : 'text-danger' }} mb-0">
-                            {{ Qs::format_money($monthlyNetStockValuationChange) }}
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

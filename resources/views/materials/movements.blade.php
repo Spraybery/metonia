@@ -21,30 +21,18 @@
         <div class="card-body">
             {{-- Item Summary Bar --}}
             <div class="row mb-3">
-                <div class="col-md-3 col-sm-6 mb-2">
+                <div class="col-md-6 col-sm-6 mb-2">
                     <div class="bg-light border rounded p-2 text-center">
                         <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Category</div>
                         <div class="h5 font-weight-bold mb-0">{{ $material->category }}</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-6 mb-2">
+                <div class="col-md-6 col-sm-6 mb-2">
                     <div class="bg-light border rounded p-2 text-center">
                         <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Current On-Hand</div>
                         <div class="h5 font-weight-bold {{ $material->isLowStock() ? 'text-danger' : 'text-success' }} mb-0">
                             {{ number_format($material->qty, 2) }} {{ $material->unit }}
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="bg-light border rounded p-2 text-center">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Unit Cost</div>
-                        <div class="h5 font-weight-bold text-dark mb-0">{{ Qs::format_money($material->unit_cost) }}</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="bg-light border rounded p-2 text-center">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Total Value</div>
-                        <div class="h5 font-weight-bold text-success mb-0">{{ Qs::format_money($material->totalValue()) }}</div>
                     </div>
                 </div>
             </div>

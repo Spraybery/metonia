@@ -76,7 +76,7 @@
                     <div class="col-md-6">
                         <fieldset>
                             <legend class="font-weight-semibold text-uppercase font-size-sm border-bottom pb-1 mb-3">
-                                <i class="icon-user mr-2"></i> Client Account &amp; Financials
+                                <i class="icon-user mr-2"></i> Client Account Information
                             </legend>
 
                             <div class="form-group">
@@ -87,17 +87,8 @@
                             <div class="form-group">
                                 <label class="font-weight-semibold">Customer Contact Phone</label>
                                 <input type="text" name="customer_phone" class="form-control" value="{{ old('customer_phone', $vehicle->customer_phone) }}">
-                            </div>
-
-                            <div class="form-row">
-                                <div class="col-md-6 form-group">
-                                    <label class="font-weight-semibold">Labor Cost (KES)</label>
-                                    <input type="number" step="0.01" name="labor_cost" class="form-control" value="{{ old('labor_cost', $vehicle->labor_cost) }}">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label class="font-weight-semibold">Billable Invoice Total (KES)</label>
-                                    <input type="number" step="0.01" name="invoice_total" class="form-control" value="{{ old('invoice_total', $vehicle->invoice_total) }}">
-                                </div>
+                                <input type="hidden" name="labor_cost" value="{{ $vehicle->labor_cost }}">
+                                <input type="hidden" name="invoice_total" value="{{ $vehicle->invoice_total }}">
                             </div>
 
                             <div class="form-group">

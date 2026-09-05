@@ -6,24 +6,18 @@
 
     {{-- Summary KPI Stat Bars (Section 5 Standard) --}}
     <div class="row mb-3">
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-6 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Catalog SKUs</div>
                 <div class="h4 font-weight-bold text-dark mb-0">{{ number_format($materials->count()) }}</div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-6 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Low-Stock Items</div>
                 <div class="h4 font-weight-bold {{ $lowStockCount > 0 ? 'text-danger' : 'text-success' }} mb-0">
                     {{ number_format($lowStockCount) }}
                 </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Store Valuation</div>
-                <div class="h4 font-weight-bold text-success mb-0">{{ Qs::format_money($totalStockValue) }}</div>
             </div>
         </div>
     </div>
@@ -85,8 +79,6 @@
                             <th>Unit</th>
                             <th class="text-center">On Hand</th>
                             <th class="text-center">Reorder Level</th>
-                            <th class="text-right">Unit Cost (KES)</th>
-                            <th class="text-right">Total Valuation (KES)</th>
                             <th>Supplier</th>
                             <th class="text-center" style="width: 80px;">Action</th>
                         </tr>
@@ -115,8 +107,6 @@
                             <td class="text-center text-muted font-size-xs">
                                 {{ number_format($row->low_stock, 2) }}
                             </td>
-                            <td class="text-right">{{ number_format($row->unit_cost, 2) }}</td>
-                            <td class="text-right font-weight-bold text-dark">{{ number_format($row->totalValue(), 2) }}</td>
                             <td class="font-size-sm">{{ $row->supplier ?: '—' }}</td>
                             <td class="text-center">
                                 <div class="list-icons">
@@ -183,15 +173,10 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Low-Stock Reorder Threshold <span class="text-danger">*</span></label>
-                                                            <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Cost per Unit (KES) <span class="text-danger">*</span></label>
-                                                            <input type="number" step="0.01" name="unit_cost" class="form-control" value="{{ $row->unit_cost }}" required>
-                                                        </div>
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Low-Stock Reorder Threshold <span class="text-danger">*</span></label>
+                                                        <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
+                                                        <input type="hidden" name="unit_cost" value="{{ $row->unit_cost ?: '0.00' }}">
                                                     </div>
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">Supplier Name</label>
@@ -378,17 +363,14 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Initial Stock <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0" name="qty" class="form-control" value="0.00" required>
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Reorder Threshold <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" min="0" name="low_stock" class="form-control" value="5.00" required>
-                        </div>
-                        <div class="col-md-4 form-group">
-                            <label class="font-weight-semibold">Unit Cost (KES) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="unit_cost" class="form-control" placeholder="0.00" required>
+                            <input type="hidden" name="unit_cost" value="0.00">
                         </div>
                     </div>
 
