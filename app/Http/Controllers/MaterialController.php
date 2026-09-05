@@ -55,6 +55,48 @@ class MaterialController extends Controller
         ));
     }
 
+    public function issuance(Request $request)
+    {
+        $materials = Material::orderBy('name')->get();
+        $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
+
+        $query = MaterialMovement::where('type', 'out')->with(['material', 'vehicle']);
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('material_name', 'like', $s)
+                    ->orWhere('vehicle_label', 'like', $s)
+                    ->orWhere('issued_by', 'like', $s)
+                    ->orWhere('issued_to', 'like', $s);
+            });
+        }
+
+        $outwardMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
+
+        return view('materials.issuance', compact('materials', 'activeVehicles', 'outwardMovements'));
+    }
+
+    public function restock(Request $request)
+    {
+        $materials = Material::orderBy('name')->get();
+
+        $query = MaterialMovement::where('type', 'in')->with('material');
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('material_name', 'like', $s)
+                    ->orWhere('note', 'like', $s)
+                    ->orWhere('person', 'like', $s);
+            });
+        }
+
+        $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
+
+        return view('materials.restock', compact('materials', 'restockMovements'));
+    }
+
     public function store(Request $request)
     {
         if (! Auth::user()->canEdit('materials')) {

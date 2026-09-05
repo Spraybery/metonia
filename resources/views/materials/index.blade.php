@@ -35,26 +35,19 @@
                 <i class="icon-boxes mr-2 text-primary"></i> Store Materials &amp; Parts Register
             </h6>
             <div class="header-elements">
+                <a href="{{ route('materials.issuance') }}" class="btn btn-outline-danger btn-sm font-weight-semibold mr-1">
+                    <i class="icon-arrow-up5 mr-1"></i> Outward Material Issuance
+                </a>
+                <a href="{{ route('materials.restock') }}" class="btn btn-outline-success btn-sm font-weight-semibold mr-1">
+                    <i class="icon-arrow-down5 mr-1"></i> Supplier Restock Data
+                </a>
                 @if(Auth::user()->canEdit('materials'))
-                    @if(Auth::user()->isManager() || Auth::user()->isAdmin())
-                    <button type="button" class="btn btn-success btn-sm font-weight-semibold mr-1" data-toggle="modal" data-target="#modal-supplier-restock">
-                        <i class="icon-arrow-down5 mr-1"></i> Supplier Restock (Manager)
-                    </button>
-                    @endif
-                    @if(Auth::user()->isShopkeeper() || Auth::user()->isAdmin())
-                    <button type="button" class="btn btn-primary btn-sm font-weight-semibold mr-1" data-toggle="modal" data-target="#modal-issue-vehicle">
-                        <i class="icon-arrow-up5 mr-1"></i> Issue to Vehicle (Shopkeeper)
-                    </button>
-                    @endif
-                    <button type="button" class="btn btn-light btn-sm mr-1 font-weight-semibold text-dark" data-toggle="modal" data-target="#modal-add-material">
-                        <i class="icon-plus2 mr-1"></i> Add Material
-                    </button>
-                    <button type="button" class="btn btn-light btn-sm mr-1 font-weight-semibold text-dark" data-toggle="modal" data-target="#modal-movement">
-                        <i class="icon-transmission mr-1"></i> Stock In / Out
+                    <button type="button" class="btn btn-primary btn-sm mr-1 font-weight-semibold" data-toggle="modal" data-target="#modal-add-material">
+                        <i class="icon-plus2 mr-1"></i> Add Material SKU
                     </button>
                 @endif
                 <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
-                    <i class="icon-printer mr-1"></i> Print Inventory
+                    <i class="icon-printer mr-1"></i> Print Catalog
                 </button>
                 {!! Qs::getPanelOptions() !!}
             </div>

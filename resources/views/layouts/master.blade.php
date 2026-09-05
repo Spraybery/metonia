@@ -146,11 +146,28 @@
                         @endif
 
                         @if(Auth::user() && Auth::user()->canView('materials'))
-                        <li class="nav-item">
-                            <a href="{{ route('materials.index') }}" class="nav-link {{ request()->routeIs('materials.*') ? 'active' : '' }}">
+                        <li class="nav-item nav-item-submenu {{ request()->routeIs('materials.*') ? 'nav-item-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('materials.*') ? 'active' : '' }}">
                                 <i class="icon-boxes"></i>
                                 <span>Store Inventory</span>
                             </a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Store Inventory" style="{{ request()->routeIs('materials.*') ? 'display: block;' : '' }}">
+                                <li class="nav-item">
+                                    <a href="{{ route('materials.index') }}" class="nav-link {{ request()->routeIs('materials.index') ? 'active' : '' }}">
+                                        <i class="icon-list mr-2"></i> Store Inventory Catalog
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('materials.issuance') }}" class="nav-link {{ request()->routeIs('materials.issuance') ? 'active' : '' }}">
+                                        <i class="icon-arrow-up5 mr-2"></i> Outward Material Issuance
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('materials.restock') }}" class="nav-link {{ request()->routeIs('materials.restock') ? 'active' : '' }}">
+                                        <i class="icon-arrow-down5 mr-2"></i> Supplier Restock Data
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         @endif
 
