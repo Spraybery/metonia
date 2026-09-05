@@ -132,8 +132,9 @@
         <div class="col-lg-7 mb-3">
             <div class="card h-100">
                 <div class="card-header header-elements-inline bg-light">
-                    <h6 class="card-title font-weight-bold text-danger">
-                        <i class="icon-warning mr-2"></i> Pipeline Bottlenecks: Stuck Vehicles (&ge; 10 Days in Stage)
+                    <h6 class="card-title font-weight-bold text-danger d-flex align-items-center">
+                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 32px; max-width: 130px; object-fit: contain;">
+                        <span><i class="icon-warning mr-2"></i> Pipeline Bottlenecks: Stuck Vehicles (&ge; 10 Days in Stage)</span>
                     </h6>
                     <div class="header-elements">
                         <span class="badge badge-danger">{{ count($stuckVehicles) }} Vehicles Flagged</span>
@@ -241,8 +242,9 @@
             {{-- 6. Calibration Status --}}
             <div class="card">
                 <div class="card-header header-elements-inline bg-light">
-                    <h6 class="card-title font-weight-bold">
-                        <i class="icon-wrench mr-2 text-primary"></i> Equipment Reliability &amp; Tools
+                    <h6 class="card-title font-weight-bold d-flex align-items-center">
+                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 28px; max-width: 110px; object-fit: contain;">
+                        <span><i class="icon-wrench mr-2 text-primary"></i> Equipment Reliability &amp; Tools</span>
                     </h6>
                     <div class="header-elements">
                         <a href="{{ route('tools.index') }}" class="btn btn-light btn-xs">Asset Register</a>
@@ -273,8 +275,9 @@
     {{-- 7. Recent Activity Audit Trail --}}
     <div class="card mb-0">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold">
-                <i class="icon-history mr-2 text-primary"></i> Live Workshop Operations Activity Log (Audit Trail)
+            <h6 class="card-title font-weight-bold d-flex align-items-center">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
+                <span><i class="icon-history mr-2 text-primary"></i> Live Workshop Operations Activity Log (Audit Trail)</span>
             </h6>
             <div class="header-elements">
                 <span class="badge badge-light border">Latest 10 Events</span>

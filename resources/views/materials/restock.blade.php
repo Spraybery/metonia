@@ -6,13 +6,16 @@
 
     {{-- Header Action & Page Overview --}}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 12px;">
-        <div>
-            <h5 class="font-weight-bold mb-1 text-dark">
-                <i class="icon-arrow-down5 text-success mr-2"></i> Supplier Restock &amp; Delivery Register
-            </h5>
-            <p class="text-muted mb-0 font-size-sm">
-                Track incoming stock deliveries from vendors and record inventory restock consignments.
-            </p>
+        <div class="d-flex align-items-center">
+            <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-3 border rounded p-1 bg-white shadow-xs" style="height: 42px; max-width: 160px; object-fit: contain;">
+            <div>
+                <h5 class="font-weight-bold mb-1 text-dark">
+                    <i class="icon-arrow-down5 text-success mr-2"></i> Supplier Restock &amp; Delivery Register
+                </h5>
+                <p class="text-muted mb-0 font-size-sm">
+                    Track incoming stock deliveries from vendors and record inventory restock consignments.
+                </p>
+            </div>
         </div>
         <div>
             @if(Auth::user()->canEdit('materials'))
@@ -51,8 +54,9 @@
     {{-- Main Container Card --}}
     <div class="card border">
         <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold">
-                <i class="icon-list mr-2 text-success"></i> Incoming Supplier Consignments Log
+            <h6 class="card-title font-weight-bold d-flex align-items-center">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
+                <span><i class="icon-list mr-2 text-success"></i> Incoming Supplier Consignments Log</span>
             </h6>
             <div class="header-elements">
                 <button onclick="window.print()" class="btn btn-light btn-sm mr-2">

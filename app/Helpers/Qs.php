@@ -19,7 +19,7 @@ class Qs
 
     public static function getSystemLogo(): string
     {
-        return asset('assets/images/logo_metonia.svg');
+        return asset('assets/images/logo_metonia.png');
     }
 
     public static function getPanelOptions(): string

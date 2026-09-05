@@ -38,7 +38,7 @@
     <div class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm py-1">
         <div class="navbar-brand py-1 px-3 d-flex align-items-center" style="background: #064e3b; margin: -0.25rem 0 -0.25rem -1.25rem; height: 100%;">
             <a href="{{ route('dashboard') }}" class="d-inline-flex align-items-center text-white font-weight-bold" style="font-size: 16px; letter-spacing: 0.5px; text-decoration: none;">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2" style="background:#fff; border-radius: 4px; padding: 2px 6px;">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" style="height: 38px; background:#fff; border-radius: 4px; padding: 2px 8px; max-width: 220px; object-fit: contain;">
             </a>
         </div>
 

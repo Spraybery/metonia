@@ -41,8 +41,9 @@
     {{-- Main Container Card --}}
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold">
-                <i class="icon-wrench mr-2 text-primary"></i> Workshop Tools &amp; Calibration Asset Register
+            <h6 class="card-title font-weight-bold d-flex align-items-center">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
+                <span><i class="icon-wrench mr-2 text-primary"></i> Workshop Tools &amp; Calibration Asset Register</span>
             </h6>
             <div class="header-elements">
                 @if(Auth::user()->canEdit('tools'))
