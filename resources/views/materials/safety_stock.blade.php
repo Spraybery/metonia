@@ -28,19 +28,13 @@
 
     {{-- Summary Stats Bar --}}
     <div class="row mb-3">
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-6 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Catalog Safety Gear SKUs</div>
                 <div class="h4 font-weight-bold text-primary mb-0">{{ number_format($totalSafetyItems) }}</div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-2">
-            <div class="bg-white border rounded p-3 shadow-xs">
-                <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Total Safety Units On-Hand</div>
-                <div class="h4 font-weight-bold text-dark mb-0">{{ (float)$totalUnitsOnHand == (int)$totalUnitsOnHand ? number_format($totalUnitsOnHand) : number_format($totalUnitsOnHand, 2) }}</div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-6 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">PPE Low-Stock Reorder Alerts</div>
                 <div class="h4 font-weight-bold {{ $lowStockSafetyItems > 0 ? 'text-danger' : 'text-success' }} mb-0">
