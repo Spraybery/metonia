@@ -58,6 +58,8 @@ class MaterialController extends Controller
     public function issuance(Request $request)
     {
         $materials = Material::orderBy('name')->get();
+        $categories = Qs::getMaterialCategories();
+        $units = Qs::getMaterialUnits();
         $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
 
         $query = MaterialMovement::where('type', 'out')->with(['material', 'vehicle']);
@@ -74,12 +76,14 @@ class MaterialController extends Controller
 
         $outwardMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
 
-        return view('materials.issuance', compact('materials', 'activeVehicles', 'outwardMovements'));
+        return view('materials.issuance', compact('materials', 'categories', 'units', 'activeVehicles', 'outwardMovements'));
     }
 
     public function restock(Request $request)
     {
         $materials = Material::orderBy('name')->get();
+        $categories = Qs::getMaterialCategories();
+        $units = Qs::getMaterialUnits();
 
         $query = MaterialMovement::where('type', 'in')->with('material');
 
@@ -94,7 +98,7 @@ class MaterialController extends Controller
 
         $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
 
-        return view('materials.restock', compact('materials', 'restockMovements'));
+        return view('materials.restock', compact('materials', 'categories', 'units', 'restockMovements'));
     }
 
     public function safetyStock(Request $request)

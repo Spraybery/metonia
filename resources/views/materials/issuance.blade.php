@@ -16,7 +16,10 @@
         </div>
         <div>
             @if(Auth::user()->canEdit('materials'))
-            <button type="button" class="btn btn-primary font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-issue-vehicle">
+            <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-item">
+                <i class="icon-plus2 mr-1"></i> Add Item
+            </button>
+            <button type="button" class="btn btn-danger font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-issue-vehicle">
                 <i class="icon-arrow-up5 mr-1"></i> Issue Material Out of Store
             </button>
             @endif
@@ -244,7 +247,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="font-weight-semibold">Material Description <span class="text-danger">*</span></label>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="font-weight-semibold mb-0">Material Description <span class="text-danger">*</span></label>
+                            @if(Auth::user()->canEdit('materials'))
+                            <a href="#" data-toggle="modal" data-target="#modal-add-item" data-dismiss="modal" class="text-primary font-size-xs font-weight-semibold">
+                                <i class="icon-plus2 mr-1"></i> Add New Item
+                            </a>
+                            @endif
+                        </div>
                         <select id="issue-mat-select" class="form-control select-search" required onchange="updateIssueAction(this.value)">
                             <option value="">-- Select Material Description --</option>
                             @foreach($materials as $m)
@@ -304,6 +314,73 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Add New Store Item --}}
+@if(Auth::user()->canEdit('materials'))
+<div id="modal-add-item" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h6 class="modal-title font-weight-bold">
+                    <i class="icon-plus2 mr-2"></i> Register New Store Inventory Item
+                </h6>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <form action="{{ route('materials.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="unit_cost" value="0.00">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Material / Item Description <span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Mild Steel Sheet 3mm x 4ft x 8ft" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Category <span class="text-danger">*</span></label>
+                            <select name="category" class="form-control" required>
+                                @foreach($categories as $c)
+                                    <option value="{{ $c }}">{{ $c }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Unit Quantity Measure <span class="text-danger">*</span></label>
+                            <select name="unit" class="form-control" required>
+                                @foreach($units as $u)
+                                    <option value="{{ $u }}" {{ $u === 'Pieces' ? 'selected' : '' }}>{{ $u }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Initial Stock On-Hand <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0" name="qty" class="form-control" value="0.00" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Reorder Alert Threshold <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0" name="low_stock" class="form-control" value="5.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Primary Supplier / Vendor Name</label>
+                        <input type="text" name="supplier" class="form-control" placeholder="e.g. Apex Steel Kenya Ltd">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary font-weight-semibold">
+                        <i class="icon-checkmark mr-1"></i> Register Item in Inventory
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 
 @push('scripts')
 <script>

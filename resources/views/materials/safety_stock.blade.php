@@ -17,7 +17,7 @@
         <div>
             @if(Auth::user()->canEdit('materials'))
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-safety-item">
-                <i class="icon-plus2 mr-1"></i> Add Safety Item
+                <i class="icon-plus2 mr-1"></i> Add Item
             </button>
             <button type="button" class="btn btn-success font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-restock-safety">
                 <i class="icon-arrow-down5 mr-1"></i> Restock Safety Gear
@@ -411,7 +411,12 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="font-weight-semibold">Select Safety Equipment Item <span class="text-danger">*</span></label>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="font-weight-semibold mb-0">Select Safety Equipment Item <span class="text-danger">*</span></label>
+                            <a href="#" data-toggle="modal" data-target="#modal-add-safety-item" data-dismiss="modal" class="text-primary font-size-xs font-weight-semibold">
+                                <i class="icon-plus2 mr-1"></i> Add New Item
+                            </a>
+                        </div>
                         <select name="material_id" class="form-control select-search" required>
                             <option value="">-- Select Safety Item --</option>
                             @foreach($materials as $m)
