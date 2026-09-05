@@ -71,6 +71,10 @@ class ToolController extends Controller
             'next_calibration' => 'nullable|date',
         ]);
 
+        if ($validated['status'] === 'Available' || empty($validated['assigned_to'])) {
+            $validated['assigned_to'] = 'In Tool Crib';
+        }
+
         $tool = Tool::create($validated);
         ActivityLog::record(Auth::user()->name, "Registered equipment asset '{$tool->name}' [{$tool->asset_tag}].");
 
@@ -100,6 +104,10 @@ class ToolController extends Controller
             'issued_by' => 'nullable|string|max:255',
             'next_calibration' => 'nullable|date',
         ]);
+
+        if ($validated['status'] === 'Available') {
+            $validated['assigned_to'] = 'In Tool Crib';
+        }
 
         $oldStatus = $tool->status;
         $tool->update($validated);

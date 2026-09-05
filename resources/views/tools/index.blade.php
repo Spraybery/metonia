@@ -123,10 +123,10 @@
                                 <span class="font-weight-semibold text-dark">{{ $tool->issued_by ?: 'Store Supervisor' }}</span>
                             </td>
                             <td>
-                                @if($tool->assigned_to)
-                                    <span class="font-weight-semibold text-dark">{{ $tool->assigned_to }}</span>
+                                @if($tool->status === 'Available' || !$tool->assigned_to || $tool->assigned_to === 'In Tool Crib')
+                                    <span class="badge badge-light border text-muted font-weight-normal"><i class="icon-home7 mr-1 text-success"></i> In Tool Crib</span>
                                 @else
-                                    <span class="text-muted font-size-xs">In Tool Crib</span>
+                                    <span class="font-weight-semibold text-dark">{{ $tool->assigned_to }}</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -293,7 +293,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Issued To / Technician</label>
-                            <input type="text" name="assigned_to" class="form-control" placeholder="Technician Name">
+                            <input type="text" name="assigned_to" class="form-control" value="In Tool Crib" placeholder="Technician Name">
                         </div>
                     </div>
                 </div>
@@ -307,5 +307,21 @@
         </div>
     </div>
 </div>
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $(document).on('change', 'select[name="status"]', function() {
+            var $form = $(this).closest('form');
+            var $assignedInput = $form.find('input[name="assigned_to"]');
+            if ($(this).val() === 'Available') {
+                $assignedInput.val('In Tool Crib');
+            } else if ($assignedInput.val() === 'In Tool Crib') {
+                $assignedInput.val('');
+            }
+        });
+    });
+</script>
+@endsection
 
 @endsection
