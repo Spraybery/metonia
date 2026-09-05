@@ -6,7 +6,7 @@
 
     {{-- 1. Executive KPI Metric Stat Bars (Section 5 Standard) --}}
     <div class="row mb-3">
-        <div class="col-xl-4 col-sm-6 mb-2">
+        <div class="col-xl-3 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Active Vehicles on Floor</div>
                 <div class="h3 font-weight-bold text-dark mb-0">{{ number_format($totalActiveVehicles) }}</div>
@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-sm-6 mb-2">
+        <div class="col-xl-3 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stuck Vehicles (&ge; 10 Days)</div>
                 <div class="h3 font-weight-bold {{ count($stuckVehicles) > 0 ? 'text-danger' : 'text-success' }} mb-0">
@@ -24,13 +24,31 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-sm-6 mb-2">
+        <div class="col-xl-3 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Low-Stock Alert Items</div>
+                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Store Low-Stock Raw Materials</div>
                 <div class="h3 font-weight-bold {{ count($lowStockMaterials) > 0 ? 'text-warning' : 'text-success' }} mb-0">
                     {{ count($lowStockMaterials) }}
                 </div>
                 <div class="text-muted font-size-xs mt-1">Below safety reorder threshold</div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-2">
+            <div class="bg-light border rounded p-3 text-center h-100">
+                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Worker Safety PPE Restock Needed</div>
+                <div class="h3 font-weight-bold {{ count($lowStockSafetyMaterials) > 0 ? 'text-danger' : 'text-success' }} mb-0">
+                    <a href="{{ route('materials.safety_stock') }}" class="{{ count($lowStockSafetyMaterials) > 0 ? 'text-danger' : 'text-success' }}">
+                        {{ count($lowStockSafetyMaterials) }}
+                    </a>
+                </div>
+                <div class="text-muted font-size-xs mt-1">
+                    @if(count($lowStockSafetyMaterials) > 0)
+                        <span class="text-danger font-weight-semibold">Urgent worker safety gear reorder</span>
+                    @else
+                        All PPE stock sufficient
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -142,6 +160,60 @@
 
         {{-- 5. Low-Stock Store Alerts & Tool Status --}}
         <div class="col-lg-5 mb-3">
+
+            {{-- Dedicated Worker Safety PPE Restock Alerts Card --}}
+            <div class="card mb-3 border-danger-300 shadow-xs">
+                <div class="card-header header-elements-inline bg-light border-bottom">
+                    <h6 class="card-title font-weight-bold text-danger">
+                        <i class="icon-shield-notice mr-2 text-danger"></i> Worker Safety (PPE) Restock Needed
+                    </h6>
+                    <div class="header-elements">
+                        <a href="{{ route('materials.safety_stock') }}" class="btn btn-danger btn-xs font-weight-semibold">
+                            <i class="icon-shield-check mr-1"></i> Safety Register
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if(count($lowStockSafetyMaterials) > 0)
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="bg-light font-size-xs text-uppercase">
+                                <tr>
+                                    <th>Safety Equipment / PPE</th>
+                                    <th class="text-center">On Hand Qty</th>
+                                    <th class="text-center">Reorder Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($lowStockSafetyMaterials as $m)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('materials.safety_stock') }}" class="font-weight-bold text-dark">
+                                            {{ $m->name }}
+                                        </a>
+                                        <div class="font-size-xs text-muted">{{ $m->category }}</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-danger font-weight-bold px-2 py-1">
+                                            {{ number_format($m->qty, 2) }} {{ $m->unit }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center text-muted font-size-xs">
+                                        {{ number_format($m->low_stock, 2) }} {{ $m->unit }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @else
+                    <div class="p-3 text-center text-muted font-size-sm">
+                        <i class="icon-checkmark-circle text-success mr-1"></i> All worker safety gear &amp; PPE stock levels are sufficient.
+                    </div>
+                    @endif
+                </div>
+            </div>
+
             <div class="card mb-3">
                 <div class="card-header header-elements-inline bg-light">
                     <h6 class="card-title font-weight-bold text-warning-800">

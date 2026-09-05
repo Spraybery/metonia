@@ -47,9 +47,24 @@ class DashboardController extends Controller
             return $v->isStuck();
         })->sortByDesc('days_in_current_stage')->values();
 
-        // 3. Low-Stock Materials Alert Evaluator
-        $lowStockMaterials = Material::all()->filter(function (Material $m) {
-            return $m->isLowStock();
+        // 3. Low-Stock Materials & Worker Safety PPE Restock Alerts
+        $allLowStock = Material::all()->filter(fn (Material $m) => $m->isLowStock())->values();
+
+        $lowStockSafetyMaterials = $allLowStock->filter(function (Material $m) {
+            return $m->category === 'Worker Safety & PPE'
+                || $m->category === 'Reflecting & Safety'
+                || stripos($m->name, 'safety') !== false
+                || stripos($m->name, 'ppe') !== false
+                || stripos($m->name, 'glove') !== false
+                || stripos($m->name, 'boot') !== false
+                || stripos($m->name, 'helmet') !== false
+                || stripos($m->name, 'goggle') !== false
+                || stripos($m->name, 'respirator') !== false
+                || stripos($m->name, 'mask') !== false;
+        })->values();
+
+        $lowStockMaterials = $allLowStock->reject(function (Material $m) use ($lowStockSafetyMaterials) {
+            return $lowStockSafetyMaterials->pluck('id')->contains($m->id);
         })->values();
 
         // Total inventory valuation
@@ -103,6 +118,7 @@ class DashboardController extends Controller
             'totalActiveVehicles' => $totalActiveVehicles,
             'stuckVehicles' => $stuckVehicles,
             'lowStockMaterials' => $lowStockMaterials,
+            'lowStockSafetyMaterials' => $lowStockSafetyMaterials,
             'totalStockValue' => $totalStockValue,
             'monthlyStockIssuedValue' => $monthlyStockIssuedValue,
             'monthlyStockRestockedValue' => $monthlyStockRestockedValue,
