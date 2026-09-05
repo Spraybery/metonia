@@ -126,7 +126,6 @@ class Qs
         return [
             'Available',
             'Checked Out',
-            'In Maintenance',
         ];
     }
 

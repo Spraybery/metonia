@@ -25,12 +25,6 @@
             </div>
         </div>
         <div class="col mb-2">
-            <div class="bg-light border rounded p-3 text-center h-100">
-                <div class="text-muted font-size-xs font-weight-semibold text-uppercase">In Maintenance</div>
-                <div class="h4 font-weight-bold text-secondary mb-0">{{ $stats['in_maintenance'] }}</div>
-            </div>
-        </div>
-        <div class="col mb-2">
             <div class="bg-light border rounded p-3 text-center h-100 {{ $stats['calibration_overdue'] > 0 ? 'border-danger' : '' }}">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Calibration Overdue</div>
                 <div class="h4 font-weight-bold text-danger mb-0">{{ $stats['calibration_overdue'] }}</div>
@@ -111,10 +105,8 @@
                             <td class="text-center">
                                 @php
                                     $statusBadge = match($tool->status) {
-                                        'Available' => 'badge-success',
                                         'Checked Out' => 'badge-warning',
-                                        'In Maintenance' => 'badge-secondary',
-                                        default => 'badge-light'
+                                        default => 'badge-success'
                                     };
                                 @endphp
                                 <span class="badge {{ $statusBadge }} font-weight-bold">{{ $tool->status }}</span>

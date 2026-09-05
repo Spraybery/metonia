@@ -42,7 +42,6 @@ class ToolController extends Controller
             'total' => $tools->count(),
             'available' => $tools->where('status', 'Available')->count(),
             'checked_out' => $tools->where('status', 'Checked Out')->count(),
-            'in_maintenance' => $tools->where('status', 'In Maintenance')->count(),
             'calibration_overdue' => $tools->filter(fn (Tool $t) => $t->isCalibrationOverdue())->count(),
         ];
 

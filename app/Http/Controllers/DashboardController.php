@@ -110,7 +110,6 @@ class DashboardController extends Controller
             'total' => Tool::count(),
             'available' => Tool::where('status', 'Available')->count(),
             'checked_out' => Tool::where('status', 'Checked Out')->count(),
-            'in_maintenance' => Tool::where('status', 'In Maintenance')->count(),
             'calibration_overdue' => Tool::whereNotNull('next_calibration')->where('next_calibration', '<', $now->toDateString())->count(),
         ];
 

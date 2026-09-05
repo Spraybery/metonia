@@ -280,10 +280,6 @@
                         <span class="font-size-sm">Checked Out to Technicians</span>
                         <span class="badge badge-warning">{{ $toolsSummary['checked_out'] }}</span>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                        <span class="font-size-sm">Under Maintenance / Repair</span>
-                        <span class="badge badge-secondary">{{ $toolsSummary['in_maintenance'] }}</span>
-                    </div>
                     <div class="d-flex justify-content-between align-items-center py-1">
                         <span class="font-size-sm font-weight-bold text-danger">Calibration Overdue</span>
                         <span class="badge badge-danger font-weight-bold">{{ $toolsSummary['calibration_overdue'] }}</span>
