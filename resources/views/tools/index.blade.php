@@ -91,28 +91,22 @@
                     <thead>
                         <tr class="bg-light">
                             <th style="width: 50px;">#</th>
-                            <th>Asset Tag</th>
                             <th>Equipment Description</th>
-                            <th>Category</th>
-                            <th>Brand / Location</th>
                             <th class="text-center">Status</th>
-                            <th>Currently Held By</th>
-                            <th class="text-center">Next Calibration</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th>Issued By</th>
+                            <th>Issued To</th>
+                            <th class="text-center" style="width: 100px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($tools as $tool)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td><span class="badge badge-secondary font-monospace">{{ $tool->asset_tag }}</span></td>
                             <td>
                                 <span class="font-weight-semibold text-dark">{{ $tool->name }}</span>
-                            </td>
-                            <td><span class="badge badge-light border">{{ $tool->category }}</span></td>
-                            <td>
-                                <div>{{ $tool->brand ?: '—' }}</div>
-                                <span class="font-size-xs text-muted">{{ $tool->location ?: 'Main Crib' }}</span>
+                                @if($tool->asset_tag)
+                                    <div class="font-size-xs text-muted font-monospace">{{ $tool->asset_tag }}</div>
+                                @endif
                             </td>
                             <td class="text-center">
                                 @php
@@ -126,29 +120,13 @@
                                 <span class="badge {{ $statusBadge }} font-weight-bold">{{ $tool->status }}</span>
                             </td>
                             <td>
+                                <span class="font-weight-semibold text-dark">{{ $tool->issued_by ?: 'Store Supervisor' }}</span>
+                            </td>
+                            <td>
                                 @if($tool->assigned_to)
                                     <span class="font-weight-semibold text-dark">{{ $tool->assigned_to }}</span>
                                 @else
                                     <span class="text-muted font-size-xs">In Tool Crib</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @if($tool->next_calibration)
-                                    @if($tool->isCalibrationOverdue())
-                                        <span class="badge badge-danger font-weight-bold" title="Calibration Overdue!">
-                                            <i class="icon-warning mr-1"></i> {{ $tool->next_calibration->format('d M Y') }}
-                                        </span>
-                                    @elseif($tool->isCalibrationUpcoming())
-                                        <span class="badge badge-warning font-weight-bold" title="Due in < 14 days">
-                                            {{ $tool->next_calibration->format('d M Y') }}
-                                        </span>
-                                    @else
-                                        <span class="badge badge-light border font-size-xs">
-                                            {{ $tool->next_calibration->format('d M Y') }}
-                                        </span>
-                                    @endif
-                                @else
-                                    <span class="text-muted font-size-xs">N/A</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -226,12 +204,12 @@
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Assigned Technician</label>
-                                                            <input type="text" name="assigned_to" class="form-control" value="{{ $tool->assigned_to }}" placeholder="Technician Name">
+                                                            <label class="font-weight-semibold">Issued By / Store Supervisor</label>
+                                                            <input type="text" name="issued_by" class="form-control" value="{{ $tool->issued_by ?: Auth::user()->name }}">
                                                         </div>
                                                         <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Next Calibration Date</label>
-                                                            <input type="date" name="next_calibration" class="form-control" value="{{ $tool->next_calibration ? $tool->next_calibration->format('Y-m-d') : '' }}">
+                                                            <label class="font-weight-semibold">Issued To / Technician</label>
+                                                            <input type="text" name="assigned_to" class="form-control" value="{{ $tool->assigned_to }}" placeholder="Technician Name">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -310,12 +288,12 @@
 
                     <div class="form-row">
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Assigned Technician</label>
-                            <input type="text" name="assigned_to" class="form-control" placeholder="Optional">
+                            <label class="font-weight-semibold">Issued By / Store Supervisor</label>
+                            <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}">
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Next Calibration Date</label>
-                            <input type="date" name="next_calibration" class="form-control">
+                            <label class="font-weight-semibold">Issued To / Technician</label>
+                            <input type="text" name="assigned_to" class="form-control" placeholder="Technician Name">
                         </div>
                     </div>
                 </div>

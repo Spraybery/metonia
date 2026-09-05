@@ -18,6 +18,7 @@ class Tool extends Model
         'location',
         'status',
         'assigned_to',
+        'issued_by',
         'next_calibration',
     ];
 

@@ -29,7 +29,8 @@ class ToolController extends Controller
                     ->orWhere('asset_tag', 'like', $s)
                     ->orWhere('brand', 'like', $s)
                     ->orWhere('location', 'like', $s)
-                    ->orWhere('assigned_to', 'like', $s);
+                    ->orWhere('assigned_to', 'like', $s)
+                    ->orWhere('issued_by', 'like', $s);
             });
         }
 
@@ -66,6 +67,7 @@ class ToolController extends Controller
             'location' => 'nullable|string|max:255',
             'status' => 'required|string|in:'.implode(',', Qs::getToolStatuses()),
             'assigned_to' => 'nullable|string|max:255',
+            'issued_by' => 'nullable|string|max:255',
             'next_calibration' => 'nullable|date',
         ]);
 
@@ -95,6 +97,7 @@ class ToolController extends Controller
             'location' => 'nullable|string|max:255',
             'status' => 'required|string|in:'.implode(',', Qs::getToolStatuses()),
             'assigned_to' => 'nullable|string|max:255',
+            'issued_by' => 'nullable|string|max:255',
             'next_calibration' => 'nullable|date',
         ]);
 
