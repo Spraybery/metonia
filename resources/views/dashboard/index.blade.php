@@ -43,11 +43,11 @@
         </div>
     </div>
 
-    {{-- 2. Financial Margin Engine (MTD Performance) --}}
+    {{-- 2. Store Stock Valuation & Monthly Inventory Analytics --}}
     <div class="card mb-3">
         <div class="card-header header-elements-inline">
             <h6 class="card-title font-weight-bold">
-                <i class="icon-cash3 mr-2 text-primary"></i> Monthly Financial Performance (MTD Margin Control)
+                <i class="icon-boxes mr-2 text-primary"></i> Stock Valuation &amp; Monthly Inventory Performance
             </h6>
             <div class="header-elements">
                 <span class="badge badge-light border">{{ now()->format('F Y') }}</span>
@@ -58,27 +58,27 @@
             <div class="row">
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Invoiced Revenue (MTD)</div>
-                        <div class="h4 font-weight-bold text-primary mb-0">{{ Qs::format_money($revenueMtd) }}</div>
+                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Total Stock Valuation</div>
+                        <div class="h4 font-weight-bold text-success mb-0">{{ Qs::format_money($totalStockValue) }}</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Labor Cost (MTD)</div>
-                        <div class="h4 font-weight-bold text-dark mb-0">{{ Qs::format_money($laborCostMtd) }}</div>
+                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Stock Value Issued (MTD)</div>
+                        <div class="h4 font-weight-bold text-danger mb-0">{{ Qs::format_money($monthlyStockIssuedValue) }}</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="border rounded p-2 text-center bg-light">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Parts Issued Cost (MTD)</div>
-                        <div class="h4 font-weight-bold text-dark mb-0">{{ Qs::format_money($partsCostMtd) }}</div>
+                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Stock Restocked Value (MTD)</div>
+                        <div class="h4 font-weight-bold text-primary mb-0">{{ Qs::format_money($monthlyStockRestockedValue) }}</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="border rounded p-2 text-center {{ $marginMtd >= 0 ? 'bg-success-light' : 'bg-danger-light' }} border">
-                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Net Gross Margin (MTD)</div>
-                        <div class="h4 font-weight-bold {{ $marginMtd >= 0 ? 'text-success' : 'text-danger' }} mb-0">
-                            {{ Qs::format_money($marginMtd) }}
+                    <div class="border rounded p-2 text-center {{ $monthlyNetStockValuationChange >= 0 ? 'bg-success-light' : 'bg-danger-light' }} border">
+                        <div class="text-muted font-size-xs text-uppercase font-weight-semibold">Net Stock Valuation Change (MTD)</div>
+                        <div class="h4 font-weight-bold {{ $monthlyNetStockValuationChange >= 0 ? 'text-success' : 'text-danger' }} mb-0">
+                            {{ Qs::format_money($monthlyNetStockValuationChange) }}
                         </div>
                     </div>
                 </div>

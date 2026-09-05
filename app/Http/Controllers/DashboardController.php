@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Qs;
 use App\Models\ActivityLog;
 use App\Models\Material;
+use App\Models\MaterialMovement;
 use App\Models\Supervisor;
 use App\Models\Tool;
 use App\Models\Vehicle;
@@ -52,24 +53,29 @@ class DashboardController extends Controller
         })->values();
 
         // Total inventory valuation
-        $totalStockValue = Material::all()->sum(function (Material $m) {
+        $totalStockValue = (float) Material::all()->sum(function (Material $m) {
             return $m->totalValue();
         });
 
-        // 4. Financial Margin Engine (MTD)
-        $completedThisMonth = Vehicle::with('parts')
-            ->whereNotNull('completed_at')
-            ->whereYear('completed_at', $now->year)
-            ->whereMonth('completed_at', $now->month)
+        // 4. Stock Valuation Engine (MTD Movement Analytics)
+        $mtdMovements = MaterialMovement::with('material')
+            ->whereYear('date', $now->year)
+            ->whereMonth('date', $now->month)
             ->get();
 
-        $revenueMtd = (float) $completedThisMonth->sum('invoice_total');
-        $laborCostMtd = (float) $completedThisMonth->sum('labor_cost');
-        $partsCostMtd = (float) $completedThisMonth->sum(function (Vehicle $v) {
-            return $v->totalPartsCost();
-        });
-        $totalCostMtd = $laborCostMtd + $partsCostMtd;
-        $marginMtd = $revenueMtd - $totalCostMtd;
+        $monthlyStockIssuedValue = (float) $mtdMovements
+            ->where('type', 'out')
+            ->sum(function (MaterialMovement $m) {
+                return (float) $m->qty * (float) ($m->material->unit_cost ?? 0);
+            });
+
+        $monthlyStockRestockedValue = (float) $mtdMovements
+            ->where('type', 'in')
+            ->sum(function (MaterialMovement $m) {
+                return (float) $m->qty * (float) ($m->material->unit_cost ?? 0);
+            });
+
+        $monthlyNetStockValuationChange = $monthlyStockRestockedValue - $monthlyStockIssuedValue;
 
         // 5. Plant Pipeline Distribution
         $pipelineCounts = [];
@@ -98,11 +104,9 @@ class DashboardController extends Controller
             'stuckVehicles' => $stuckVehicles,
             'lowStockMaterials' => $lowStockMaterials,
             'totalStockValue' => $totalStockValue,
-            'revenueMtd' => $revenueMtd,
-            'laborCostMtd' => $laborCostMtd,
-            'partsCostMtd' => $partsCostMtd,
-            'totalCostMtd' => $totalCostMtd,
-            'marginMtd' => $marginMtd,
+            'monthlyStockIssuedValue' => $monthlyStockIssuedValue,
+            'monthlyStockRestockedValue' => $monthlyStockRestockedValue,
+            'monthlyNetStockValuationChange' => $monthlyNetStockValuationChange,
             'stages' => $stages,
             'pipelineCounts' => $pipelineCounts,
             'maxPipelineCount' => $maxPipelineCount,

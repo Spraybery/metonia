@@ -60,8 +60,10 @@ class WorkshopSystemTest extends TestCase
             'totalActiveVehicles',
             'stuckVehicles',
             'lowStockMaterials',
-            'revenueMtd',
-            'marginMtd',
+            'totalStockValue',
+            'monthlyStockIssuedValue',
+            'monthlyStockRestockedValue',
+            'monthlyNetStockValuationChange',
             'pipelineCounts',
         ]);
     }
