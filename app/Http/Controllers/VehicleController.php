@@ -145,9 +145,20 @@ class VehicleController extends Controller
             $history = $historiesByStage[$stageName] ?? null;
             $isCurrent = ($vehicle->stage === $stageName);
             $isCompleted = ($index < $currentStageIndex) || ($stageName === '8. Completed & Dispatched' && $vehicle->completed_at);
-            $isPending = ($index > $currentStageIndex && ! $isCompleted);
 
             $enteredAt = $history?->transitioned_at;
+
+            // Fallback for Stage 1 or past completed stages if explicit history entry was omitted
+            if (! $enteredAt && ($index === 0 || $index <= $currentStageIndex)) {
+                if ($index === 0) {
+                    $enteredAt = $vehicle->intake_date ?? $vehicle->created_at;
+                } else {
+                    $prevStageName = $allStages[$index - 1] ?? null;
+                    $prevHistory = $prevStageName ? ($historiesByStage[$prevStageName] ?? null) : null;
+                    $enteredAt = $prevHistory?->transitioned_at ?? $vehicle->intake_date ?? $vehicle->created_at;
+                }
+            }
+
             $leftAt = null;
 
             // Find entry timestamp of the subsequent stage to calculate exit time
@@ -159,10 +170,19 @@ class VehicleController extends Controller
                 }
             }
 
+            if (! $leftAt && $isCompleted) {
+                if ($stageName === '8. Completed & Dispatched' && $vehicle->completed_at) {
+                    $leftAt = $vehicle->completed_at;
+                } elseif ($index < $currentStageIndex) {
+                    $currentHistory = $historiesByStage[$vehicle->stage] ?? null;
+                    $leftAt = $currentHistory?->transitioned_at ?? Carbon::now();
+                }
+            }
+
             $durationDays = 0;
             if ($enteredAt) {
                 $endPoint = $leftAt ?? Carbon::now();
-                $durationDays = (int) floor($enteredAt->diffInDays($endPoint));
+                $durationDays = (int) max(0, floor(abs(Carbon::parse($enteredAt)->diffInSeconds(Carbon::parse($endPoint))) / 86400));
             }
 
             $status = $isCurrent ? 'current' : ($isCompleted ? 'completed' : 'pending');

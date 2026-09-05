@@ -291,6 +291,42 @@
                         </span>
                     </div>
 
+                    {{-- Visual 8-Stage Pipeline Stepper --}}
+                    <div class="card bg-light border mb-4">
+                        <div class="card-body p-3">
+                            <div class="row text-center">
+                                @foreach($stageTimeline as $row)
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="p-2 rounded border bg-white shadow-xs {{ $row['is_current'] ? 'border-primary' : ($row['is_completed'] ? 'border-success' : '') }}">
+                                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle font-weight-bold mb-1 {{ $row['is_current'] ? 'bg-primary text-white' : ($row['is_completed'] ? 'bg-success text-white' : 'bg-light text-muted border') }}" style="width: 32px; height: 32px; font-size: 13px;">
+                                            @if($row['is_completed'])
+                                                <i class="icon-checkmark2"></i>
+                                            @else
+                                                {{ $row['stage_number'] }}
+                                            @endif
+                                        </div>
+                                        <div class="font-weight-bold font-size-xs text-truncate {{ $row['is_current'] ? 'text-primary' : ($row['is_completed'] ? 'text-success' : 'text-muted') }}" title="{{ $row['stage'] }}">
+                                            Stage {{ $row['stage_number'] }}
+                                        </div>
+                                        <div class="text-muted font-size-xs text-truncate" title="{{ $row['stage'] }}">
+                                            {{ Str::after($row['stage'], '. ') }}
+                                        </div>
+                                        <div class="mt-1">
+                                            @if($row['is_current'])
+                                                <span class="badge badge-primary font-size-xs">Current</span>
+                                            @elseif($row['is_completed'])
+                                                <span class="badge badge-success font-size-xs">Done</span>
+                                            @else
+                                                <span class="badge badge-light border text-muted font-size-xs">Pending</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover border">
                             <thead class="bg-light">
