@@ -167,6 +167,11 @@
                                         <i class="icon-arrow-down5 mr-2"></i> Supplier Restock Data
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('materials.safety_stock') }}" class="nav-link {{ request()->routeIs('materials.safety_stock') ? 'active' : '' }}">
+                                        <i class="icon-warning2 mr-2 text-warning"></i> Safety Stock Alerts
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif

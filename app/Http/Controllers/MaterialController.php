@@ -97,6 +97,41 @@ class MaterialController extends Controller
         return view('materials.restock', compact('materials', 'restockMovements'));
     }
 
+    public function safetyStock(Request $request)
+    {
+        $allMaterials = Material::orderBy('name')->get();
+        $categories = Qs::getMaterialCategories();
+
+        $query = Material::orderBy('name');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->query('category'));
+        }
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', $s)
+                    ->orWhere('supplier', 'like', $s);
+            });
+        }
+
+        $materials = $query->get()->filter(fn (Material $m) => $m->isLowStock());
+
+        $lowStockCount = $allMaterials->filter(fn (Material $m) => $m->isLowStock())->count();
+        $outOfStockCount = $allMaterials->filter(fn (Material $m) => (float) $m->qty <= 0)->count();
+        $criticalDeficitCount = $allMaterials->filter(fn (Material $m) => (float) $m->qty <= (float) ($m->low_stock / 2))->count();
+
+        return view('materials.safety_stock', compact(
+            'materials',
+            'categories',
+            'allMaterials',
+            'lowStockCount',
+            'outOfStockCount',
+            'criticalDeficitCount'
+        ));
+    }
+
     public function store(Request $request)
     {
         if (! Auth::user()->canEdit('materials')) {
