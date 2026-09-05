@@ -240,6 +240,7 @@
                                     <th>Material Description</th>
                                     <th class="text-center">Quantity</th>
                                     <th>Issued By</th>
+                                    <th>Issued To</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -259,10 +260,13 @@
                                             <span class="d-block text-muted font-size-xs">{{ $part->issued_at->format('d M Y, H:i') }}</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        <span class="font-weight-semibold text-dark">{{ $part->issued_to ?? ($vehicle->assigned_to ?: 'Eng. Peter Kimani') }}</span>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted p-4">
+                                    <td colspan="5" class="text-center text-muted p-4">
                                         No materials or spare parts have been issued to this job card yet.
                                     </td>
                                 </tr>

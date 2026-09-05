@@ -376,7 +376,8 @@ class VehicleController extends Controller
                     'qty' => $requestedQty,
                     'unit_cost' => $material->unit_cost,
                     'cost' => $cost,
-                    'issued_by' => $personTakingPart ?? Auth::user()->name,
+                    'issued_by' => Auth::user()->name,
+                    'issued_to' => $personTakingPart,
                     'issued_at' => Carbon::now(),
                 ]);
 

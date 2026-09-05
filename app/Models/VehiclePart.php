@@ -20,6 +20,7 @@ class VehiclePart extends Model
         'unit_cost',
         'cost',
         'issued_by',
+        'issued_to',
         'issued_at',
     ];
 
