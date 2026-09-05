@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48">
+  <defs>
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <!-- Industrial Emblem -->
+  <rect x="4" y="6" width="36" height="36" rx="8" fill="url(#metalGrad)" />
+  <path d="M12 24 L22 14 L32 24 L28 24 L28 32 L16 32 L16 24 Z" fill="#ffffff" />
+  <circle cx="22" cy="22" r="3" fill="#10B981" />
+  <!-- Typography -->
+  <text x="50" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="900" fill="#0f172a" letter-spacing="1.5">METONIA</text>
+  <text x="50" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#10B981" letter-spacing="2">ASSEMBLY PLANT #1</text>
+</svg>

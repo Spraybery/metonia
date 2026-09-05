@@ -1,0 +1,236 @@
+/* ==========================================================================
+   METONIA WORKSHOP — EXECUTIVE GREEN & WHITE THEME
+   Replaces generic blue with rich Emerald/Forest Green & Crisp White
+   ========================================================================== */
+
+:root {
+    --theme-green-dark: #064e3b;      /* Deep forest green for sidebar */
+    --theme-green-sidebar: #065f46;   /* Sidebar gradient stop */
+    --theme-green-primary: #10b981;   /* Emerald accent & primary buttons */
+    --theme-green-hover: #059669;     /* Button hover */
+    --theme-green-active: #047857;    /* Active state */
+    --theme-green-light: #ecfdf5;     /* Soft background highlight */
+    --theme-green-border: #a7f3d0;    /* Subtle green borders */
+    --theme-white: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   1. SIDEBAR: RICH GREEN & WHITE ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.sidebar-main,
+.sidebar-dark {
+    background: linear-gradient(180deg, #064e3b 0%, #065f46 60%, #044e39 100%) !important;
+    color: #ffffff !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+.sidebar-dark .sidebar-content {
+    background: transparent !important;
+}
+
+/* User header block in sidebar */
+.sidebar-user {
+    background: rgba(0, 0, 0, 0.15) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    padding: 12px 16px !important;
+}
+
+.sidebar-user .media-title {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px;
+}
+
+.sidebar-user .font-size-xs {
+    color: #d1fae5 !important;
+}
+
+.sidebar-user .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+}
+
+/* Section header labels */
+.sidebar-dark .nav-sidebar .nav-item-header {
+    color: #a7f3d0 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px;
+    padding-top: 18px !important;
+    padding-bottom: 6px !important;
+}
+
+/* Navigation items */
+.sidebar-dark .nav-sidebar .nav-link {
+    color: #f1f5f9 !important;
+    font-weight: 500 !important;
+    padding: 10px 18px !important;
+    margin: 2px 8px !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+.sidebar-dark .nav-sidebar .nav-link i {
+    color: #a7f3d0 !important;
+    margin-right: 12px !important;
+    font-size: 16px !important;
+    transition: color 0.15s ease-in-out !important;
+}
+
+/* Hover state */
+.sidebar-dark .nav-sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+.sidebar-dark .nav-sidebar .nav-link:hover i {
+    color: #ffffff !important;
+}
+
+/* Active navigation state */
+.sidebar-dark .nav-sidebar .nav-link.active {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.sidebar-dark .nav-sidebar .nav-link.active i {
+    color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP NAVIGATION BAR (CRISP WHITE WITH GREEN ACCENTS)
+   -------------------------------------------------------------------------- */
+.navbar-top-theme {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+.navbar-top-theme .navbar-nav-link {
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+.navbar-top-theme .navbar-nav-link:hover {
+    color: #059669 !important;
+}
+
+.navbar-brand-theme {
+    background-color: #064e3b !important;
+    padding: 8px 18px !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. PRIMARY BUTTONS & ACTIONS (VIBRANT EMERALD GREEN)
+   -------------------------------------------------------------------------- */
+.btn-primary {
+    color: #ffffff !important;
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+    color: #ffffff !important;
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.45) !important;
+}
+
+.btn-outline-primary {
+    color: #059669 !important;
+    border-color: #10b981 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    color: #ffffff !important;
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. TEXT & BADGE OVERRIDES (NO BLUE)
+   -------------------------------------------------------------------------- */
+.text-primary {
+    color: #059669 !important;
+}
+
+a.text-primary:hover {
+    color: #047857 !important;
+}
+
+.badge-primary {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+}
+
+.progress-bar.bg-primary {
+    background-color: #10b981 !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. HIGHLIGHTED TABS (GREEN ACCENT)
+   -------------------------------------------------------------------------- */
+.nav-tabs-highlight .nav-link {
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.nav-tabs-highlight .nav-link.active {
+    color: #065f46 !important;
+    border-top: 3px solid #10b981 !important;
+    background-color: #ffffff !important;
+}
+
+.nav-tabs-highlight .nav-link.active i {
+    color: #10b981 !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. DATATABLES & PAGINATION
+   -------------------------------------------------------------------------- */
+.paginate_button.current,
+.paginate_button.current:hover {
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.paginate_button:hover {
+    background: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+    color: #065f46 !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. FORM FOCUS STYLING
+   -------------------------------------------------------------------------- */
+.form-control:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.2) !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+}
+
+.form-check-input:checked {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. CARD & HEADER CONTROLS
+   -------------------------------------------------------------------------- */
+.card-header .text-primary {
+    color: #059669 !important;
+}

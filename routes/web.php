@@ -1,0 +1,72 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\ToolController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VehicleController;
+use Illuminate\Support\Facades\Route;
+
+// Guest Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/api/login', [AuthController::class, 'login']);
+});
+
+// Authenticated Application Routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
+
+    Route::get('/', function () {
+        return redirect()->route('dashboard');
+    });
+
+    // Dashboard Analytics Engine
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/api/db', [DashboardController::class, 'apiSnapshot'])->name('api.db');
+
+    // Vehicle Build & Job Cards
+    Route::get('/vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+    Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('vehicles.create');
+    Route::post('/vehicles', [VehicleController::class, 'store'])->name('vehicles.store');
+    Route::get('/vehicles/{id}', [VehicleController::class, 'show'])->name('vehicles.show');
+    Route::get('/vehicles/{id}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
+    Route::put('/vehicles/{id}', [VehicleController::class, 'update'])->name('vehicles.update');
+    Route::put('/vehicles/{id}/stage', [VehicleController::class, 'updateStage'])->name('vehicles.update_stage');
+    Route::put('/vehicles/{id}/checklist', [VehicleController::class, 'updateChecklist'])->name('vehicles.update_checklist');
+    Route::post('/vehicles/{id}/parts', [VehicleController::class, 'issuePart'])->name('vehicles.issue_part');
+    Route::delete('/vehicles/{id}', [VehicleController::class, 'destroy'])->name('vehicles.destroy');
+    Route::get('/vehicles/{id}/print', [VehicleController::class, 'printJobCard'])->name('vehicles.print');
+
+    // Materials & Store Inventory
+    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::post('/materials', [MaterialController::class, 'store'])->name('materials.store');
+    Route::put('/materials/{id}', [MaterialController::class, 'update'])->name('materials.update');
+    Route::post('/materials/{id}/movement', [MaterialController::class, 'stockMovement'])->name('materials.movement');
+    Route::get('/materials/{id}/movements', [MaterialController::class, 'movements'])->name('materials.movements');
+    Route::delete('/materials/{id}', [MaterialController::class, 'destroy'])->name('materials.destroy');
+
+    // Supervisors Roster
+    Route::get('/supervisors', [SupervisorController::class, 'index'])->name('supervisors.index');
+    Route::post('/supervisors', [SupervisorController::class, 'store'])->name('supervisors.store');
+    Route::put('/supervisors/{id}', [SupervisorController::class, 'update'])->name('supervisors.update');
+    Route::delete('/supervisors/{id}', [SupervisorController::class, 'destroy'])->name('supervisors.destroy');
+
+    // Tools & Equipment Asset Register
+    Route::get('/tools', [ToolController::class, 'index'])->name('tools.index');
+    Route::post('/tools', [ToolController::class, 'store'])->name('tools.store');
+    Route::put('/tools/{id}', [ToolController::class, 'update'])->name('tools.update');
+    Route::delete('/tools/{id}', [ToolController::class, 'destroy'])->name('tools.destroy');
+
+    // User Management (Admin Only)
+    Route::middleware('role:Admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+});
