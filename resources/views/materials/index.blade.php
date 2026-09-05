@@ -31,9 +31,8 @@
     {{-- Main Container Card --}}
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-boxes mr-2 text-primary"></i> Store Materials &amp; Parts Register</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-boxes mr-2 text-primary"></i> Store Materials &amp; Parts Register
             </h6>
             <div class="header-elements">
                 <a href="{{ route('materials.issuance') }}" class="btn btn-outline-danger btn-sm font-weight-semibold mr-1">
@@ -72,6 +71,11 @@
                         <a href="{{ route('materials.index') }}" class="btn btn-link btn-sm text-danger">Reset</a>
                     @endif
                 </form>
+            </div>
+
+            {{-- Company Logo on Top of List --}}
+            <div class="mb-2">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
             </div>
 
             {{-- Standard DataTables --}}
@@ -274,15 +278,19 @@
     {{-- Outward Material Issuance Register Log Card --}}
     <div class="card mt-4 border">
         <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-arrow-up5 mr-2 text-danger"></i> Outward Store Material Issuance Register</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-arrow-up5 mr-2 text-danger"></i> Outward Store Material Issuance Register
             </h6>
             <div class="header-elements">
                 <span class="badge badge-primary font-weight-bold">Store Keeper Issuance Register</span>
             </div>
         </div>
         <div class="card-body">
+            {{-- Company Logo on Top of List --}}
+            <div class="mb-2">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-hover border">
                     <thead class="bg-light">

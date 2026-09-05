@@ -6,9 +6,8 @@
 
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-users4 mr-2 text-primary"></i> Workshop Lead Supervisors &amp; Workload Balancing</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-users4 mr-2 text-primary"></i> Workshop Lead Supervisors &amp; Workload Balancing
             </h6>
             <div class="header-elements">
                 @if(Auth::user()->canEdit('supervisors'))
@@ -24,6 +23,11 @@
         </div>
 
         <div class="card-body">
+            {{-- Company Logo on Top of List --}}
+            <div class="mb-2">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
+            </div>
+
             <div class="table-responsive">
                 <table class="table datatable-button-html5-columns table-striped table-hover">
                     <thead>

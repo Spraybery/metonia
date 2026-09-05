@@ -41,9 +41,8 @@
     {{-- Main Container Card --}}
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-file-text2 mr-2 text-primary"></i> Job Card #{{ $vehicle->plate }} — {{ $vehicle->make }} {{ $vehicle->model }}</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-file-text2 mr-2 text-primary"></i> Job Card #{{ $vehicle->plate }} — {{ $vehicle->make }} {{ $vehicle->model }}
             </h6>
             <div class="header-elements">
                 <a href="{{ route('vehicles.print', $vehicle->id) }}" target="_blank" class="btn btn-light btn-sm mr-1">
@@ -233,6 +232,11 @@
                         @endif
                     </div>
 
+                    {{-- Company Logo on Top of List --}}
+                    <div class="mb-2">
+                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 38px; max-width: 220px; object-fit: contain;">
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover border">
                             <thead class="bg-light">
@@ -322,6 +326,11 @@
                                 @endforeach
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Company Logo on Top of List --}}
+                    <div class="mb-2">
+                        <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 38px; max-width: 220px; object-fit: contain;">
                     </div>
 
                     <div class="table-responsive">

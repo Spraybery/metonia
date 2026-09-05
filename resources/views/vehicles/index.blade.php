@@ -7,9 +7,8 @@
     {{-- Main Container Card --}}
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-truck mr-2 text-primary"></i> Vehicle Build &amp; Stage Board Register</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-truck mr-2 text-primary"></i> Vehicle Build &amp; Stage Board Register
             </h6>
             <div class="header-elements">
                 @if(Auth::user()->canEdit('vehicles'))
@@ -42,6 +41,11 @@
                         <a href="{{ route('vehicles.index') }}" class="btn btn-link btn-sm text-danger">Reset</a>
                     @endif
                 </form>
+            </div>
+
+            {{-- Company Logo on Top of List --}}
+            <div class="mb-2">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
             </div>
 
             {{-- Standard DataTables (Section 3) --}}

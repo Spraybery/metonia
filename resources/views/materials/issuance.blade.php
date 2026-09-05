@@ -6,16 +6,13 @@
 
     {{-- Header Action & Page Overview --}}
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: 12px;">
-        <div class="d-flex align-items-center">
-            <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-3 border rounded p-1 bg-white shadow-xs" style="height: 42px; max-width: 160px; object-fit: contain;">
-            <div>
-                <h5 class="font-weight-bold mb-1 text-dark">
-                    <i class="icon-arrow-up5 text-danger mr-2"></i> Outward Store Material Issuance Register
-                </h5>
-                <p class="text-muted mb-0 font-size-sm">
-                    Dedicated storekeeper module to issue raw materials to active vehicle job cards and track outward dispatches.
-                </p>
-            </div>
+        <div>
+            <h5 class="font-weight-bold mb-1 text-dark">
+                <i class="icon-arrow-up5 text-danger mr-2"></i> Outward Store Material Issuance Register
+            </h5>
+            <p class="text-muted mb-0 font-size-sm">
+                Dedicated storekeeper module to issue raw materials to active vehicle job cards and track outward dispatches.
+            </p>
         </div>
         <div>
             @if(Auth::user()->canEdit('materials'))
@@ -54,9 +51,8 @@
     {{-- Main Container Card --}}
     <div class="card border">
         <div class="card-header header-elements-inline bg-light">
-            <h6 class="card-title font-weight-bold d-flex align-items-center">
-                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Logo" class="mr-2 border rounded p-1 bg-white shadow-xs" style="height: 34px; max-width: 140px; object-fit: contain;">
-                <span><i class="icon-list mr-2 text-danger"></i> Store Outward Issuance Register Log</span>
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-list mr-2 text-danger"></i> Store Outward Issuance Register Log
             </h6>
             <div class="header-elements">
                 <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
@@ -76,6 +72,11 @@
                         <a href="{{ route('materials.issuance') }}" class="btn btn-link btn-sm text-danger">Reset</a>
                     @endif
                 </form>
+            </div>
+
+            {{-- Company Logo on Top of List --}}
+            <div class="mb-2">
+                <img src="{{ Qs::getSystemLogo() }}" alt="Metonia Enterprise Limited" style="height: 42px; max-width: 240px; object-fit: contain;">
             </div>
 
             {{-- Table --}}
