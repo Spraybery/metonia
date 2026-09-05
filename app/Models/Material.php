@@ -44,8 +44,26 @@ class Material extends Model
         return (float) $this->qty <= (float) $this->low_stock;
     }
 
+    public function isSafetyStock(): bool
+    {
+        return $this->category === 'Worker Safety & PPE'
+            || $this->category === 'Reflecting & Safety'
+            || stripos($this->name, 'safety') !== false
+            || stripos($this->name, 'ppe') !== false
+            || stripos($this->name, 'glove') !== false
+            || stripos($this->name, 'boot') !== false
+            || stripos($this->name, 'helmet') !== false
+            || stripos($this->name, 'goggle') !== false
+            || stripos($this->name, 'respirator') !== false
+            || stripos($this->name, 'mask') !== false;
+    }
+
     public function totalValue(): float
     {
+        if ($this->isSafetyStock()) {
+            return 0.00;
+        }
+
         return (float) $this->qty * (float) $this->unit_cost;
     }
 }

@@ -166,6 +166,15 @@ class MaterialController extends Controller
             'supplier' => 'nullable|string|max:255',
         ]);
 
+        $isSafety = $validated['category'] === 'Worker Safety & PPE'
+            || $validated['category'] === 'Reflecting & Safety'
+            || stripos($validated['name'], 'safety') !== false
+            || stripos($validated['name'], 'ppe') !== false;
+
+        if ($isSafety) {
+            $validated['unit_cost'] = 0.00;
+        }
+
         $material = Material::create($validated);
 
         if ((float) $material->qty > 0) {
@@ -208,6 +217,15 @@ class MaterialController extends Controller
             'unit_cost' => 'required|numeric|min:0',
             'supplier' => 'nullable|string|max:255',
         ]);
+
+        $isSafety = $validated['category'] === 'Worker Safety & PPE'
+            || $validated['category'] === 'Reflecting & Safety'
+            || stripos($validated['name'], 'safety') !== false
+            || stripos($validated['name'], 'ppe') !== false;
+
+        if ($isSafety) {
+            $validated['unit_cost'] = 0.00;
+        }
 
         $material->update($validated);
         ActivityLog::record(Auth::user()->name, "Updated store item specifications for '{$material->name}'.");

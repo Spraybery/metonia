@@ -67,16 +67,19 @@ class DashboardController extends Controller
             return $lowStockSafetyMaterials->pluck('id')->contains($m->id);
         })->values();
 
-        // Total inventory valuation
-        $totalStockValue = (float) Material::all()->sum(function (Material $m) {
+        // Total inventory valuation (excluding Safety Stock)
+        $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(function (Material $m) {
             return $m->totalValue();
         });
 
-        // 4. Stock Valuation Engine (MTD Movement Analytics)
+        // 4. Stock Valuation Engine (MTD Movement Analytics, excluding Safety Stock)
         $mtdMovements = MaterialMovement::with('material')
             ->whereYear('date', $now->year)
             ->whereMonth('date', $now->month)
-            ->get();
+            ->get()
+            ->reject(function (MaterialMovement $m) {
+                return $m->material && $m->material->isSafetyStock();
+            });
 
         $monthlyStockIssuedValue = (float) $mtdMovements
             ->where('type', 'out')
