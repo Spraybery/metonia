@@ -9,23 +9,22 @@ A specialized Enterprise Resource Planning (ERP) and workshop operations platfor
 
 - **8-Stage Sequential Build Board**: Real-time tracking of vehicle assembly progression from *Intake & Diagnosis* to *Quality & Road Test* and *Completed & Dispatched*.
 - **Bottleneck Detection**: Automatic identification and alerting for vehicles stuck $\ge 10$ days in any single stage.
-- **5 Specialized Role Profiles**: Tailored user experience and permission boundaries (Admin, Manager, General Supervisor, Shopkeeper, Accountant).
+- **4 Specialized Role Profiles**: Tailored user experience and permission boundaries (Admin, Manager, Shopkeeper, Accountant).
 - **Atomic Parts Issuance**: Store inventory deductions with database-level row locking (`SELECT ... FOR UPDATE`) to prevent inventory overselling and race conditions.
 - **Immediate Job Card Synchronization**: Store item issuances automatically register directly to the vehicle's Job Card parts schedule with cost auditing.
 - **Supervisors Roster & Balancing**: Live calculation of active supervised vehicles across all assembly bays.
-- **Tools & Equipment Asset Register**: Asset tracking across 5 workshop crib categories with calibration overdue/upcoming alerts.
+- **Tools & Equipment Asset Register**: Asset tracking across crib categories with calibration overdue/upcoming alerts.
 - **Financial Gross Margin Engine (MTD)**: Dynamic aggregation of invoiced revenue vs direct labor and issued parts consumption.
 - **Official Print Engine**: High-fidelity, watermarked Job Cards and Build Dossiers styled in the executive Green & White theme (`#064e3b`, `#10b981`).
 
 ---
 
-## 👥 5 System Role Profiles
+## 👥 4 System Role Profiles
 
 | Role | Default Username | Default Password | Primary Workflow |
 |---|---|---|---|
 | **Admin** | `admin` | `password` | Full system governance, deletions, and user management (RBAC). Protected by self-deletion guard. |
-| **Manager** | `manager` | `password` | Restocks store materials from suppliers with supplier name, date, quantity, receiving officer, and delivery notes. |
-| **General Supervisor** | `supervisor` | `password` | Advances vehicle build stages (1 to 8) and assigns/updates the lead engineer or technician for each stage. |
+| **Manager** | `manager` | `password` | Restocks store materials, advances vehicle build stages (1 to 8), and assigns/updates lead supervisors/technicians. |
 | **Shopkeeper** | `shopkeeper` | `password` | Issues materials to vehicles, records technician name, and auto-syncs to the vehicle's Job Card. |
 | **Accountant** | `accountant` | `password` | Pure financial auditing of labor costs, parts costs, customer invoices, and gross margins (strictly view-only). |
 

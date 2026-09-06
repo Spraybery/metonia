@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        // 1. Seed Core RBAC Users (5 Specific System Profiles)
+        // 1. Seed Core RBAC Users (4 Specific System Profiles)
         $users = [
             [
                 'name' => 'Eng. Martin Kariuki',
@@ -39,13 +39,6 @@ class DatabaseSeeder extends Seeder
                 'email' => 'manager@metonia.co.ke',
                 'password' => Hash::make('password'),
                 'role' => 'Manager',
-            ],
-            [
-                'name' => 'Eng. Patrick Kamau',
-                'username' => 'supervisor',
-                'email' => 'supervisor@metonia.co.ke',
-                'password' => Hash::make('password'),
-                'role' => 'General Supervisor',
             ],
             [
                 'name' => 'David Omondi',

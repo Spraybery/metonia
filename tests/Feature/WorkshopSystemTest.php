@@ -168,15 +168,15 @@ class WorkshopSystemTest extends TestCase
         ]);
     }
 
-    public function test_general_supervisor_can_transition_vehicle_stage_and_assign_lead(): void
+    public function test_manager_can_transition_vehicle_stage_and_assign_lead(): void
     {
-        $supervisor = User::where('username', 'supervisor')->first();
+        $manager = User::where('username', 'manager')->first();
         $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
 
         $newStage = '3. Powertrain & Mechanical';
         $newLead = 'Eng. John Otieno';
 
-        $response = $this->actingAs($supervisor)->put("/vehicles/{$vehicle->id}/stage", [
+        $response = $this->actingAs($manager)->put("/vehicles/{$vehicle->id}/stage", [
             'stage' => $newStage,
             'assigned_to' => $newLead,
         ]);
@@ -259,11 +259,11 @@ class WorkshopSystemTest extends TestCase
 
     public function test_advance_to_next_stage_action_moves_vehicle_forward_one_step(): void
     {
-        $supervisor = User::where('username', 'supervisor')->first();
+        $manager = User::where('username', 'manager')->first();
         $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
         $expectedNextStage = '3. Powertrain & Mechanical';
 
-        $response = $this->actingAs($supervisor)->put("/vehicles/{$vehicle->id}/stage", [
+        $response = $this->actingAs($manager)->put("/vehicles/{$vehicle->id}/stage", [
             'stage' => $expectedNextStage,
         ]);
 

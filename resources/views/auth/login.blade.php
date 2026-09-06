@@ -86,7 +86,6 @@
                         <div class="d-flex flex-wrap" style="gap: 4px;">
                             <button type="button" class="btn btn-outline-dark btn-xs font-weight-semibold" onclick="setCreds('admin')">Admin</button>
                             <button type="button" class="btn btn-outline-success btn-xs font-weight-semibold" onclick="setCreds('manager')">Manager</button>
-                            <button type="button" class="btn btn-outline-primary btn-xs font-weight-semibold" onclick="setCreds('supervisor')">General Supervisor</button>
                             <button type="button" class="btn btn-outline-warning btn-xs font-weight-semibold" onclick="setCreds('shopkeeper')">Shopkeeper</button>
                             <button type="button" class="btn btn-outline-secondary btn-xs font-weight-semibold" onclick="setCreds('accountant')">Accountant</button>
                         </div>

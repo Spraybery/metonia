@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         if (DB::getDriverName() === 'mysql') {
-            DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Manager', 'General Supervisor', 'Shopkeeper', 'Accountant') NOT NULL DEFAULT 'Manager'");
+            DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Manager', 'Shopkeeper', 'Accountant') NOT NULL DEFAULT 'Manager'");
         }
     }
 
