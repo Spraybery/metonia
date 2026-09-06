@@ -468,7 +468,7 @@ class DatabaseSeeder extends Seeder
                 'brand' => 'Ingersoll Rand',
                 'location' => 'Tool Crib A - Bay 1',
                 'status' => 'Available',
-                'assigned_to' => null,
+                'assigned_to' => 'In Tool Crib',
                 'next_calibration' => Carbon::now()->addMonths(3),
             ],
             [
@@ -488,7 +488,7 @@ class DatabaseSeeder extends Seeder
                 'brand' => 'Lincoln Electric',
                 'location' => 'Bay 2 Structural',
                 'status' => 'Available',
-                'assigned_to' => null,
+                'assigned_to' => 'In Tool Crib',
                 'next_calibration' => Carbon::now()->addMonths(2),
             ],
             [
@@ -508,7 +508,7 @@ class DatabaseSeeder extends Seeder
                 'brand' => 'Rotary',
                 'location' => 'Bay 4 Undercarriage',
                 'status' => 'Available',
-                'assigned_to' => null,
+                'assigned_to' => 'In Tool Crib',
                 'next_calibration' => Carbon::now()->addMonths(4),
             ],
             [
@@ -517,8 +517,8 @@ class DatabaseSeeder extends Seeder
                 'category' => 'Welding & Plasma Cutters',
                 'brand' => 'Hypertherm',
                 'location' => 'Maintenance Crib',
-                'status' => 'In Maintenance',
-                'assigned_to' => null,
+                'status' => 'Available',
+                'assigned_to' => 'In Tool Crib',
                 'next_calibration' => Carbon::now()->subDays(12), // OVERDUE CALIBRATION!
             ],
         ];
