@@ -9,6 +9,8 @@ use App\Models\VehicleStageHistory;
 use Carbon\Carbon;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class WorkshopSystemTest extends TestCase
@@ -321,5 +323,100 @@ class WorkshopSystemTest extends TestCase
         $vehicle->refresh();
         $this->assertEquals(12, $vehicle->days_in_current_stage);
         $this->assertTrue($vehicle->isStuck());
+    }
+
+    public function test_login_page_shows_forgot_password_link_and_password_toggle(): void
+    {
+        $response = $this->get('/login');
+
+        $response->assertStatus(200);
+        $response->assertSee(route('password.request'), false);
+        $response->assertSee('togglePasswordVisibility', false);
+    }
+
+    public function test_forgot_password_page_renders_successfully(): void
+    {
+        $response = $this->get('/password/forgot');
+
+        $response->assertStatus(200);
+        $response->assertSee('Reset Your Password');
+    }
+
+    public function test_valid_email_receives_generic_confirmation_and_creates_reset_token(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->post('/password/forgot', ['email' => $admin->email]);
+
+        $response->assertSessionHas('flash_success');
+        $this->assertDatabaseHas('password_reset_tokens', ['email' => $admin->email]);
+    }
+
+    public function test_unregistered_email_shows_the_same_generic_confirmation(): void
+    {
+        $response = $this->post('/password/forgot', ['email' => 'nobody@metonia.co.ke']);
+
+        $response->assertSessionHas('flash_success', 'If that email address is registered in our system, a password reset link has been sent.');
+        $this->assertDatabaseMissing('password_reset_tokens', ['email' => 'nobody@metonia.co.ke']);
+    }
+
+    public function test_reset_password_page_renders_with_token_and_email_prefilled(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->get('/password/reset/some-token?email='.urlencode($admin->email));
+
+        $response->assertStatus(200);
+        $response->assertSee($admin->email);
+    }
+
+    public function test_valid_reset_token_updates_password_and_redirects_to_login(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $token = Password::createToken($admin);
+
+        $response = $this->post('/password/reset', [
+            'token' => $token,
+            'email' => $admin->email,
+            'password' => 'NewSecure123',
+            'password_confirmation' => 'NewSecure123',
+        ]);
+
+        $response->assertRedirect(route('login'));
+
+        $admin->refresh();
+        $this->assertTrue(Hash::check('NewSecure123', $admin->password));
+    }
+
+    public function test_invalid_reset_token_is_rejected(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->post('/password/reset', [
+            'token' => 'not-a-real-token',
+            'email' => $admin->email,
+            'password' => 'NewSecure123',
+            'password_confirmation' => 'NewSecure123',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+
+        $admin->refresh();
+        $this->assertFalse(Hash::check('NewSecure123', $admin->password));
+    }
+
+    public function test_weak_new_password_is_rejected_on_reset(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $token = Password::createToken($admin);
+
+        $response = $this->post('/password/reset', [
+            'token' => $token,
+            'email' => $admin->email,
+            'password' => 'alllowercase',
+            'password_confirmation' => 'alllowercase',
+        ]);
+
+        $response->assertSessionHasErrors('password');
     }
 }
