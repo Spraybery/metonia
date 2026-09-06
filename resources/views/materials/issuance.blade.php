@@ -213,7 +213,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                @endif
+                                    @endif
+@endif
                             </td>
                         </tr>
                         @empty
