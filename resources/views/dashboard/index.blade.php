@@ -118,7 +118,9 @@
                                     <th>Current Stage</th>
                                     <th>Lead Supervisor</th>
                                     <th class="text-center">Days Stuck</th>
+                                    @if(!Auth::user()->isAccountant())
                                     <th class="text-right">Action</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -137,11 +139,13 @@
                                             {{ $vehicle->days_in_current_stage }} Days
                                         </span>
                                     </td>
+                                    @if(!Auth::user()->isAccountant())
                                     <td class="text-right">
                                         <a href="{{ route('vehicles.show', $vehicle->id) }}" class="btn btn-light btn-xs">
                                             <i class="icon-arrow-right5"></i> Resolve
                                         </a>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -66,7 +66,9 @@
                             <th>Date of Intake</th>
                             <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
+                            @if(Auth::user()->canEdit('vehicles') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 170px;">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +107,7 @@
                             <td>
                                 <span class="font-weight-semibold text-dark">{{ $row->assigned_to ?: 'Unassigned' }}</span>
                             </td>
+                            @if(Auth::user()->canEdit('vehicles') || Auth::user()->canDelete())
                             <td class="text-center">
                                 <div class="d-inline-flex align-items-center" style="gap: 4px;">
                                     @if(Auth::user()->canEdit('vehicles'))
@@ -149,6 +152,7 @@
                                     </div>
                                 </div>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

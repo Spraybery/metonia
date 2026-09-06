@@ -85,7 +85,9 @@
                             <th>Received By</th>
                             <th>Delivery Date</th>
                             <th>Note / Consignment Ref</th>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 80px;">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -115,8 +117,8 @@
                             <td class="font-size-sm text-muted">
                                 {{ $m->note ?: 'Supplier consignment verified & received into stock.' }}
                             </td>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <td class="text-center">
-                                @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                                 <div class="list-icons">
                                     <div class="dropdown">
                                         <a href="#" class="list-icons-item" data-toggle="dropdown">
@@ -138,9 +140,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                @else
-                                <span class="badge badge-light border text-muted font-weight-normal"><i class="icon-eye mr-1 text-primary"></i> View Only</span>
-                                @endif
 
                                 {{-- Edit Restock Modal --}}
                                 @if(Auth::user()->canEdit('materials'))

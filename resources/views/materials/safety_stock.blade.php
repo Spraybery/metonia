@@ -81,7 +81,9 @@
                             <th class="text-center">Safety Reorder Level</th>
                             <th class="text-center">Stock Status</th>
                             <th>Primary Supplier</th>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 100px;">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -128,6 +130,7 @@
                                 @endif
                             </td>
                             <td class="font-size-sm">{{ $row->supplier ?: '—' }}</td>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <td class="text-center">
                                 <div class="list-icons">
                                     <div class="dropdown">
@@ -152,6 +155,8 @@
                                         </div>
                                     </div>
                                 </div>
+                            </td>
+                            @endif
 
                                 {{-- Quick Issue to Worker Modal --}}
                                 @if(Auth::user()->canEdit('materials'))

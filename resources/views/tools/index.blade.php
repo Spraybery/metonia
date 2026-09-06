@@ -89,7 +89,9 @@
                             <th class="text-center">Status</th>
                             <th>Issued By</th>
                             <th>Issued To</th>
+                            @if(Auth::user()->canEdit('tools') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 170px;">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -120,6 +122,7 @@
                                     <span class="font-weight-semibold text-dark">{{ $tool->assigned_to }}</span>
                                 @endif
                             </td>
+                            @if(Auth::user()->canEdit('tools') || Auth::user()->canDelete())
                             <td class="text-center">
                                 <div class="d-inline-flex align-items-center" style="gap: 4px;">
                                     @if(Auth::user()->canEdit('tools'))
@@ -135,11 +138,9 @@
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif
-                                    @if(!Auth::user()->canEdit('tools') && !Auth::user()->canDelete())
-                                        <span class="badge badge-light border text-muted font-weight-normal"><i class="icon-eye mr-1 text-primary"></i> View Only</span>
-                                    @endif
                                 </div>
                             </td>
+                            @endif
                                 {{-- Edit Modal --}}
                                 @if(Auth::user()->canEdit('tools'))
                                 <div id="modal-edit-tool-{{ $tool->id }}" class="modal fade" tabindex="-1">

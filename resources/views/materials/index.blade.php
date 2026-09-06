@@ -86,7 +86,9 @@
                             <th class="text-center">On Hand</th>
                             <th class="text-center">Reorder Level</th>
                             <th>Supplier</th>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 80px;">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -119,6 +121,7 @@
                                 {{ number_format($row->low_stock, 2) }}
                             </td>
                             <td class="font-size-sm">{{ $row->supplier ?: '—' }}</td>
+                            @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <td class="text-center">
                                 <div class="list-icons">
                                     <div class="dropdown">
@@ -265,6 +268,7 @@
                                 </div>
                                 @endif
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>
