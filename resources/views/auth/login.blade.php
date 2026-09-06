@@ -47,14 +47,14 @@
                             @csrf
 
                             <div class="form-group form-group-feedback form-group-feedback-left">
-                                <input type="text" name="identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="{{ old('identifier', 'admin') }}" required autofocus>
+                                <input type="text" name="identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="{{ old('identifier') }}" required autofocus autocomplete="username">
                                 <div class="form-control-feedback">
                                     <i class="icon-user text-muted"></i>
                                 </div>
                             </div>
 
                             <div class="form-group form-group-feedback form-group-feedback-left position-relative">
-                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" value="password" required>
+                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" required autocomplete="current-password">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>

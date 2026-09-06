@@ -29,10 +29,11 @@ class AuthController extends Controller
             'remember' => 'nullable',
         ]);
 
-        $field = filter_var($validated['identifier'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $identifier = trim($validated['identifier']);
+        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         $credentials = [
-            $field => $validated['identifier'],
+            $field => $identifier,
             'password' => $validated['password'],
         ];
 

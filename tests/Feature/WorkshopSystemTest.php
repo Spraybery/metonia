@@ -520,4 +520,55 @@ class WorkshopSystemTest extends TestCase
 
         $response->assertSessionHasErrors('password');
     }
+
+    public function test_updating_username_allows_authenticating_with_new_username(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $manager = User::where('username', 'manager')->first();
+
+        // Admin updates manager's username to "new_manager_handle"
+        $response = $this->actingAs($admin)->put("/users/{$manager->id}", [
+            'name' => $manager->name,
+            'username' => ' new_manager_handle ',
+            'email' => $manager->email,
+            'role' => $manager->role,
+        ]);
+
+        $response->assertSessionHas('flash_success');
+        $manager->refresh();
+        $this->assertEquals('new_manager_handle', $manager->username);
+
+        // Sign out admin session so guest login can be tested
+        $this->post('/logout');
+
+        // Authenticate with the newly assigned username
+        $loginResponse = $this->post('/login', [
+            'identifier' => 'new_manager_handle',
+            'password' => 'password',
+        ]);
+
+        $loginResponse->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($manager);
+    }
+
+    public function test_login_page_renders_with_empty_inputs(): void
+    {
+        $response = $this->get('/login');
+        $response->assertStatus(200);
+        $response->assertDontSee('value="admin"', false);
+        $response->assertDontSee('value="password"', false);
+    }
+
+    public function test_login_trims_whitespace_from_username_input(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->post('/login', [
+            'identifier' => '  admin  ',
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($admin);
+    }
 }

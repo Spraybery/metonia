@@ -41,6 +41,9 @@ class UserController extends Controller
             'role' => 'required|string|in:'.implode(',', Qs::getUserRoles()),
         ]);
 
+        $validated['name'] = trim($validated['name']);
+        $validated['username'] = trim($validated['username']);
+        $validated['email'] = trim($validated['email']);
         $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
@@ -68,6 +71,10 @@ class UserController extends Controller
             'password' => 'nullable|string|min:6',
             'role' => 'required|string|in:'.implode(',', Qs::getUserRoles()),
         ]);
+
+        $validated['name'] = trim($validated['name']);
+        $validated['username'] = trim($validated['username']);
+        $validated['email'] = trim($validated['email']);
 
         if (! empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
