@@ -14,6 +14,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::post('/api/login', [AuthController::class, 'login']);
+
+    // Forgot / Reset Password
+    Route::get('/password/forgot', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/password/forgot', [AuthController::class, 'sendResetLinkEmail'])->middleware('throttle:6,1')->name('password.email');
+    Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [AuthController::class, 'resetPassword'])->middleware('throttle:6,1')->name('password.update');
 });
 
 // Authenticated Application Routes
