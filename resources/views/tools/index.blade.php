@@ -135,6 +135,9 @@
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif
+                                    @if(!Auth::user()->canEdit('tools') && !Auth::user()->canDelete())
+                                        <span class="badge badge-light border text-muted font-weight-normal"><i class="icon-eye mr-1 text-primary"></i> View Only</span>
+                                    @endif
                                 </div>
                             </td>
                                 {{-- Edit Modal --}}

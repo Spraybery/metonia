@@ -116,6 +116,7 @@
                                 {{ $m->note ?: 'Supplier consignment verified & received into stock.' }}
                             </td>
                             <td class="text-center">
+                                @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                                 <div class="list-icons">
                                     <div class="dropdown">
                                         <a href="#" class="list-icons-item" data-toggle="dropdown">
@@ -137,6 +138,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                @else
+                                <span class="badge badge-light border text-muted font-weight-normal"><i class="icon-eye mr-1 text-primary"></i> View Only</span>
+                                @endif
 
                                 {{-- Edit Restock Modal --}}
                                 @if(Auth::user()->canEdit('materials'))
