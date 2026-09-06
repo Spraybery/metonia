@@ -81,18 +81,6 @@
                                 </button>
                             </div>
                         </form>
-                    </div>
-
-                    <!-- Quick Demo Credentials Box -->
-                    <div class="card-footer bg-light border-top p-3 font-size-xs">
-                        <div class="font-weight-bold text-muted text-uppercase mb-1">Demo Plant Accounts (Password: <code>password</code>):</div>
-                        <div class="d-flex flex-wrap" style="gap: 4px;">
-                            <button type="button" class="btn btn-outline-dark btn-xs font-weight-semibold" onclick="setCreds('admin')">Admin</button>
-                            <button type="button" class="btn btn-outline-success btn-xs font-weight-semibold" onclick="setCreds('manager')">Manager</button>
-                            <button type="button" class="btn btn-outline-warning btn-xs font-weight-semibold" onclick="setCreds('storekeeper')">Storekeeper</button>
-                            <button type="button" class="btn btn-outline-secondary btn-xs font-weight-semibold" onclick="setCreds('accountant')">Accountant</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="text-center text-white-50 font-size-xs">
