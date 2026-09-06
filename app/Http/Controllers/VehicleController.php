@@ -46,6 +46,29 @@ class VehicleController extends Controller
         return view('vehicles.index', compact('vehicles', 'stages', 'supervisors'));
     }
 
+    public function printRegister(Request $request)
+    {
+        $query = Vehicle::with(['stageHistories', 'parts'])->orderByDesc('created_at');
+
+        if ($request->filled('stage')) {
+            $query->where('stage', $request->query('stage'));
+        }
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('plate', 'like', $s)
+                    ->orWhere('model', 'like', $s)
+                    ->orWhere('customer_name', 'like', $s)
+                    ->orWhere('assigned_to', 'like', $s);
+            });
+        }
+
+        $vehicles = $query->get();
+
+        return view('print.vehicles_register', compact('vehicles'));
+    }
+
     public function create()
     {
         $stages = Qs::getStages();

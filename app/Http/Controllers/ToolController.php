@@ -52,6 +52,34 @@ class ToolController extends Controller
         return view('tools.index', compact('tools', 'categories', 'statuses', 'stats'));
     }
 
+    public function printRegister(Request $request)
+    {
+        $query = Tool::orderBy('name');
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->query('category'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->query('status'));
+        }
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', $s)
+                    ->orWhere('asset_tag', 'like', $s)
+                    ->orWhere('brand', 'like', $s)
+                    ->orWhere('location', 'like', $s)
+                    ->orWhere('assigned_to', 'like', $s);
+            });
+        }
+
+        $tools = $query->get();
+
+        return view('print.tools_register', compact('tools'));
+    }
+
     public function store(Request $request)
     {
         if (! Auth::user()->canEdit('tools')) {

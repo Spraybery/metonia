@@ -15,6 +15,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('materials.safety_stock.print', request()->query()) }}" target="_blank" class="btn btn-light font-weight-semibold shadow-xs mr-1">
+                <i class="icon-printer mr-1"></i> Print Register
+            </a>
             @if(Auth::user()->canEdit('materials'))
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-safety-item">
                 <i class="icon-plus2 mr-1"></i> Add Item
@@ -78,7 +81,7 @@
                             <th class="text-center">Safety Reorder Level</th>
                             <th class="text-center">Stock Status</th>
                             <th>Primary Supplier</th>
-                            <th class="text-center" style="width: 100px;">Action</th>
+                            <th class="text-center no-export" style="width: 100px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

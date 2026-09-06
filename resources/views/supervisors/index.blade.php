@@ -15,9 +15,9 @@
                     <i class="icon-plus2 mr-1"></i> Add Supervisor
                 </button>
                 @endif
-                <button onclick="window.print()" class="btn btn-light btn-sm mr-2">
+                <a href="{{ route('supervisors.print') }}" target="_blank" class="btn btn-light btn-sm mr-2">
                     <i class="icon-printer mr-1"></i> Print Roster
-                </button>
+                </a>
                 {!! Qs::getPanelOptions() !!}
             </div>
         </div>
@@ -34,7 +34,7 @@
                             <th>Work Shift</th>
                             <th>Contact Phone</th>
                             <th class="text-center">Live Active Workload</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>

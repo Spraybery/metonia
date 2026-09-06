@@ -322,4 +322,104 @@ class WorkshopSystemTest extends TestCase
         $this->assertEquals(12, $vehicle->days_in_current_stage);
         $this->assertTrue($vehicle->isStuck());
     }
+
+    public function test_vehicles_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/vehicles/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Vehicle Build &amp; Job Cards Register', false);
+        $response->assertSee('MET-2026-8849102');
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_vehicles_register_print_view_respects_stage_filter(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/vehicles/print?stage='.urlencode('2. Structural & Frame'));
+
+        $response->assertStatus(200);
+        $response->assertSee('MET-2026-8849102');
+        $response->assertDontSee('MET-2026-7731209');
+    }
+
+    public function test_materials_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Store Inventory &amp; Raw Materials Register', false);
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_materials_register_print_view_respects_category_filter(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/print?category=Metals');
+
+        $response->assertStatus(200);
+        $response->assertSee('Heavy Duty Structural Steel Beam');
+        $response->assertDontSee('Aluminium Tread Plate Sheet');
+    }
+
+    public function test_outward_issuance_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/issuance/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Outward Store Material Issuance Register');
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_supplier_restock_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/restock/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Supplier Restock &amp; Delivery Register', false);
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_safety_stock_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/safety-stock/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Worker Safety &amp; Personal Protective Equipment', false);
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_tools_register_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/tools/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Workshop Tools &amp; Calibration Asset Register', false);
+        $response->assertSee('logo_metonia');
+    }
+
+    public function test_supervisors_roster_print_view_renders_with_logo_and_theme(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/supervisors/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Workshop Lead Supervisors Roster');
+        $response->assertSee('logo_metonia');
+    }
 }

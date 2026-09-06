@@ -15,6 +15,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('materials.print', request()->query()) }}" target="_blank" class="btn btn-light font-weight-semibold shadow-xs mr-1">
+                <i class="icon-printer mr-1"></i> Print Register
+            </a>
             @if(Auth::user()->canEdit('materials'))
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-add-material">
                 <i class="icon-plus2 mr-1"></i> Add Material SKU
@@ -83,7 +86,7 @@
                             <th class="text-center">On Hand</th>
                             <th class="text-center">Reorder Level</th>
                             <th>Supplier</th>
-                            <th class="text-center" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 80px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
