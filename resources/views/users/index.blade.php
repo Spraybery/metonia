@@ -28,7 +28,7 @@
                             <th>Email Address</th>
                             <th class="text-center">Assigned Role</th>
                             <th class="text-center">Registered</th>
-                            <th class="text-center no-export" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 170px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,27 +57,19 @@
                             </td>
                             <td class="text-center text-muted font-size-xs">{{ $user->created_at ? $user->created_at->format('d M Y') : '—' }}</td>
                             <td class="text-center">
-                                <div class="list-icons">
-                                    <div class="dropdown">
-                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                            <i class="icon-menu9"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-user-{{ $user->id }}">
-                                                <i class="icon-pencil"></i> Edit Account
-                                            </a>
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    <button type="button" class="btn btn-xs btn-outline-info font-weight-semibold px-2" data-toggle="modal" data-target="#modal-edit-user-{{ $user->id }}" title="Edit Account">
+                                        <i class="icon-pencil mr-1"></i> Edit
+                                    </button>
 
-                                            @if(Auth::id() !== $user->id)
-                                            <div class="dropdown-divider"></div>
-                                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" id="del-user-{{ $user->id }}">
-                                                @csrf @method('DELETE')
-                                            </form>
-                                            <a href="#" onclick="if(confirm('Delete user account \'{{ $user->username }}\'?')) { document.getElementById('del-user-{{ $user->id }}').submit(); }" class="dropdown-item text-danger">
-                                                <i class="icon-trash text-danger"></i> Delete Account
-                                            </a>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @if(Auth::id() !== $user->id)
+                                        <form method="POST" action="{{ route('users.destroy', $user->id) }}" id="del-user-{{ $user->id }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                        <button type="button" onclick="if(confirm('Delete user account \'{{ $user->username }}\'?')) { document.getElementById('del-user-{{ $user->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Account">
+                                            <i class="icon-trash mr-1"></i> Delete
+                                        </button>
+                                    @endif
                                 </div>
 
                                 {{-- Edit Modal --}}

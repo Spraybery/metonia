@@ -66,7 +66,7 @@
                             <th>Date of Intake</th>
                             <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
-                            <th class="text-center no-export" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 170px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,9 +106,24 @@
                                 <span class="font-weight-semibold text-dark">{{ $row->assigned_to ?: 'Unassigned' }}</span>
                             </td>
                             <td class="text-center">
-                                <div class="list-icons">
-                                    <div class="dropdown">
-                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    @if(Auth::user()->canEdit('vehicles'))
+                                        <a href="{{ route('vehicles.edit', $row->id) }}" class="btn btn-xs btn-outline-info font-weight-semibold px-2" title="Edit Vehicle Details">
+                                            <i class="icon-pencil mr-1"></i> Edit
+                                        </a>
+                                    @endif
+
+                                    @if(Auth::user()->canDelete())
+                                        <form method="POST" action="{{ route('vehicles.destroy', $row->id) }}" id="del-veh-{{ $row->id }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                        <button type="button" onclick="if(confirm('Delete Job Card #{{ $row->plate }}? This will permanently delete stage history and parts logs.')) { document.getElementById('del-veh-{{ $row->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Job Card">
+                                            <i class="icon-trash mr-1"></i> Delete
+                                        </button>
+                                    @endif
+
+                                    <div class="dropdown d-inline">
+                                        <a href="#" class="list-icons-item ml-1" data-toggle="dropdown">
                                             <i class="icon-menu9"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
@@ -118,7 +133,7 @@
                                             <a href="{{ route('vehicles.print', $row->id) }}" target="_blank" class="dropdown-item">
                                                 <i class="icon-printer text-muted"></i> Print Job Sheet
                                             </a>
-                                             @if(Auth::user()->canEdit('vehicles'))
+                                            @if(Auth::user()->canEdit('vehicles'))
                                                 @php $nextSt = Qs::getNextStage($row->stage); @endphp
                                                 @if($nextSt)
                                                 <form method="POST" action="{{ route('vehicles.update_stage', $row->id) }}" id="adv-veh-{{ $row->id }}">
@@ -129,18 +144,6 @@
                                                     <i class="icon-arrow-right8 text-success"></i> Advance to: {{ $nextSt }}
                                                 </a>
                                                 @endif
-                                                <a href="{{ route('vehicles.edit', $row->id) }}" class="dropdown-item">
-                                                    <i class="icon-pencil text-muted"></i> Edit Details
-                                                </a>
-                                             @endif
-                                            @if(Auth::user()->canDelete())
-                                            <div class="dropdown-divider"></div>
-                                            <form method="POST" action="{{ route('vehicles.destroy', $row->id) }}" id="del-veh-{{ $row->id }}">
-                                                @csrf @method('DELETE')
-                                            </form>
-                                            <a href="#" onclick="if(confirm('Delete Job Card #{{ $row->plate }}? This will permanently delete stage history and parts logs.')) { document.getElementById('del-veh-{{ $row->id }}').submit(); }" class="dropdown-item text-danger">
-                                                <i class="icon-trash text-danger"></i> Delete Job Card
-                                            </a>
                                             @endif
                                         </div>
                                     </div>

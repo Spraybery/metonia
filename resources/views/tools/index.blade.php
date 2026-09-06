@@ -89,7 +89,7 @@
                             <th class="text-center">Status</th>
                             <th>Issued By</th>
                             <th>Issued To</th>
-                            <th class="text-center no-export" style="width: 100px;">Action</th>
+                            <th class="text-center no-export" style="width: 170px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,19 +97,18 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <span class="font-weight-semibold text-dark">{{ $tool->name }}</span>
-                                @if($tool->asset_tag)
-                                    <div class="font-size-xs text-muted font-monospace">{{ $tool->asset_tag }}</div>
-                                @endif
+                                <div class="font-weight-bold text-dark">{{ $tool->name }}</div>
+                                <div class="text-muted font-size-xs">Tag: <code>{{ $tool->asset_tag }}</code> | {{ $tool->brand ?: 'Standard' }}</div>
                             </td>
                             <td class="text-center">
                                 @php
-                                    $statusBadge = match($tool->status) {
+                                    $stBadge = match($tool->status) {
+                                        'Available' => 'badge-success',
                                         'Checked Out' => 'badge-warning',
-                                        default => 'badge-success'
+                                        default => 'badge-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $statusBadge }} font-weight-bold">{{ $tool->status }}</span>
+                                <span class="badge {{ $stBadge }} px-2 py-1 font-weight-semibold">{{ $tool->status }}</span>
                             </td>
                             <td>
                                 <span class="font-weight-semibold text-dark">{{ $tool->issued_by ?: 'Store Supervisor' }}</span>
@@ -122,30 +121,22 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <div class="list-icons">
-                                    <div class="dropdown">
-                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                            <i class="icon-menu9"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            @if(Auth::user()->canEdit('tools'))
-                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-tool-{{ $tool->id }}">
-                                                <i class="icon-pencil"></i> Edit Asset
-                                            </a>
-                                            @endif
-                                            @if(Auth::user()->canDelete())
-                                            <div class="dropdown-divider"></div>
-                                            <form method="POST" action="{{ route('tools.destroy', $tool->id) }}" id="del-tool-{{ $tool->id }}">
-                                                @csrf @method('DELETE')
-                                            </form>
-                                            <a href="#" onclick="if(confirm('Decommission equipment [{{ $tool->asset_tag }}]?')) { document.getElementById('del-tool-{{ $tool->id }}').submit(); }" class="dropdown-item text-danger">
-                                                <i class="icon-trash text-danger"></i> Decommission
-                                            </a>
-                                            @endif
-                                        </div>
-                                    </div>
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    @if(Auth::user()->canEdit('tools'))
+                                        <button type="button" class="btn btn-xs btn-outline-info font-weight-semibold px-2" data-toggle="modal" data-target="#modal-edit-tool-{{ $tool->id }}" title="Edit Asset Details">
+                                            <i class="icon-pencil mr-1"></i> Edit
+                                        </button>
+                                    @endif
+                                    @if(Auth::user()->canDelete())
+                                        <form method="POST" action="{{ route('tools.destroy', $tool->id) }}" id="del-tool-{{ $tool->id }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                        <button type="button" onclick="if(confirm('Decommission equipment [{{ $tool->asset_tag }}]?')) { document.getElementById('del-tool-{{ $tool->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Decommission Equipment">
+                                            <i class="icon-trash mr-1"></i> Delete
+                                        </button>
+                                    @endif
                                 </div>
-
+                            </td>
                                 {{-- Edit Modal --}}
                                 @if(Auth::user()->canEdit('tools'))
                                 <div id="modal-edit-tool-{{ $tool->id }}" class="modal fade" tabindex="-1">

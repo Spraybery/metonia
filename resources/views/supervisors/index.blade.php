@@ -32,7 +32,7 @@
                             <th>Assigned Build Stage</th>
                             <th>Contact Phone</th>
                             <th class="text-center">Live Active Workload</th>
-                            <th class="text-center no-export" style="width: 80px;">Action</th>
+                            <th class="text-center no-export" style="width: 170px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,28 +57,20 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <div class="list-icons">
-                                    <div class="dropdown">
-                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                            <i class="icon-menu9"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            @if(Auth::user()->canEdit('supervisors'))
-                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-sup-{{ $sup->id }}">
-                                                <i class="icon-pencil"></i> Edit Details
-                                            </a>
-                                            @endif
-                                            @if(Auth::user()->canDelete())
-                                            <div class="dropdown-divider"></div>
-                                            <form method="POST" action="{{ route('supervisors.destroy', $sup->id) }}" id="del-sup-{{ $sup->id }}">
-                                                @csrf @method('DELETE')
-                                            </form>
-                                            <a href="#" onclick="if(confirm('Remove {{ $sup->name }} from active supervisor roster?')) { document.getElementById('del-sup-{{ $sup->id }}').submit(); }" class="dropdown-item text-danger">
-                                                <i class="icon-trash text-danger"></i> Remove Supervisor
-                                            </a>
-                                            @endif
-                                        </div>
-                                    </div>
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    @if(Auth::user()->canEdit('supervisors'))
+                                        <button type="button" class="btn btn-xs btn-outline-info font-weight-semibold px-2" data-toggle="modal" data-target="#modal-edit-sup-{{ $sup->id }}" title="Edit Details">
+                                            <i class="icon-pencil mr-1"></i> Edit
+                                        </button>
+                                    @endif
+                                    @if(Auth::user()->canDelete())
+                                        <form method="POST" action="{{ route('supervisors.destroy', $sup->id) }}" id="del-sup-{{ $sup->id }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                        </form>
+                                        <button type="button" onclick="if(confirm('Remove {{ $sup->name }} from active supervisor roster?')) { document.getElementById('del-sup-{{ $sup->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Remove Supervisor">
+                                            <i class="icon-trash mr-1"></i> Delete
+                                        </button>
+                                    @endif
                                 </div>
 
                                 {{-- Edit Modal --}}
