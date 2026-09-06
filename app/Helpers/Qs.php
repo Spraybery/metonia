@@ -134,7 +134,7 @@ class Qs
         return [
             'Admin',
             'Manager',
-            'Shopkeeper',
+            'Storekeeper',
             'Accountant',
         ];
     }

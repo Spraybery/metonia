@@ -43,14 +43,14 @@ class User extends Authenticatable
         return $this->role === 'Manager';
     }
 
-    public function isShopkeeper(): bool
+    public function isStorekeeper(): bool
     {
-        return $this->role === 'Shopkeeper' || $this->role === 'Store Keeper';
+        return in_array($this->role, ['Storekeeper', 'Store Keeper', 'Shopkeeper']);
     }
 
-    public function isStoreKeeper(): bool
+    public function isShopkeeper(): bool
     {
-        return $this->isShopkeeper();
+        return $this->isStorekeeper();
     }
 
     public function isAccountant(): bool
@@ -63,7 +63,7 @@ class User extends Authenticatable
         return match ($this->role) {
             'Admin' => true,
             'Manager', 'Accountant' => in_array($module, ['dashboard', 'vehicles', 'supervisors', 'materials', 'tools']),
-            'Shopkeeper', 'Store Keeper' => in_array($module, ['dashboard', 'materials', 'tools']),
+            'Storekeeper', 'Store Keeper', 'Shopkeeper' => in_array($module, ['dashboard', 'materials', 'tools']),
             default => false,
         };
     }
@@ -73,7 +73,7 @@ class User extends Authenticatable
         return match ($this->role) {
             'Admin' => true,
             'Manager' => in_array($module, ['vehicles', 'supervisors', 'materials', 'tools']),
-            'Shopkeeper', 'Store Keeper' => in_array($module, ['materials', 'tools', 'vehicle_parts']),
+            'Storekeeper', 'Store Keeper', 'Shopkeeper' => in_array($module, ['materials', 'tools', 'vehicle_parts']),
             'Accountant' => false,
             default => false,
         };

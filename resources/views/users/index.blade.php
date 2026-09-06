@@ -48,7 +48,7 @@
                                     $roleBadge = match($user->role) {
                                         'Admin' => 'badge-dark',
                                         'Manager' => 'badge-primary',
-                                        'Shopkeeper', 'Store Keeper' => 'badge-warning',
+                                        'Storekeeper', 'Store Keeper', 'Shopkeeper' => 'badge-warning',
                                         'Accountant' => 'badge-success',
                                         default => 'badge-secondary'
                                     };

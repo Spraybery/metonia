@@ -63,7 +63,7 @@
                         $roleClass = match(Auth::user()->role) {
                             'Admin' => 'badge-admin',
                             'Manager' => 'badge-manager',
-                            'Shopkeeper', 'Store Keeper' => 'badge-storekeeper',
+                            'Storekeeper', 'Store Keeper', 'Shopkeeper' => 'badge-storekeeper',
                             'Accountant' => 'badge-accountant',
                             default => 'badge-secondary'
                         };

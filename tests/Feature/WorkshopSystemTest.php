@@ -93,11 +93,11 @@ class WorkshopSystemTest extends TestCase
         ]);
     }
 
-    public function test_shopkeeper_cannot_access_user_management(): void
+    public function test_storekeeper_cannot_access_user_management(): void
     {
-        $shopkeeper = User::where('username', 'shopkeeper')->first();
+        $storekeeper = User::where('username', 'storekeeper')->first() ?? User::where('username', 'shopkeeper')->first();
 
-        $response = $this->actingAs($shopkeeper)->get('/users');
+        $response = $this->actingAs($storekeeper)->get('/users');
         $response->assertStatus(403);
     }
 
@@ -131,16 +131,16 @@ class WorkshopSystemTest extends TestCase
         ]);
     }
 
-    public function test_shopkeeper_can_issue_material_to_vehicle_with_technician_and_syncs_job_card(): void
+    public function test_storekeeper_can_issue_material_to_vehicle_with_technician_and_syncs_job_card(): void
     {
-        $shopkeeper = User::where('username', 'shopkeeper')->first();
+        $storekeeper = User::where('username', 'storekeeper')->first() ?? User::where('username', 'shopkeeper')->first();
         $vehicle = Vehicle::where('plate', 'MET-2026-8849102')->first();
         $material = Material::where('qty', '>', 5)->first();
 
         $initialQty = (float) $material->qty;
         $issueQty = 3.0;
 
-        $response = $this->actingAs($shopkeeper)->post("/materials/{$material->id}/movement", [
+        $response = $this->actingAs($storekeeper)->post("/materials/{$material->id}/movement", [
             'type' => 'out',
             'qty' => $issueQty,
             'date' => now()->toDateString(),

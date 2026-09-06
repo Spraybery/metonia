@@ -43,18 +43,18 @@
 
                         @include('partials.flash_message')
 
-                        <form action="{{ route('login.post') }}" method="POST">
+                        <form action="{{ route('login.post') }}" method="POST" autocomplete="off">
                             @csrf
 
                             <div class="form-group form-group-feedback form-group-feedback-left">
-                                <input type="text" name="identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="{{ old('identifier') }}" required autofocus autocomplete="username">
+                                <input type="text" name="identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="" required autofocus autocomplete="off">
                                 <div class="form-control-feedback">
                                     <i class="icon-user text-muted"></i>
                                 </div>
                             </div>
 
                             <div class="form-group form-group-feedback form-group-feedback-left position-relative">
-                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" required autocomplete="current-password">
+                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" required autocomplete="off">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
@@ -66,7 +66,7 @@
                             <div class="form-group d-flex align-items-center justify-content-between mb-3">
                                 <div class="form-check mb-0">
                                     <label class="form-check-label font-size-sm text-muted">
-                                        <input type="checkbox" name="remember" value="1" class="form-check-input" checked> Remember session
+                                        <input type="checkbox" name="remember" value="1" class="form-check-input"> Remember session
                                     </label>
                                 </div>
                                 <a href="{{ route('password.request') }}" class="font-size-xs">Forgot password?</a>
@@ -86,7 +86,7 @@
                         <div class="d-flex flex-wrap" style="gap: 4px;">
                             <button type="button" class="btn btn-outline-dark btn-xs font-weight-semibold" onclick="setCreds('admin')">Admin</button>
                             <button type="button" class="btn btn-outline-success btn-xs font-weight-semibold" onclick="setCreds('manager')">Manager</button>
-                            <button type="button" class="btn btn-outline-warning btn-xs font-weight-semibold" onclick="setCreds('shopkeeper')">Shopkeeper</button>
+                            <button type="button" class="btn btn-outline-warning btn-xs font-weight-semibold" onclick="setCreds('storekeeper')">Storekeeper</button>
                             <button type="button" class="btn btn-outline-secondary btn-xs font-weight-semibold" onclick="setCreds('accountant')">Accountant</button>
                         </div>
                     </div>
