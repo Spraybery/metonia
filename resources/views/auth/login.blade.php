@@ -53,14 +53,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group form-group-feedback form-group-feedback-left form-group-feedback-right">
-                                <input type="password" name="password" id="login-password" class="form-control" placeholder="Account Password" value="password" required>
+                            <div class="form-group form-group-feedback form-group-feedback-left position-relative">
+                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" value="password" required>
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
-                                <div class="form-control-feedback" style="pointer-events: auto; cursor: pointer;" onclick="togglePasswordVisibility('login-password', this)">
-                                    <i class="icon-eye-blocked text-muted"></i>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-light border-0 position-absolute" style="right: 6px; top: 50%; transform: translateY(-50%); z-index: 5; background: transparent; cursor: pointer; font-size: 15px;" onclick="togglePasswordVisibility('login-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
+                                    👁️
+                                </button>
                             </div>
 
                             <div class="form-group d-flex align-items-center justify-content-between mb-3">
@@ -109,12 +109,18 @@
 
         function togglePasswordVisibility(inputId, toggleEl) {
             const input = document.getElementById(inputId);
-            const icon = toggleEl.querySelector('i');
+            if (!input) return;
             const showing = input.type === 'text';
-
             input.type = showing ? 'password' : 'text';
-            icon.classList.toggle('icon-eye-blocked', showing);
-            icon.classList.toggle('icon-eye', !showing);
+            if (toggleEl) {
+                const icon = toggleEl.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('icon-eye-blocked', showing);
+                    icon.classList.toggle('icon-eye', !showing);
+                } else {
+                    toggleEl.style.opacity = showing ? '0.5' : '1';
+                }
+            }
         }
     </script>
 </body>

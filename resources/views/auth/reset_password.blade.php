@@ -57,28 +57,28 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group form-group-feedback form-group-feedback-left form-group-feedback-right">
-                                <input type="password" name="password" id="reset-password" class="form-control @error('password') is-invalid @enderror" placeholder="New Password" required minlength="8">
+                            <div class="form-group form-group-feedback form-group-feedback-left position-relative">
+                                <input type="password" name="password" id="reset-password" class="form-control pr-5 @error('password') is-invalid @enderror" placeholder="New Password" required minlength="8">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
-                                <div class="form-control-feedback" style="pointer-events: auto; cursor: pointer;" onclick="togglePasswordVisibility('reset-password', this)">
-                                    <i class="icon-eye-blocked text-muted"></i>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-light border-0 position-absolute" style="right: 6px; top: 50%; transform: translateY(-50%); z-index: 5; background: transparent; cursor: pointer; font-size: 15px;" onclick="togglePasswordVisibility('reset-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
+                                    👁️
+                                </button>
                                 @error('password')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                                 <span class="font-size-xs text-muted">Min 8 characters, upper &amp; lowercase letters, and a number.</span>
                             </div>
 
-                            <div class="form-group form-group-feedback form-group-feedback-left form-group-feedback-right mb-3">
-                                <input type="password" name="password_confirmation" id="reset-password-confirm" class="form-control" placeholder="Confirm New Password" required minlength="8">
+                            <div class="form-group form-group-feedback form-group-feedback-left position-relative mb-3">
+                                <input type="password" name="password_confirmation" id="reset-password-confirm" class="form-control pr-5" placeholder="Confirm New Password" required minlength="8">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
-                                <div class="form-control-feedback" style="pointer-events: auto; cursor: pointer;" onclick="togglePasswordVisibility('reset-password-confirm', this)">
-                                    <i class="icon-eye-blocked text-muted"></i>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-light border-0 position-absolute" style="right: 6px; top: 50%; transform: translateY(-50%); z-index: 5; background: transparent; cursor: pointer; font-size: 15px;" onclick="togglePasswordVisibility('reset-password-confirm', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
+                                    👁️
+                                </button>
                             </div>
 
                             <div class="form-group mb-0">
@@ -108,12 +108,18 @@
     <script>
         function togglePasswordVisibility(inputId, toggleEl) {
             const input = document.getElementById(inputId);
-            const icon = toggleEl.querySelector('i');
+            if (!input) return;
             const showing = input.type === 'text';
-
             input.type = showing ? 'password' : 'text';
-            icon.classList.toggle('icon-eye-blocked', showing);
-            icon.classList.toggle('icon-eye', !showing);
+            if (toggleEl) {
+                const icon = toggleEl.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('icon-eye-blocked', showing);
+                    icon.classList.toggle('icon-eye', !showing);
+                } else {
+                    toggleEl.style.opacity = showing ? '0.5' : '1';
+                }
+            }
         }
     </script>
 </body>

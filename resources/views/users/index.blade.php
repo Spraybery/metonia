@@ -107,7 +107,12 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">New Password</label>
-                                                        <input type="password" name="password" class="form-control" placeholder="Leave blank to preserve existing password" minlength="6">
+                                                        <div class="input-group">
+                                                            <input type="password" name="password" id="edit-user-pass-{{ $user->id }}" class="form-control" placeholder="Leave blank to preserve existing password" minlength="6">
+                                                            <div class="input-group-append">
+                                                                <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('edit-user-pass-{{ $user->id }}', this)" title="Show/Hide Password">👁️</button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -169,7 +174,12 @@
 
                     <div class="form-group">
                         <label class="font-weight-semibold">Password (min 6 chars) <span class="text-danger">*</span></label>
-                        <input type="password" name="password" class="form-control" required minlength="6" value="password">
+                        <div class="input-group">
+                            <input type="password" name="password" id="add-user-pass" class="form-control" required minlength="6" value="password">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('add-user-pass', this)" title="Show/Hide Password">👁️</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

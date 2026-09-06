@@ -268,15 +268,30 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="font-weight-semibold">Current Password <span class="text-danger">*</span></label>
-                            <input type="password" name="current_password" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="current_password" id="change-pass-current" class="form-control" required>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('change-pass-current', this)" title="Show/Hide Password">👁️</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="font-weight-semibold">New Password (min 6) <span class="text-danger">*</span></label>
-                            <input type="password" name="password" class="form-control" required minlength="6">
+                            <div class="input-group">
+                                <input type="password" name="password" id="change-pass-new" class="form-control" required minlength="6">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('change-pass-new', this)" title="Show/Hide Password">👁️</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group mb-0">
                             <label class="font-weight-semibold">Confirm Password <span class="text-danger">*</span></label>
-                            <input type="password" name="password_confirmation" class="form-control" required minlength="6">
+                            <div class="input-group">
+                                <input type="password" name="password_confirmation" id="change-pass-confirm" class="form-control" required minlength="6">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('change-pass-confirm', this)" title="Show/Hide Password">👁️</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -342,6 +357,22 @@
                 $('.select-search').select2();
             }
         });
+
+        function togglePasswordVisibility(inputId, btnEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isShowing = input.type === 'text';
+            input.type = isShowing ? 'password' : 'text';
+            if (btnEl) {
+                const icon = btnEl.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('icon-eye-blocked', isShowing);
+                    icon.classList.toggle('icon-eye', !isShowing);
+                } else {
+                    btnEl.style.opacity = isShowing ? '0.5' : '1';
+                }
+            }
+        }
     </script>
 
     @stack('scripts')
