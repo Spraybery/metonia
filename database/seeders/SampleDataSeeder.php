@@ -21,43 +21,36 @@ class SampleDataSeeder extends Seeder
         $supervisors = [
             [
                 'name' => 'Eng. Hassan Mohamed',
-                'title' => 'Intake & Diagnostics Specialist',
                 'stage' => '1. Intake & Diagnosis',
                 'phone' => '+254 722 300 202',
             ],
             [
                 'name' => 'Eng. Peter Kimani',
-                'title' => 'Structural & Frame Lead',
                 'stage' => '2. Structural & Frame',
                 'phone' => '+254 711 200 101',
             ],
             [
                 'name' => 'Eng. John Otieno',
-                'title' => 'Powertrain & Transmission Lead',
                 'stage' => '3. Powertrain & Mechanical',
                 'phone' => '+254 733 400 303',
             ],
             [
                 'name' => 'Eng. Catherine Mwangi',
-                'title' => 'Auto-Electrical Specialist',
                 'stage' => '4. Electrical & Harness',
                 'phone' => '+254 720 500 404',
             ],
             [
                 'name' => 'Eng. Kevin Mutua',
-                'title' => 'Bodywork & Spray Paint Lead',
                 'stage' => '5. Bodywork & Spray Paint',
                 'phone' => '+254 715 600 505',
             ],
             [
                 'name' => 'Eng. Brian Kipchirchir',
-                'title' => 'Interior & Glass Fit Specialist',
                 'stage' => '6. Interior & Glass Fit',
                 'phone' => '+254 718 700 606',
             ],
             [
                 'name' => 'Eng. Patrick Kamau',
-                'title' => 'Plant Operations Director',
                 'stage' => 'All Stages',
                 'phone' => '+254 722 800 707',
             ],

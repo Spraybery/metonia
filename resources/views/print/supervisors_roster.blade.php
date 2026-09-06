@@ -28,7 +28,6 @@
             <tr>
                 <th style="width: 30px;">#</th>
                 <th>Supervisor Name</th>
-                <th>Designation</th>
                 <th>Assigned Build Stage</th>
                 <th>Contact Phone</th>
                 <th class="text-center">Active Workload</th>
@@ -39,14 +38,13 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td><strong>{{ $supervisor->name }}</strong></td>
-                <td>{{ $supervisor->title }}</td>
                 <td>{{ $supervisor->stage }}</td>
                 <td>{{ $supervisor->phone ?: '—' }}</td>
                 <td class="text-center">{{ $supervisor->activeSupervisedVehiclesCount() }} Vehicles</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No supervisors are currently on the roster.</td>
+                <td colspan="5" class="text-center" style="padding: 16px; color: #64748b;">No supervisors are currently on the roster.</td>
             </tr>
             @endforelse
         </tbody>

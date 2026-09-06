@@ -39,13 +39,12 @@ class SupervisorController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
             'stage' => 'required|string|in:'.implode(',', $stages),
             'phone' => 'nullable|string|max:255',
         ]);
 
         $supervisor = Supervisor::create($validated);
-        ActivityLog::record(Auth::user()->name, "Added supervisor '{$supervisor->name}' ({$supervisor->title}).");
+        ActivityLog::record(Auth::user()->name, "Added supervisor '{$supervisor->name}'.");
 
         if ($request->wantsJson()) {
             return response()->json(['ok' => true, 'supervisor' => $supervisor], 201);
@@ -65,7 +64,6 @@ class SupervisorController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
             'stage' => 'required|string|in:'.implode(',', $stages),
             'phone' => 'nullable|string|max:255',
         ]);

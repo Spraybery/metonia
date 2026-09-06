@@ -29,7 +29,6 @@
                         <tr class="bg-light">
                             <th style="width: 50px;">#</th>
                             <th>Supervisor Name</th>
-                            <th>Designation / Specialization</th>
                             <th>Assigned Build Stage</th>
                             <th>Contact Phone</th>
                             <th class="text-center">Live Active Workload</th>
@@ -44,7 +43,6 @@
                             <td>
                                 <span class="font-weight-bold text-dark">{{ $sup->name }}</span>
                             </td>
-                            <td><span class="badge badge-light border">{{ $sup->title }}</span></td>
                             <td>
                                 @if($sup->stage === 'All Stages')
                                     <span class="badge badge-secondary">All Stages (Lead)</span>
@@ -100,10 +98,6 @@
                                                         <input type="text" name="name" class="form-control" value="{{ $sup->name }}" required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="font-weight-semibold">Designation / Specialization <span class="text-danger">*</span></label>
-                                                        <input type="text" name="title" class="form-control" value="{{ $sup->title }}" required>
-                                                    </div>
-                                                    <div class="form-group">
                                                         <label class="font-weight-semibold">Assigned Stage <span class="text-danger">*</span></label>
                                                         <select name="stage" class="form-control" required>
                                                             @foreach($stages as $st)
@@ -152,11 +146,6 @@
                     <div class="form-group">
                         <label class="font-weight-semibold">Full Name <span class="text-danger">*</span></label>
                         <input type="text" name="name" class="form-control" placeholder="e.g. Eng. Peter Kimani" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Designation / Lead Role <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" placeholder="e.g. Powertrain & Engine Assembly Lead" required>
                     </div>
 
                     <div class="form-group">
