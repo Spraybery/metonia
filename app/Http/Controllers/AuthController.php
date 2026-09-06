@@ -30,17 +30,21 @@ class AuthController extends Controller
         ]);
 
         $identifier = trim($validated['identifier']);
-        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
 
-        $credentials = [
-            $field => $identifier,
-            'password' => $validated['password'],
-        ];
+        // Perform case-insensitive lookup for both username and email
+        $user = User::where(function ($query) use ($identifier, $isEmail) {
+            if ($isEmail) {
+                $query->whereRaw('LOWER(email) = ?', [strtolower($identifier)]);
+            } else {
+                $query->whereRaw('LOWER(username) = ?', [strtolower($identifier)]);
+            }
+        })->first();
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if ($user && Hash::check($validated['password'], $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
-            $user = Auth::user();
             ActivityLog::record($user->name, "{$user->name} ({$user->role}) signed into the system.");
 
             if ($request->wantsJson()) {

@@ -571,4 +571,18 @@ class WorkshopSystemTest extends TestCase
         $response->assertRedirect('/dashboard');
         $this->assertAuthenticatedAs($admin);
     }
+
+    public function test_login_is_case_insensitive_for_username_and_email(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $admin->update(['username' => 'MaryAdmin']);
+
+        $response = $this->post('/login', [
+            'identifier' => 'maryadmin',
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($admin);
+    }
 }
