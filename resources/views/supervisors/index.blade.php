@@ -31,7 +31,6 @@
                             <th>Supervisor Name</th>
                             <th>Designation / Specialization</th>
                             <th>Assigned Build Stage</th>
-                            <th>Work Shift</th>
                             <th>Contact Phone</th>
                             <th class="text-center">Live Active Workload</th>
                             <th class="text-center no-export" style="width: 80px;">Action</th>
@@ -53,7 +52,6 @@
                                     <span class="badge badge-primary">{{ $sup->stage }}</span>
                                 @endif
                             </td>
-                            <td>{{ $sup->shift ?: 'Standard Shift' }}</td>
                             <td>{{ $sup->phone ?: '—' }}</td>
                             <td class="text-center">
                                 <span class="badge {{ $workload > 3 ? 'badge-warning' : 'badge-success' }} font-weight-bold px-2 py-1" style="font-size: 13px;">
@@ -113,15 +111,9 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Shift Schedule</label>
-                                                            <input type="text" name="shift" class="form-control" value="{{ $sup->shift }}">
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Contact Phone</label>
-                                                            <input type="text" name="phone" class="form-control" value="{{ $sup->phone }}">
-                                                        </div>
+                                                    <div class="form-group">
+                                                        <label class="font-weight-semibold">Contact Phone</label>
+                                                        <input type="text" name="phone" class="form-control" value="{{ $sup->phone }}" placeholder="e.g. +254 700 123 456">
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -176,15 +168,9 @@
                         </select>
                     </div>
 
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Shift</label>
-                            <input type="text" name="shift" class="form-control" placeholder="Day Shift (07:00 - 16:00)">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Contact Phone</label>
-                            <input type="text" name="phone" class="form-control" placeholder="+254 700 123 456">
-                        </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Contact Phone</label>
+                        <input type="text" name="phone" class="form-control" placeholder="+254 700 123 456">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -42,7 +42,6 @@ class SupervisorController extends Controller
             'title' => 'required|string|max:255',
             'stage' => 'required|string|in:'.implode(',', $stages),
             'phone' => 'nullable|string|max:255',
-            'shift' => 'nullable|string|max:255',
         ]);
 
         $supervisor = Supervisor::create($validated);
@@ -69,7 +68,6 @@ class SupervisorController extends Controller
             'title' => 'required|string|max:255',
             'stage' => 'required|string|in:'.implode(',', $stages),
             'phone' => 'nullable|string|max:255',
-            'shift' => 'nullable|string|max:255',
         ]);
 
         $supervisor->update($validated);

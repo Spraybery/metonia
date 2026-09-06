@@ -14,7 +14,6 @@ class Supervisor extends Model
         'title',
         'stage',
         'phone',
-        'shift',
     ];
 
     public function activeSupervisedVehiclesCount(): int
