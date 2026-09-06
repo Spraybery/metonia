@@ -45,16 +45,19 @@
 
                         <form action="{{ route('login.post') }}" method="POST" autocomplete="off">
                             @csrf
+                            <!-- Dummy inputs to prevent browser password managers from auto-filling saved credentials -->
+                            <input type="text" name="fake_username_remembered" style="display:none;" tabindex="-1" aria-hidden="true" autocomplete="off">
+                            <input type="password" name="fake_password_remembered" style="display:none;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
 
                             <div class="form-group form-group-feedback form-group-feedback-left">
-                                <input type="text" name="identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="" required autofocus autocomplete="off">
+                                <input type="text" name="identifier" id="login-identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="" required autofocus autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" oninput="this.dataset.userInteracted='true';">
                                 <div class="form-control-feedback">
                                     <i class="icon-user text-muted"></i>
                                 </div>
                             </div>
 
                             <div class="form-group form-group-feedback form-group-feedback-left position-relative">
-                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" required autocomplete="off">
+                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" value="" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" oninput="this.dataset.userInteracted='true';">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
@@ -103,9 +106,32 @@
     <script src="{{ asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
     <script>
         function setCreds(user) {
-            document.querySelector('input[name="identifier"]').value = user;
-            document.querySelector('input[name="password"]').value = 'password';
+            const idInput = document.getElementById('login-identifier');
+            const passInput = document.getElementById('login-password');
+            if (idInput) { idInput.removeAttribute('readonly'); idInput.value = user; idInput.dataset.userInteracted = 'true'; }
+            if (passInput) { passInput.removeAttribute('readonly'); passInput.value = 'password'; passInput.dataset.userInteracted = 'true'; }
         }
+
+        function forceClearLoginInputs() {
+            const idInput = document.getElementById('login-identifier');
+            const passInput = document.getElementById('login-password');
+            if (idInput && !idInput.dataset.userInteracted) {
+                idInput.value = '';
+            }
+            if (passInput && !passInput.dataset.userInteracted) {
+                passInput.value = '';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            forceClearLoginInputs();
+            setTimeout(forceClearLoginInputs, 50);
+            setTimeout(forceClearLoginInputs, 200);
+            setTimeout(forceClearLoginInputs, 500);
+        });
+        window.addEventListener('pageshow', function(e) {
+            forceClearLoginInputs();
+        });
 
         function togglePasswordVisibility(inputId, toggleEl) {
             const input = document.getElementById(inputId);
