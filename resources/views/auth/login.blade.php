@@ -81,6 +81,7 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
                 </div>
 
                 <div class="text-center text-white-50 font-size-xs">
