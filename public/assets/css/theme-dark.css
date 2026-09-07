@@ -1,0 +1,307 @@
+/* ==========================================================================
+   METONIA WORKSHOP MANAGEMENT SYSTEM — DARK MODE STYLESHEET
+   Supports data-theme="dark" attribute and .dark-mode class on <html> / <body>
+   ========================================================================== */
+
+html[data-theme="dark"],
+body.dark-mode {
+    --bg-dark-base: #0f172a;       /* Slate 900 */
+    --bg-dark-card: #1e293b;       /* Slate 800 */
+    --bg-dark-hover: #334155;      /* Slate 700 */
+    --border-dark: #334155;        /* Slate 700 border */
+    --text-dark-main: #f8fafc;     /* Slate 50 */
+    --text-dark-muted: #94a3b8;    /* Slate 400 */
+    --theme-green-primary: #10b981;
+}
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL & LAYOUT
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] .page-content,
+html[data-theme="dark"] .content-wrapper {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+/* Smooth transitions when switching themes */
+body, .card, .navbar, .page-header, .sidebar, .table, .modal-content, .dropdown-menu, .form-control {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP NAVIGATION BAR & FOOTER
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .navbar:not(.navbar-brand-theme) {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .navbar-light .navbar-nav .nav-link,
+html[data-theme="dark"] .navbar-light .navbar-text {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .navbar-light .navbar-nav .nav-link:hover,
+html[data-theme="dark"] .navbar-light .navbar-nav .nav-link:focus {
+    color: #10b981 !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. PAGE HEADER & BREADCRUMBS
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .page-header-light {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .page-header-light .page-title h4,
+html[data-theme="dark"] .breadcrumb-item {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .breadcrumb-item > a {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .breadcrumb-item > a:hover {
+    color: #10b981 !important;
+}
+
+html[data-theme="dark"] .breadcrumb-item.active {
+    color: #34d399 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. CARDS & CONTAINERS
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .card-header {
+    background-color: #0f172a !important;
+    border-bottom-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .bg-light {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .bg-white {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. TABLES & DATATABLES
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .table {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .table th {
+    background-color: #0f172a !important;
+    color: #94a3b8 !important;
+    border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .table td {
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(15, 23, 42, 0.5) !important;
+}
+
+html[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+html[data-theme="dark"] .datatable-header,
+html[data-theme="dark"] .datatable-footer {
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .dataTables_info,
+html[data-theme="dark"] .dataTables_paginate {
+    color: #cbd5e1 !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. FORMS & INPUTS
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .custom-select {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .form-control::placeholder {
+    color: #64748b !important;
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .custom-select:focus {
+    background-color: #0f172a !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+html[data-theme="dark"] .form-control[disabled],
+html[data-theme="dark"] .form-control[readonly] {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .input-group-text {
+    background-color: #334155 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+/* Select2 Dark Support */
+html[data-theme="dark"] .select2-container--default .select2-selection--single {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .select2-dropdown {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .select2-search__field {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .select2-results__option {
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .select2-results__option--highlighted[aria-selected] {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. MODALS, DROPDOWNS & BADGES
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .modal-content {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .modal-header {
+    border-bottom-color: #334155 !important;
+}
+
+html[data-theme="dark"] .modal-footer {
+    border-top-color: #334155 !important;
+}
+
+html[data-theme="dark"] .dropdown-menu {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .dropdown-item {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme="dark"] .dropdown-item:focus {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .dropdown-divider {
+    border-top-color: #334155 !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. BUTTONS & UTILITIES
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .btn-light {
+    background-color: #334155 !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .btn-light:hover,
+html[data-theme="dark"] .btn-light:focus {
+    background-color: #475569 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .text-dark {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .text-muted {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .border,
+html[data-theme="dark"] .border-top,
+html[data-theme="dark"] .border-bottom,
+html[data-theme="dark"] .border-left,
+html[data-theme="dark"] .border-right {
+    border-color: #334155 !important;
+}
+
+/* Theme Toggle Button Styling */
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-theme-toggle:hover {
+    background-color: #f1f5f9;
+    color: #10b981;
+    transform: scale(1.05);
+}
+
+html[data-theme="dark"] .btn-theme-toggle {
+    border-color: #334155;
+    background-color: #0f172a;
+    color: #fbbf24; /* Amber sun icon in dark mode */
+}
+
+html[data-theme="dark"] .btn-theme-toggle:hover {
+    background-color: #1e293b;
+    color: #f59e0b;
+}

@@ -15,6 +15,21 @@
     <link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/theme-green-white.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/theme-dark.css') }}" rel="stylesheet" type="text/css">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('metonia_theme');
+            const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.classList.remove('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #044e39 100%);">
 
@@ -23,7 +38,12 @@
             <div class="col-md-5 col-lg-4">
 
                 <!-- Brand Card -->
-                <div class="text-center mb-3">
+                <div class="text-center mb-3 position-relative">
+                    <div class="position-absolute" style="right: 0; top: 0;">
+                        <button type="button" class="btn-theme-toggle" id="theme-toggle-btn" onclick="toggleAppTheme()" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode">
+                            <i class="icon-moon2" id="theme-toggle-icon"></i>
+                        </button>
+                    </div>
                     <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
                         <img src="{{ Qs::getSystemLogo() }}" alt="Metonia" style="height: 38px;">
                     </div>
@@ -112,7 +132,37 @@
             }
         }
 
+        function updateThemeToggleUI(theme) {
+            const btn = document.getElementById('theme-toggle-btn');
+            const icon = document.getElementById('theme-toggle-icon');
+            if (!icon) return;
+            if (theme === 'dark') {
+                icon.className = 'icon-sun3';
+                if (btn) btn.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'icon-moon2';
+                if (btn) btn.title = 'Switch to Dark Mode';
+            }
+        }
+
+        function toggleAppTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+            
+            localStorage.setItem('metonia_theme', newTheme);
+            updateThemeToggleUI(newTheme);
+        }
+
         window.addEventListener('DOMContentLoaded', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeToggleUI(currentTheme);
             forceClearLoginInputs();
             setTimeout(forceClearLoginInputs, 50);
             setTimeout(forceClearLoginInputs, 200);

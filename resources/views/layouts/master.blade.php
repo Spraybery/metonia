@@ -18,6 +18,21 @@
     <link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/qs.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/css/theme-green-white.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/theme-dark.css') }}" rel="stylesheet" type="text/css">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('metonia_theme');
+            const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.classList.remove('dark-mode');
+            }
+        })();
+    </script>
 
     <style>
         .navbar-brand img { height: 32px; }
@@ -57,6 +72,11 @@
             </span>
 
             <ul class="navbar-nav align-items-center">
+                <li class="nav-item mr-3">
+                    <button type="button" class="btn-theme-toggle" id="theme-toggle-btn" onclick="toggleAppTheme()" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode">
+                        <i class="icon-moon2" id="theme-toggle-icon"></i>
+                    </button>
+                </li>
                 @auth
                 <li class="nav-item mr-3">
                     @php
@@ -356,6 +376,39 @@
             if ($('.select-search').length > 0) {
                 $('.select-search').select2();
             }
+        });
+
+        function updateThemeToggleUI(theme) {
+            const btn = document.getElementById('theme-toggle-btn');
+            const icon = document.getElementById('theme-toggle-icon');
+            if (!icon) return;
+            if (theme === 'dark') {
+                icon.className = 'icon-sun3';
+                if (btn) btn.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'icon-moon2';
+                if (btn) btn.title = 'Switch to Dark Mode';
+            }
+        }
+
+        function toggleAppTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+            
+            localStorage.setItem('metonia_theme', newTheme);
+            updateThemeToggleUI(newTheme);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeToggleUI(currentTheme);
         });
 
         function togglePasswordVisibility(inputId, btnEl) {
