@@ -109,12 +109,26 @@ class MaterialController extends Controller
 
     public function issuance(Request $request)
     {
-        $materials = Material::orderBy('name')->get();
-        $categories = Qs::getMaterialCategories();
+        $rawMaterialIds = Material::where(function ($q) {
+            $q->whereNotIn('category', ['Worker Safety & PPE', 'Reflecting & Safety'])
+                ->where('name', 'not like', '%Safety%')
+                ->where('name', 'not like', '%PPE%')
+                ->where('name', 'not like', '%Helmet%')
+                ->where('name', 'not like', '%Glove%')
+                ->where('name', 'not like', '%Boot%')
+                ->where('name', 'not like', '%Goggle%')
+                ->where('name', 'not like', '%Mask%')
+                ->where('name', 'not like', '%First Aid%');
+        })->pluck('id');
+
+        $materials = Material::whereIn('id', $rawMaterialIds)->orderBy('name')->get();
+        $categories = Qs::getRawMaterialCategories();
         $units = Qs::getMaterialUnits();
         $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
 
-        $query = MaterialMovement::where('type', 'out')->with(['material', 'vehicle']);
+        $query = MaterialMovement::where('type', 'out')
+            ->whereIn('material_id', $rawMaterialIds)
+            ->with(['material', 'vehicle']);
 
         if ($request->filled('search')) {
             $s = '%'.$request->query('search').'%';
@@ -133,7 +147,21 @@ class MaterialController extends Controller
 
     public function printIssuance(Request $request)
     {
-        $query = MaterialMovement::where('type', 'out')->with(['material', 'vehicle']);
+        $rawMaterialIds = Material::where(function ($q) {
+            $q->whereNotIn('category', ['Worker Safety & PPE', 'Reflecting & Safety'])
+                ->where('name', 'not like', '%Safety%')
+                ->where('name', 'not like', '%PPE%')
+                ->where('name', 'not like', '%Helmet%')
+                ->where('name', 'not like', '%Glove%')
+                ->where('name', 'not like', '%Boot%')
+                ->where('name', 'not like', '%Goggle%')
+                ->where('name', 'not like', '%Mask%')
+                ->where('name', 'not like', '%First Aid%');
+        })->pluck('id');
+
+        $query = MaterialMovement::where('type', 'out')
+            ->whereIn('material_id', $rawMaterialIds)
+            ->with(['material', 'vehicle']);
 
         if ($request->filled('search')) {
             $s = '%'.$request->query('search').'%';
@@ -264,6 +292,10 @@ class MaterialController extends Controller
                 ->orWhere('name', 'like', '%First Aid%');
         })->orderBy('name');
 
+        if ($request->filled('category')) {
+            $query->where('category', $request->query('category'));
+        }
+
         if ($request->filled('search')) {
             $s = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($s) {
@@ -276,6 +308,40 @@ class MaterialController extends Controller
         $materials = $query->get();
 
         return view('print.safety_stock_register', compact('materials'));
+    }
+
+    public function printSafetyIssuance(Request $request)
+    {
+        $safetyMaterialIds = Material::where(function ($q) {
+            $q->where('category', 'Worker Safety & PPE')
+                ->orWhere('category', 'Reflecting & Safety')
+                ->orWhere('name', 'like', '%Safety%')
+                ->orWhere('name', 'like', '%PPE%')
+                ->orWhere('name', 'like', '%Helmet%')
+                ->orWhere('name', 'like', '%Glove%')
+                ->orWhere('name', 'like', '%Boot%')
+                ->orWhere('name', 'like', '%Goggle%')
+                ->orWhere('name', 'like', '%Mask%')
+                ->orWhere('name', 'like', '%First Aid%');
+        })->pluck('id');
+
+        $query = MaterialMovement::where('type', 'out')
+            ->whereIn('material_id', $safetyMaterialIds)
+            ->with(['material', 'vehicle']);
+
+        if ($request->filled('search')) {
+            $s = '%'.$request->query('search').'%';
+            $query->where(function ($q) use ($s) {
+                $q->where('material_name', 'like', $s)
+                    ->orWhere('vehicle_label', 'like', $s)
+                    ->orWhere('issued_by', 'like', $s)
+                    ->orWhere('issued_to', 'like', $s);
+            });
+        }
+
+        $safetyIssuances = $query->orderByDesc('date')->orderByDesc('id')->get();
+
+        return view('print.safety_issuance_register', compact('safetyIssuances'));
     }
 
     public function store(Request $request)

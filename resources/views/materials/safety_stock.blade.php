@@ -245,10 +245,13 @@
 
     {{-- Dedicated Separate Worker Safety Issuance Log Card --}}
     <div class="card border mt-4">
-        <div class="card-header bg-light">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h6 class="card-title font-weight-bold mb-0 text-dark">
                 <i class="icon-history mr-2 text-danger"></i> Worker Safety Gear (PPE) Outward Issuance Log
             </h6>
+            <a href="{{ route('materials.safety_issuance.print') }}" target="_blank" class="btn btn-sm btn-light font-weight-semibold shadow-xs">
+                <i class="icon-printer mr-1"></i> Print Issuance Register
+            </a>
         </div>
 
         <div class="card-body">
