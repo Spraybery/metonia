@@ -97,6 +97,26 @@ class Qs
         ];
     }
 
+    public static function getRawMaterialCategories(): array
+    {
+        return [
+            'Consumables',
+            'Metals',
+            'Aluminium',
+            'Bolts & Fasteners',
+            'Rubbers',
+            'Fibreglass',
+        ];
+    }
+
+    public static function getPpeCategories(): array
+    {
+        return [
+            'Worker Safety & PPE',
+            'Reflecting & Safety',
+        ];
+    }
+
     public static function getMaterialUnits(): array
     {
         return [

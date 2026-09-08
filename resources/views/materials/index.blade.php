@@ -19,11 +19,8 @@
                 <i class="icon-printer mr-1"></i> Print Register
             </a>
             @if(Auth::user()->canEdit('materials'))
-            <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-material">
+            <button type="button" class="btn btn-primary font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-add-material">
                 <i class="icon-plus2 mr-1"></i> Add Material SKU
-            </button>
-            <button type="button" class="btn btn-success font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-add-safety-sku">
-                <i class="icon-shield-check mr-1"></i> Add Safety / PPE SKU
             </button>
             @endif
         </div>
@@ -423,78 +420,6 @@
     </div>
 </div>
 
-{{-- Add Safety / PPE SKU Modal --}}
-@if(Auth::user()->canEdit('materials'))
-<div id="modal-add-safety-sku" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h6 class="modal-title font-weight-bold">
-                    <i class="icon-shield-check mr-2"></i> Register New Worker Safety / PPE SKU
-                </h6>
-                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-            </div>
-            <form action="{{ route('materials.store') }}" method="POST">
-                @csrf
-                <input type="hidden" name="unit_cost" value="0.00">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="col-md-5 form-group">
-                            <label class="font-weight-semibold">Item Code / SKU</label>
-                            <input type="text" name="item_code" class="form-control" placeholder="e.g. SAF-0005">
-                            <small class="form-text text-muted">Auto-generated if left blank</small>
-                        </div>
-                        <div class="col-md-7 form-group">
-                            <label class="font-weight-semibold">Safety Equipment / PPE Description <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g. EN388 Heavy Leather Welding Gloves" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Safety Category <span class="text-danger">*</span></label>
-                            <select name="category" class="form-control" required>
-                                <option value="Worker Safety & PPE" selected>Worker Safety &amp; PPE</option>
-                                <option value="Reflecting & Safety">Reflecting &amp; Safety</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Unit Quantity Measure <span class="text-danger">*</span></label>
-                            <select name="unit" class="form-control" required>
-                                @foreach($ppeUnits as $u)
-                                    <option value="{{ $u }}" {{ $u === 'Pairs' ? 'selected' : '' }}>{{ $u }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Initial Stock On-Hand <span class="text-danger">*</span></label>
-                            <input type="number" step="1" min="0" name="qty" class="form-control" value="10" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label class="font-weight-semibold">Safety Reorder Threshold <span class="text-danger">*</span></label>
-                            <input type="number" step="1" min="0" name="low_stock" class="form-control" value="5" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Primary Safety Vendor / Supplier</label>
-                        <input type="text" name="supplier" class="form-control" placeholder="e.g. Safety Plus East Africa Ltd">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success font-weight-semibold">
-                        <i class="icon-checkmark mr-1"></i> Register Safety Equipment
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@endif
 
 {{-- Global Stock Movement Modal --}}
 <div id="modal-movement" class="modal fade" tabindex="-1">

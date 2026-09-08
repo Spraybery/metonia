@@ -17,7 +17,19 @@ class MaterialController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Material::with('movements')->orderBy('name');
+        $query = Material::with('movements')
+            ->where(function ($q) {
+                $q->whereNotIn('category', ['Worker Safety & PPE', 'Reflecting & Safety'])
+                    ->where('name', 'not like', '%Safety%')
+                    ->where('name', 'not like', '%PPE%')
+                    ->where('name', 'not like', '%Helmet%')
+                    ->where('name', 'not like', '%Glove%')
+                    ->where('name', 'not like', '%Boot%')
+                    ->where('name', 'not like', '%Goggle%')
+                    ->where('name', 'not like', '%Mask%')
+                    ->where('name', 'not like', '%First Aid%');
+            })
+            ->orderBy('name');
 
         if ($request->filled('category')) {
             $query->where('category', $request->query('category'));
@@ -33,11 +45,17 @@ class MaterialController extends Controller
         }
 
         $materials = $query->get();
-        $categories = Qs::getMaterialCategories();
+        $categories = Qs::getRawMaterialCategories();
         $units = Qs::getMaterialUnits();
-        $ppeUnits = Qs::getPpeUnits();
         $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
-        $outwardMovements = MaterialMovement::where('type', 'out')->with('vehicle')->orderByDesc('date')->orderByDesc('id')->get();
+
+        $rawMaterialIds = $materials->pluck('id');
+        $outwardMovements = MaterialMovement::where('type', 'out')
+            ->whereIn('material_id', $rawMaterialIds)
+            ->with('vehicle')
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
 
         $totalStockValue = $materials->sum(fn (Material $m) => $m->totalValue());
         $lowStockCount = $materials->filter(fn (Material $m) => $m->isLowStock())->count();
@@ -50,7 +68,6 @@ class MaterialController extends Controller
             'materials',
             'categories',
             'units',
-            'ppeUnits',
             'activeVehicles',
             'outwardMovements',
             'totalStockValue',
@@ -60,7 +77,17 @@ class MaterialController extends Controller
 
     public function printIndex(Request $request)
     {
-        $query = Material::orderBy('name');
+        $query = Material::where(function ($q) {
+            $q->whereNotIn('category', ['Worker Safety & PPE', 'Reflecting & Safety'])
+                ->where('name', 'not like', '%Safety%')
+                ->where('name', 'not like', '%PPE%')
+                ->where('name', 'not like', '%Helmet%')
+                ->where('name', 'not like', '%Glove%')
+                ->where('name', 'not like', '%Boot%')
+                ->where('name', 'not like', '%Goggle%')
+                ->where('name', 'not like', '%Mask%')
+                ->where('name', 'not like', '%First Aid%');
+        })->orderBy('name');
 
         if ($request->filled('category')) {
             $query->where('category', $request->query('category'));
@@ -191,7 +218,7 @@ class MaterialController extends Controller
 
         $materials = $query->get();
 
-        $categories = Qs::getMaterialCategories();
+        $categories = Qs::getPpeCategories();
         $units = Qs::getPpeUnits();
 
         $totalSafetyItems = $materials->count();
