@@ -145,117 +145,25 @@
                                                 <i class="icon-history text-primary"></i> View Issuance &amp; Stock Audit
                                             </a>
                                             @if(Auth::user()->canEdit('materials'))
-                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-issue-worker-{{ $row->id }}">
-                                                <i class="icon-arrow-up5 text-danger"></i> Issue to Worker / Staff
-                                            </a>
-                                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-restock-{{ $row->id }}">
-                                                <i class="icon-arrow-down5 text-success"></i> Restock Safety Gear
-                                            </a>
                                             <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-{{ $row->id }}">
                                                 <i class="icon-pencil text-muted"></i> Edit Item Details
+                                            </a>
+                                            @endif
+                                            @if(Auth::user()->canDelete())
+                                            <div class="dropdown-divider"></div>
+                                            <form method="POST" action="{{ route('materials.destroy', $row->id) }}" id="del-material-{{ $row->id }}">
+                                                @csrf @method('DELETE')
+                                            </form>
+                                            <a href="#" onclick="if(confirm('Delete {{ $row->name }} from safety inventory?')) { document.getElementById('del-material-{{ $row->id }}').submit(); }" class="dropdown-item text-danger">
+                                                <i class="icon-trash text-danger"></i> Delete Item
                                             </a>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
-                            </td>
-                            @endif
-
-                                {{-- Quick Issue to Worker Modal --}}
-                                @if(Auth::user()->canEdit('materials'))
-                                <div id="modal-issue-worker-{{ $row->id }}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog text-left">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-danger text-white">
-                                                <h6 class="modal-title font-weight-bold">
-                                                    <i class="icon-arrow-up5 mr-2"></i> Issue Safety Gear: {{ $row->name }}
-                                                </h6>
-                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <form action="{{ route('materials.movement', $row->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="type" value="out">
-                                                <div class="modal-body">
-                                                    <div class="alert alert-info py-2 font-size-sm">
-                                                        <i class="icon-info22 mr-1"></i> Available On-Hand: <strong>{{ (float)$row->qty == (int)$row->qty ? number_format($row->qty) : number_format($row->qty, 2) }} {{ $row->unit }}</strong>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Quantity to Issue ({{ $row->unit }}) <span class="text-danger">*</span></label>
-                                                        <input type="number" step="1" min="1" max="{{ (int)$row->qty }}" name="qty" class="form-control" value="1" required>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Worker / Technician Name <span class="text-danger">*</span></label>
-                                                        <input type="text" name="issued_to" class="form-control" required placeholder="e.g. Eng. Martin Kariuki (Welder)">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Issued By / Store Supervisor</label>
-                                                        <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Usage / Workstation Notes</label>
-                                                        <input type="text" name="note" class="form-control" placeholder="e.g. Stage 3 Chassis Welding Safety Gear">
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-danger font-weight-semibold">
-                                                        <i class="icon-checkmark mr-1"></i> Issue Safety Gear
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Quick Restock Modal --}}
-                                <div id="modal-restock-{{ $row->id }}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog text-left">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h6 class="modal-title font-weight-bold">
-                                                    <i class="icon-arrow-down5 mr-2"></i> Restock {{ $row->name }}
-                                                </h6>
-                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <form action="{{ route('materials.movement', $row->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="type" value="in">
-                                                <div class="modal-body">
-                                                    <div class="alert alert-info py-2 font-size-sm">
-                                                        <i class="icon-info22 mr-1"></i> Current On-Hand: <strong>{{ (float)$row->qty == (int)$row->qty ? number_format($row->qty) : number_format($row->qty, 2) }} {{ $row->unit }}</strong>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Restock Quantity ({{ $row->unit }}) <span class="text-danger">*</span></label>
-                                                        <input type="number" step="1" min="1" name="qty" class="form-control" value="10" required>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Received By / Store Keeper</label>
-                                                        <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Supplier Consignment Notes</label>
-                                                        <input type="text" name="note" class="form-control" placeholder="e.g. Received from {{ $row->supplier ?: 'Safety Vendor' }}">
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-success font-weight-semibold">
-                                                        <i class="icon-checkmark mr-1"></i> Add Stock Quantity
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 {{-- Edit Modal --}}
+                                @if(Auth::user()->canEdit('materials'))
                                 <div id="modal-edit-{{ $row->id }}" class="modal fade" tabindex="-1">
                                     <div class="modal-dialog text-left">
                                         <div class="modal-content">
