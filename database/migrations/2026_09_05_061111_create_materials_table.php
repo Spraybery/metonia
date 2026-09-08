@@ -14,16 +14,8 @@ return new class extends Migration
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('category', [
-                'Consumables',
-                'Metals',
-                'Aluminium',
-                'Bolts & Fasteners',
-                'Rubbers',
-                'Fibreglass',
-                'Reflecting & Safety',
-            ]);
-            $table->enum('unit', ['Pieces', 'Rolls', 'Liters', 'Kilograms']);
+            $table->string('category');
+            $table->string('unit');
             $table->decimal('qty', 10, 2)->default(0.00);
             $table->decimal('low_stock', 10, 2)->default(0.00);
             $table->decimal('unit_cost', 12, 2)->default(0.00);
