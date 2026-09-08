@@ -35,6 +35,7 @@ class MaterialController extends Controller
         $materials = $query->get();
         $categories = Qs::getMaterialCategories();
         $units = Qs::getMaterialUnits();
+        $ppeUnits = Qs::getPpeUnits();
         $activeVehicles = Vehicle::where('stage', '!=', '8. Completed & Dispatched')->orderBy('plate')->get();
         $outwardMovements = MaterialMovement::where('type', 'out')->with('vehicle')->orderByDesc('date')->orderByDesc('id')->get();
 
@@ -49,6 +50,7 @@ class MaterialController extends Controller
             'materials',
             'categories',
             'units',
+            'ppeUnits',
             'activeVehicles',
             'outwardMovements',
             'totalStockValue',
