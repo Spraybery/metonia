@@ -102,11 +102,21 @@ class Qs
         return [
             'Pieces',
             'Pairs',
+            'Kits',
             'Sets',
             'Rolls',
             'Boxes',
             'Liters',
             'Kilograms',
+        ];
+    }
+
+    public static function getPpeUnits(): array
+    {
+        return [
+            'Pairs',
+            'Pieces',
+            'Kits',
         ];
     }
 

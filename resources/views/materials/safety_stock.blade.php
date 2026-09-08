@@ -293,7 +293,7 @@
                                                                     <option value="{{ $u }}" {{ $row->unit === $u ? 'selected' : '' }}>{{ $u }}</option>
                                                                 @endforeach
                                                             </select>
-                                                            <small class="form-text text-muted">Choose unit: e.g. <strong>Pieces</strong> (Helmets, Vests) or <strong>Pairs</strong> (Gloves, Boots).</small>
+                                                            <small class="form-text text-muted">Choose unit: <strong>Pairs</strong> (Gloves, Boots), <strong>Pieces</strong> (Helmets, Vests), or <strong>Kits</strong> (First Aid).</small>
                                                         </div>
                                                     </div>
 
@@ -375,7 +375,7 @@
                                     <option value="{{ $u }}" {{ $u === 'Pairs' ? 'selected' : '' }}>{{ $u }}</option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Choose unit: e.g. <strong>Pieces</strong> (Helmets, Vests) or <strong>Pairs</strong> (Gloves, Boots).</small>
+                            <small class="form-text text-muted">Choose unit: <strong>Pairs</strong> (Gloves, Boots), <strong>Pieces</strong> (Helmets, Vests), or <strong>Kits</strong> (First Aid).</small>
                         </div>
                     </div>
 

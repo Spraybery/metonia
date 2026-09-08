@@ -190,7 +190,7 @@ class MaterialController extends Controller
         $materials = $query->get();
 
         $categories = Qs::getMaterialCategories();
-        $units = Qs::getMaterialUnits();
+        $units = Qs::getPpeUnits();
 
         $totalSafetyItems = $materials->count();
         $totalUnitsOnHand = (float) $materials->sum('qty');
