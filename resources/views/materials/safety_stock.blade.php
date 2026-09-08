@@ -245,15 +245,10 @@
 
     {{-- Dedicated Separate Worker Safety Issuance Log Card --}}
     <div class="card border mt-4">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap" style="gap: 8px;">
+        <div class="card-header bg-light">
             <h6 class="card-title font-weight-bold mb-0 text-dark">
                 <i class="icon-history mr-2 text-danger"></i> Worker Safety Gear (PPE) Outward Issuance Log
             </h6>
-            @if(Auth::user()->canEdit('materials'))
-            <button type="button" class="btn btn-danger btn-sm font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-issue-safety">
-                <i class="icon-arrow-up5 mr-1"></i> Issue Safety Gear to Worker
-            </button>
-            @endif
         </div>
 
         <div class="card-body">
