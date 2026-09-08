@@ -585,4 +585,14 @@ class WorkshopSystemTest extends TestCase
         $response->assertRedirect('/dashboard');
         $this->assertAuthenticatedAs($admin);
     }
+
+    public function test_safety_stock_page_renders_successfully(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/materials/safety-stock');
+        $response->assertStatus(200);
+        $response->assertSee('Worker Safety &amp; Personal Protective Equipment', false);
+        $response->assertSee('Worker Safety Gear (PPE) Outward Issuance Log');
+    }
 }
