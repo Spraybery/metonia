@@ -19,6 +19,9 @@
                 <i class="icon-printer mr-1"></i> Print Register
             </a>
             @if(Auth::user()->canEdit('materials'))
+            <button type="button" class="btn btn-danger font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-issue-safety">
+                <i class="icon-arrow-up5 mr-1"></i> Issue Safety Gear
+            </button>
             <button type="button" class="btn btn-primary font-weight-semibold shadow-xs mr-1" data-toggle="modal" data-target="#modal-add-safety-item">
                 <i class="icon-plus2 mr-1"></i> Add Item
             </button>
@@ -331,6 +334,69 @@
         </div>
     </div>
 
+    {{-- Dedicated Separate Worker Safety Issuance Log Card --}}
+    <div class="card border mt-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap" style="gap: 8px;">
+            <h6 class="card-title font-weight-bold mb-0 text-dark">
+                <i class="icon-history mr-2 text-danger"></i> Worker Safety Gear (PPE) Outward Issuance Log
+            </h6>
+            @if(Auth::user()->canEdit('materials'))
+            <button type="button" class="btn btn-danger btn-sm font-weight-semibold shadow-xs" data-toggle="modal" data-target="#modal-issue-safety">
+                <i class="icon-arrow-up5 mr-1"></i> Issue Safety Gear to Worker
+            </button>
+            @endif
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover border">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Safety Equipment / PPE Description</th>
+                            <th class="text-center">Quantity Issued</th>
+                            <th>Issued To (Worker)</th>
+                            <th>Issued By</th>
+                            <th>Date Issued</th>
+                            <th>Usage / Workstation Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($safetyIssuances as $issuance)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                <span class="font-weight-bold text-dark">{{ $issuance->material_name }}</span>
+                            </td>
+                            <td class="text-center font-weight-bold text-danger">
+                                -{{ (float)$issuance->qty == (int)$issuance->qty ? number_format($issuance->qty) : number_format($issuance->qty, 2) }} {{ $issuance->unit }}
+                            </td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $issuance->issued_to ?: ($issuance->person ?: 'Worker') }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted font-size-sm">{{ $issuance->issued_by ?: 'Storekeeper' }}</span>
+                            </td>
+                            <td class="font-size-sm text-muted">
+                                {{ $issuance->date ? $issuance->date->format('d M Y') : $issuance->created_at->format('d M Y') }}
+                            </td>
+                            <td class="font-size-sm text-muted">
+                                {{ $issuance->note ?: '—' }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center text-muted p-4">
+                                No worker safety gear issuances logged yet. Click <strong>Issue Safety Gear to Worker</strong> to record PPE issuance.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {{-- Modal Add Safety Item --}}
@@ -455,6 +521,69 @@
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success font-weight-semibold">
                         <i class="icon-checkmark mr-1"></i> Add Stock Quantity
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Issue Safety Gear to Worker (Separate Direct Action) --}}
+<div id="modal-issue-safety" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h6 class="modal-title font-weight-bold">
+                    <i class="icon-arrow-up5 mr-2"></i> Issue Worker Safety Equipment / PPE
+                </h6>
+                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="form-issue-safety-gear" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="out">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Select Safety Equipment Item <span class="text-danger">*</span></label>
+                        <select id="issue-safety-item-select" class="form-control select-search" required onchange="document.getElementById('form-issue-safety-gear').action = '/materials/' + this.value + '/movement'">
+                            <option value="">-- Select Safety Equipment / PPE --</option>
+                            @foreach($materials as $m)
+                                <option value="{{ $m->id }}" {{ $m->qty <= 0 ? 'disabled' : '' }}>
+                                    {{ $m->name }} (Available: {{ (float)$m->qty == (int)$m->qty ? number_format($m->qty) : number_format($m->qty, 2) }} {{ $m->unit }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Quantity to Issue <span class="text-danger">*</span></label>
+                            <input type="number" step="1" min="1" name="qty" class="form-control" value="1" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="font-weight-semibold">Date Issued <span class="text-danger">*</span></label>
+                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Worker / Technician Name <span class="text-danger">*</span></label>
+                        <input type="text" name="issued_to" class="form-control" required placeholder="e.g. Eng. Martin Kariuki (Welder)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Issued By / Store Supervisor</label>
+                        <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-semibold">Usage / Workstation Notes</label>
+                        <input type="text" name="note" class="form-control" placeholder="e.g. Stage 3 Chassis Welding Safety Gear">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger font-weight-semibold">
+                        <i class="icon-checkmark mr-1"></i> Issue Safety Gear
                     </button>
                 </div>
             </form>

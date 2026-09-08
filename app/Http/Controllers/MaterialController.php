@@ -199,6 +199,14 @@ class MaterialController extends Controller
 
         $allCatalogMaterials = Material::orderBy('name')->get();
 
+        $safetyMaterialIds = $materials->pluck('id');
+        $safetyIssuances = MaterialMovement::where('type', 'out')
+            ->whereIn('material_id', $safetyMaterialIds)
+            ->with(['material', 'vehicle'])
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
+
         return view('materials.safety_stock', compact(
             'materials',
             'categories',
@@ -207,7 +215,8 @@ class MaterialController extends Controller
             'totalSafetyItems',
             'totalUnitsOnHand',
             'lowStockSafetyItems',
-            'outOfStockCount'
+            'outOfStockCount',
+            'safetyIssuances'
         ));
     }
 
