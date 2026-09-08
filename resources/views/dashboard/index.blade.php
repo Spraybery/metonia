@@ -26,25 +26,33 @@
 
         <div class="col-xl-3 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Store Low-Stock Raw Materials</div>
+                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Store Materials Needed</div>
                 <div class="h3 font-weight-bold {{ count($lowStockMaterials) > 0 ? 'text-warning' : 'text-success' }} mb-0">
-                    {{ count($lowStockMaterials) }}
+                    <a href="{{ route('materials.index') }}" class="{{ count($lowStockMaterials) > 0 ? 'text-warning' : 'text-success' }}">
+                        {{ count($lowStockMaterials) }} <span class="font-size-sm font-weight-normal text-muted">Item(s)</span>
+                    </a>
                 </div>
-                <div class="text-muted font-size-xs mt-1">Below safety reorder threshold</div>
+                <div class="text-muted font-size-xs mt-1">
+                    @if(count($lowStockMaterials) > 0)
+                        <span class="text-warning-800 font-weight-semibold">{{ (float)$totalStoreUnitsNeeded == (int)$totalStoreUnitsNeeded ? number_format($totalStoreUnitsNeeded) : number_format($totalStoreUnitsNeeded, 2) }} units shortage</span>
+                    @else
+                        All store materials sufficient
+                    @endif
+                </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-sm-6 mb-2">
             <div class="bg-light border rounded p-3 text-center h-100">
-                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Worker Safety PPE Restock Needed</div>
+                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Safety Gears (PPE) Needed</div>
                 <div class="h3 font-weight-bold {{ count($lowStockSafetyMaterials) > 0 ? 'text-danger' : 'text-success' }} mb-0">
                     <a href="{{ route('materials.safety_stock') }}" class="{{ count($lowStockSafetyMaterials) > 0 ? 'text-danger' : 'text-success' }}">
-                        {{ count($lowStockSafetyMaterials) }}
+                        {{ count($lowStockSafetyMaterials) }} <span class="font-size-sm font-weight-normal text-muted">Item(s)</span>
                     </a>
                 </div>
                 <div class="text-muted font-size-xs mt-1">
                     @if(count($lowStockSafetyMaterials) > 0)
-                        <span class="text-danger font-weight-semibold">Urgent worker safety gear reorder</span>
+                        <span class="text-danger font-weight-semibold">{{ (float)$totalSafetyUnitsNeeded == (int)$totalSafetyUnitsNeeded ? number_format($totalSafetyUnitsNeeded) : number_format($totalSafetyUnitsNeeded, 2) }} units shortage</span>
                     @else
                         All PPE stock sufficient
                     @endif
@@ -169,7 +177,7 @@
             <div class="card mb-3 border-danger-300 shadow-xs">
                 <div class="card-header header-elements-inline bg-light border-bottom">
                     <h6 class="card-title font-weight-bold text-danger">
-                        <i class="icon-shield-notice mr-2 text-danger"></i> Worker Safety (PPE) Restock Needed
+                        <i class="icon-shield-notice mr-2 text-danger"></i> Safety Gears (PPE) Needed for Restock
                     </h6>
                     <div class="header-elements">
                         <a href="{{ route('materials.safety_stock') }}" class="btn btn-danger btn-xs font-weight-semibold">
@@ -184,12 +192,16 @@
                             <thead class="bg-light font-size-xs text-uppercase">
                                 <tr>
                                     <th>Safety Equipment / PPE</th>
-                                    <th class="text-center">On Hand Qty</th>
-                                    <th class="text-center">Reorder Level</th>
+                                    <th class="text-center">On Hand</th>
+                                    <th class="text-center">Reorder</th>
+                                    <th class="text-center">Deficit / Needed</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($lowStockSafetyMaterials as $m)
+                                @php
+                                    $needed = max(0, (float)$m->low_stock - (float)$m->qty);
+                                @endphp
                                 <tr>
                                     <td>
                                         <a href="{{ route('materials.safety_stock') }}" class="font-weight-bold text-dark">
@@ -204,6 +216,11 @@
                                     </td>
                                     <td class="text-center text-muted font-size-xs">
                                         {{ (float)$m->low_stock == (int)$m->low_stock ? number_format($m->low_stock) : number_format($m->low_stock, 2) }} {{ $m->unit }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-warning text-dark font-weight-bold px-2 py-1">
+                                            +{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }} {{ $m->unit }} Needed
+                                        </span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -221,7 +238,7 @@
             <div class="card mb-3">
                 <div class="card-header header-elements-inline bg-light">
                     <h6 class="card-title font-weight-bold text-warning-800">
-                        <i class="icon-alert mr-2 text-warning"></i> Store Low-Stock Alert Evaluator
+                        <i class="icon-alert mr-2 text-warning"></i> Store Materials &amp; Parts Needed for Restock
                     </h6>
                     <div class="header-elements">
                         <a href="{{ route('materials.index') }}" class="btn btn-light btn-xs">View Store</a>
@@ -234,23 +251,34 @@
                         <table class="table table-sm table-hover mb-0">
                             <thead class="bg-light font-size-xs text-uppercase">
                                 <tr>
-                                    <th>Material Item</th>
+                                    <th>Material / Part</th>
                                     <th class="text-center">On Hand</th>
-                                    <th class="text-center">Reorder Level</th>
+                                    <th class="text-center">Reorder</th>
+                                    <th class="text-center">Deficit / Needed</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($lowStockMaterials->take(5) as $mat)
+                                @foreach($lowStockMaterials as $mat)
+                                @php
+                                    $matNeeded = max(0, (float)$mat->low_stock - (float)$mat->qty);
+                                @endphp
                                 <tr>
                                     <td>
-                                        <span class="font-weight-semibold">{{ $mat->name }}</span>
+                                        <a href="{{ route('materials.index') }}" class="font-weight-semibold text-dark">
+                                            {{ $mat->name }}
+                                        </a>
                                         <div class="font-size-xs text-muted">{{ $mat->category }}</div>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge badge-danger">{{ number_format($mat->qty, 2) }} {{ $mat->unit }}</span>
+                                        <span class="badge badge-danger">{{ (float)$mat->qty == (int)$mat->qty ? number_format($mat->qty) : number_format($mat->qty, 2) }} {{ $mat->unit }}</span>
                                     </td>
                                     <td class="text-center text-muted font-size-xs">
-                                        {{ number_format($mat->low_stock, 2) }} {{ $mat->unit }}
+                                        {{ (float)$mat->low_stock == (int)$mat->low_stock ? number_format($mat->low_stock) : number_format($mat->low_stock, 2) }} {{ $mat->unit }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-warning text-dark font-weight-bold px-2 py-1">
+                                            +{{ (float)$matNeeded == (int)$matNeeded ? number_format($matNeeded) : number_format($matNeeded, 2) }} {{ $mat->unit }} Needed
+                                        </span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -259,7 +287,7 @@
                     </div>
                     @else
                     <div class="p-3 text-center text-muted font-size-sm">
-                        <i class="icon-check text-success"></i> All materials are above reorder safety limits.
+                        <i class="icon-check text-success"></i> All store materials are above reorder safety limits.
                     </div>
                     @endif
                 </div>

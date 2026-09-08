@@ -67,6 +67,9 @@ class DashboardController extends Controller
             return $lowStockSafetyMaterials->pluck('id')->contains($m->id);
         })->values();
 
+        $totalStoreUnitsNeeded = (float) $lowStockMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
+        $totalSafetyUnitsNeeded = (float) $lowStockSafetyMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
+
         // Total inventory valuation (excluding Safety Stock)
         $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(function (Material $m) {
             return $m->totalValue();
@@ -121,6 +124,8 @@ class DashboardController extends Controller
             'stuckVehicles' => $stuckVehicles,
             'lowStockMaterials' => $lowStockMaterials,
             'lowStockSafetyMaterials' => $lowStockSafetyMaterials,
+            'totalStoreUnitsNeeded' => $totalStoreUnitsNeeded,
+            'totalSafetyUnitsNeeded' => $totalSafetyUnitsNeeded,
             'totalStockValue' => $totalStockValue,
             'monthlyStockIssuedValue' => $monthlyStockIssuedValue,
             'monthlyStockRestockedValue' => $monthlyStockRestockedValue,
