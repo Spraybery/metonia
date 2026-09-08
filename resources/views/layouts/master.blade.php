@@ -187,6 +187,11 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{ route('materials.restock_needed') }}" class="nav-link {{ request()->routeIs('materials.restock_needed') ? 'active' : '' }}">
+                                        <i class="icon-clipboard3 mr-2 text-warning"></i> Restock Needed Requisition
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{ route('materials.safety_stock') }}" class="nav-link {{ request()->routeIs('materials.safety_stock') ? 'active' : '' }}">
                                         <i class="icon-shield-check mr-2 text-primary"></i> Worker Safety &amp; PPE Stock
                                     </a>

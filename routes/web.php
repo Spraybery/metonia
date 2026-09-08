@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/materials/issuance/print', [MaterialController::class, 'printIssuance'])->name('materials.issuance.print');
     Route::get('/materials/restock', [MaterialController::class, 'restock'])->name('materials.restock');
     Route::get('/materials/restock/print', [MaterialController::class, 'printRestock'])->name('materials.restock.print');
+    Route::get('/materials/restock-needed', [MaterialController::class, 'restockNeeded'])->name('materials.restock_needed');
+    Route::get('/materials/restock-needed/print', [MaterialController::class, 'printRestockNeeded'])->name('materials.restock_needed.print');
     Route::get('/materials/safety-stock', [MaterialController::class, 'safetyStock'])->name('materials.safety_stock');
     Route::get('/materials/safety-stock/print', [MaterialController::class, 'printSafetyStock'])->name('materials.safety_stock.print');
     Route::get('/materials/safety-stock/issuance/print', [MaterialController::class, 'printSafetyIssuance'])->name('materials.safety_issuance.print');

@@ -218,6 +218,106 @@ class MaterialController extends Controller
         return view('print.restock_register', compact('restockMovements'));
     }
 
+    public function restockNeeded(Request $request)
+    {
+        $type = $request->query('type', 'all');
+
+        $allLowStock = Material::all()->filter(fn (Material $m) => $m->isLowStock())->values();
+
+        $lowStockSafety = $allLowStock->filter(function (Material $m) {
+            return $m->category === 'Worker Safety & PPE'
+                || $m->category === 'Reflecting & Safety'
+                || stripos($m->name, 'safety') !== false
+                || stripos($m->name, 'ppe') !== false
+                || stripos($m->name, 'glove') !== false
+                || stripos($m->name, 'boot') !== false
+                || stripos($m->name, 'helmet') !== false
+                || stripos($m->name, 'goggle') !== false
+                || stripos($m->name, 'respirator') !== false
+                || stripos($m->name, 'mask') !== false;
+        })->values();
+
+        $lowStockMaterials = $allLowStock->reject(function (Material $m) use ($lowStockSafety) {
+            return $lowStockSafety->pluck('id')->contains($m->id);
+        })->values();
+
+        if ($type === 'materials') {
+            $items = $lowStockMaterials;
+        } elseif ($type === 'safety') {
+            $items = $lowStockSafety;
+        } else {
+            $items = $allLowStock;
+        }
+
+        if ($request->filled('search')) {
+            $s = mb_strtolower($request->query('search'));
+            $items = $items->filter(function (Material $m) use ($s) {
+                return str_contains(mb_strtolower($m->name), $s)
+                    || str_contains(mb_strtolower($m->item_code), $s)
+                    || str_contains(mb_strtolower($m->category), $s)
+                    || str_contains(mb_strtolower($m->supplier ?: ''), $s);
+            })->values();
+        }
+
+        $totalShortageUnits = $items->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
+
+        return view('materials.restock_needed', compact(
+            'items',
+            'type',
+            'lowStockMaterials',
+            'lowStockSafety',
+            'allLowStock',
+            'totalShortageUnits'
+        ));
+    }
+
+    public function printRestockNeeded(Request $request)
+    {
+        $type = $request->query('type', 'all');
+
+        $allLowStock = Material::all()->filter(fn (Material $m) => $m->isLowStock())->values();
+
+        $lowStockSafety = $allLowStock->filter(function (Material $m) {
+            return $m->category === 'Worker Safety & PPE'
+                || $m->category === 'Reflecting & Safety'
+                || stripos($m->name, 'safety') !== false
+                || stripos($m->name, 'ppe') !== false
+                || stripos($m->name, 'glove') !== false
+                || stripos($m->name, 'boot') !== false
+                || stripos($m->name, 'helmet') !== false
+                || stripos($m->name, 'goggle') !== false
+                || stripos($m->name, 'respirator') !== false
+                || stripos($m->name, 'mask') !== false;
+        })->values();
+
+        $lowStockMaterials = $allLowStock->reject(function (Material $m) use ($lowStockSafety) {
+            return $lowStockSafety->pluck('id')->contains($m->id);
+        })->values();
+
+        if ($type === 'materials') {
+            $items = $lowStockMaterials;
+            $reportTitle = 'Store Raw Materials & Parts Restock Requisition List';
+        } elseif ($type === 'safety') {
+            $items = $lowStockSafety;
+            $reportTitle = 'Worker Safety Gear & PPE Restock Requisition List';
+        } else {
+            $items = $allLowStock;
+            $reportTitle = 'Combined Store Inventory & Worker Safety Restock Requisition';
+        }
+
+        if ($request->filled('search')) {
+            $s = mb_strtolower($request->query('search'));
+            $items = $items->filter(function (Material $m) use ($s) {
+                return str_contains(mb_strtolower($m->name), $s)
+                    || str_contains(mb_strtolower($m->item_code), $s)
+                    || str_contains(mb_strtolower($m->category), $s)
+                    || str_contains(mb_strtolower($m->supplier ?: ''), $s);
+            })->values();
+        }
+
+        return view('print.restock_needed_register', compact('items', 'type', 'reportTitle'));
+    }
+
     public function safetyStock(Request $request)
     {
         $categories = Qs::getMaterialCategories();

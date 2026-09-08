@@ -15,6 +15,9 @@
             </p>
         </div>
         <div>
+            <a href="{{ route('materials.restock_needed.print', ['type' => 'safety']) }}" target="_blank" class="btn btn-outline-danger font-weight-semibold shadow-xs mr-1">
+                <i class="icon-clipboard3 mr-1"></i> Print Restock Needed
+            </a>
             <a href="{{ route('materials.safety_stock.print', request()->query()) }}" target="_blank" class="btn btn-light font-weight-semibold shadow-xs mr-1">
                 <i class="icon-printer mr-1"></i> Print Register
             </a>

@@ -180,6 +180,9 @@
                         <i class="icon-shield-notice mr-2 text-danger"></i> Safety Gears (PPE) Needed for Restock
                     </h6>
                     <div class="header-elements">
+                        <a href="{{ route('materials.restock_needed.print', ['type' => 'safety']) }}" target="_blank" class="btn btn-outline-danger btn-xs font-weight-semibold mr-1">
+                            <i class="icon-printer mr-1"></i> Print Needed List
+                        </a>
                         <a href="{{ route('materials.safety_stock') }}" class="btn btn-danger btn-xs font-weight-semibold">
                             <i class="icon-shield-check mr-1"></i> Safety Register
                         </a>
@@ -241,6 +244,9 @@
                         <i class="icon-alert mr-2 text-warning"></i> Store Materials &amp; Parts Needed for Restock
                     </h6>
                     <div class="header-elements">
+                        <a href="{{ route('materials.restock_needed.print', ['type' => 'materials']) }}" target="_blank" class="btn btn-outline-warning text-dark btn-xs font-weight-semibold mr-1">
+                            <i class="icon-printer mr-1"></i> Print Needed List
+                        </a>
                         <a href="{{ route('materials.index') }}" class="btn btn-light btn-xs">View Store</a>
                     </div>
                 </div>
