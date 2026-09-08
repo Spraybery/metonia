@@ -262,7 +262,6 @@
                             <th>Issued To (Worker)</th>
                             <th>Issued By</th>
                             <th>Date Issued</th>
-                            <th>Usage / Workstation Notes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -284,13 +283,10 @@
                             <td class="font-size-sm text-muted">
                                 {{ $issuance->date ? $issuance->date->format('d M Y') : $issuance->created_at->format('d M Y') }}
                             </td>
-                            <td class="font-size-sm text-muted">
-                                {{ $issuance->note ?: '—' }}
-                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted p-4">
+                            <td colspan="6" class="text-center text-muted p-4">
                                 No worker safety gear issuances logged yet. Click <strong>Issue Safety Gear to Worker</strong> to record PPE issuance.
                             </td>
                         </tr>
@@ -477,11 +473,6 @@
                     <div class="form-group">
                         <label class="font-weight-semibold">Issued By / Store Supervisor</label>
                         <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Usage / Workstation Notes</label>
-                        <input type="text" name="note" class="form-control" placeholder="e.g. Stage 3 Chassis Welding Safety Gear">
                     </div>
                 </div>
                 <div class="modal-footer">
