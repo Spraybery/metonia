@@ -6,7 +6,7 @@
             <span style="flex-grow: 1; border-bottom: 1px dashed #64748b; height: 16px;"></span>
         </div>
         <div style="font-size: 11px; color: #1e293b; margin-bottom: 4px; text-align: left; display: flex; align-items: flex-end;">
-            <span style="font-weight: 700; min-width: 85px;">Sign &amp; Date:</span>
+            <span style="font-weight: 700; min-width: 85px;">Signature:</span>
             <span style="flex-grow: 1; border-bottom: 1px dashed #64748b; height: 16px;"></span>
         </div>
     </div>
@@ -17,7 +17,7 @@
             <span style="flex-grow: 1; border-bottom: 1px dashed #64748b; height: 16px;"></span>
         </div>
         <div style="font-size: 11px; color: #1e293b; margin-bottom: 4px; text-align: left; display: flex; align-items: flex-end;">
-            <span style="font-weight: 700; min-width: 85px;">Sign &amp; Date:</span>
+            <span style="font-weight: 700; min-width: 85px;">Signature:</span>
             <span style="flex-grow: 1; border-bottom: 1px dashed #64748b; height: 16px;"></span>
         </div>
     </div>
