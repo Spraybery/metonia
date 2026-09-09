@@ -92,16 +92,7 @@
     @endif
 
     {{-- Signatures Box --}}
-    <div class="signatures-box">
-        <div class="sig-line">
-            <div>{{ $vehicle->assigned_to ?: 'Lead Workshop Engineer' }}</div>
-            <span style="font-size: 10px; color: #64748b;">Stage Supervisor Sign &amp; Date</span>
-        </div>
-        <div class="sig-line">
-            <div>Plant Operations Director</div>
-            <span style="font-size: 10px; color: #64748b;">Quality Assurance &amp; Final Release</span>
-        </div>
-    </div>
+    @include('print.document_signatures')
 
     {{-- Footer --}}
     <div class="system-footer">
