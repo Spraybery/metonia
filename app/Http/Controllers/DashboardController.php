@@ -58,19 +58,49 @@ class DashboardController extends Controller
         $now = Carbon::now();
         $stages = Qs::getStages();
 
-        // 1. Active Vehicles
+        return array_merge(
+            $this->getVehicleMetrics(),
+            $this->getMaterialStockAlerts(),
+            $this->getStockValuationMetrics($now),
+            $this->getPipelineMetrics($stages),
+            [
+                'toolsSummary' => $this->getToolsSummary($now),
+                'recentActivities' => ActivityLog::orderByDesc('id')->take(10)->get(),
+                'totalSupervisors' => Supervisor::count(),
+            ]
+        );
+    }
+
+    /**
+     * @return array{totalActiveVehicles: int, stuckVehicles: Collection<int, Vehicle>}
+     */
+    private function getVehicleMetrics(): array
+    {
         $activeVehicles = Vehicle::with(['stageHistories', 'parts'])
             ->where('stage', '!=', '8. Completed & Dispatched')
             ->get();
 
-        $totalActiveVehicles = $activeVehicles->count();
+        $stuckVehicles = $activeVehicles->filter(fn (Vehicle $v) => $v->isStuck())
+            ->sortByDesc('days_in_current_stage')
+            ->values();
 
-        // 2. Stuck Vehicles Detector (>= 10 days in current stage)
-        $stuckVehicles = $activeVehicles->filter(function (Vehicle $v) {
-            return $v->isStuck();
-        })->sortByDesc('days_in_current_stage')->values();
+        return [
+            'totalActiveVehicles' => $activeVehicles->count(),
+            'stuckVehicles' => $stuckVehicles,
+        ];
+    }
 
-        // 3. Low-Stock Materials & Worker Safety PPE Restock Alerts
+    /**
+     * @return array{
+     *     lowStockMaterials: Collection<int, Material>,
+     *     lowStockSafetyMaterials: Collection<int, Material>,
+     *     totalStoreUnitsNeeded: float,
+     *     totalSafetyUnitsNeeded: float,
+     *     totalStockValue: float
+     * }
+     */
+    private function getMaterialStockAlerts(): array
+    {
         $allLowStock = Material::all()->filter(fn (Material $m) => $m->isLowStock())->values();
 
         $lowStockSafetyMaterials = $allLowStock->filter(function (Material $m) {
@@ -93,72 +123,77 @@ class DashboardController extends Controller
         $totalStoreUnitsNeeded = (float) $lowStockMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
         $totalSafetyUnitsNeeded = (float) $lowStockSafetyMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
 
-        // Total inventory valuation (excluding Safety Stock)
-        $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(function (Material $m) {
-            return $m->totalValue();
-        });
-
-        // 4. Stock Valuation Engine (MTD Movement Analytics, excluding Safety Stock)
-        $mtdMovements = MaterialMovement::with('material')
-            ->whereYear('date', $now->year)
-            ->whereMonth('date', $now->month)
-            ->get()
-            ->reject(function (MaterialMovement $m) {
-                return $m->material && $m->material->isSafetyStock();
-            });
-
-        $monthlyStockIssuedValue = (float) $mtdMovements
-            ->where('type', 'out')
-            ->sum(function (MaterialMovement $m) {
-                return (float) $m->qty * (float) ($m->material->unit_cost ?? 0);
-            });
-
-        $monthlyStockRestockedValue = (float) $mtdMovements
-            ->where('type', 'in')
-            ->sum(function (MaterialMovement $m) {
-                return (float) $m->qty * (float) ($m->material->unit_cost ?? 0);
-            });
-
-        $monthlyNetStockValuationChange = $monthlyStockRestockedValue - $monthlyStockIssuedValue;
-
-        // 5. Plant Pipeline Distribution
-        $pipelineCounts = [];
-        foreach ($stages as $stage) {
-            $pipelineCounts[$stage] = Vehicle::where('stage', $stage)->count();
-        }
-        $maxPipelineCount = max(array_values($pipelineCounts) ?: [1]);
-        if ($maxPipelineCount <= 0) {
-            $maxPipelineCount = 1;
-        }
-
-        // 6. Tool Calibration Overdue & Status
-        $toolsSummary = [
-            'total' => Tool::count(),
-            'available' => Tool::where('status', 'Available')->count(),
-            'checked_out' => Tool::where('status', 'Checked Out')->count(),
-            'calibration_overdue' => Tool::whereNotNull('next_calibration')->where('next_calibration', '<', $now->toDateString())->count(),
-        ];
-
-        // 7. Recent Activity Feed
-        $recentActivities = ActivityLog::orderByDesc('id')->take(10)->get();
+        $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(fn (Material $m) => $m->totalValue());
 
         return [
-            'totalActiveVehicles' => $totalActiveVehicles,
-            'stuckVehicles' => $stuckVehicles,
             'lowStockMaterials' => $lowStockMaterials,
             'lowStockSafetyMaterials' => $lowStockSafetyMaterials,
             'totalStoreUnitsNeeded' => $totalStoreUnitsNeeded,
             'totalSafetyUnitsNeeded' => $totalSafetyUnitsNeeded,
             'totalStockValue' => $totalStockValue,
+        ];
+    }
+
+    /**
+     * @return array{
+     *     monthlyStockIssuedValue: float,
+     *     monthlyStockRestockedValue: float,
+     *     monthlyNetStockValuationChange: float
+     * }
+     */
+    private function getStockValuationMetrics(Carbon $now): array
+    {
+        $mtdMovements = MaterialMovement::with('material')
+            ->whereYear('date', $now->year)
+            ->whereMonth('date', $now->month)
+            ->get()
+            ->reject(fn (MaterialMovement $m) => $m->material && $m->material->isSafetyStock());
+
+        $monthlyStockIssuedValue = (float) $mtdMovements
+            ->where('type', 'out')
+            ->sum(fn (MaterialMovement $m) => (float) $m->qty * (float) ($m->material->unit_cost ?? 0));
+
+        $monthlyStockRestockedValue = (float) $mtdMovements
+            ->where('type', 'in')
+            ->sum(fn (MaterialMovement $m) => (float) $m->qty * (float) ($m->material->unit_cost ?? 0));
+
+        return [
             'monthlyStockIssuedValue' => $monthlyStockIssuedValue,
             'monthlyStockRestockedValue' => $monthlyStockRestockedValue,
-            'monthlyNetStockValuationChange' => $monthlyNetStockValuationChange,
+            'monthlyNetStockValuationChange' => $monthlyStockRestockedValue - $monthlyStockIssuedValue,
+        ];
+    }
+
+    /**
+     * @param  array<int, string>  $stages
+     * @return array{stages: array<int, string>, pipelineCounts: array<string, int>, maxPipelineCount: int}
+     */
+    private function getPipelineMetrics(array $stages): array
+    {
+        $pipelineCounts = [];
+        foreach ($stages as $stage) {
+            $pipelineCounts[$stage] = Vehicle::where('stage', $stage)->count();
+        }
+
+        $maxPipelineCount = max(array_values($pipelineCounts) ?: [1]);
+
+        return [
             'stages' => $stages,
             'pipelineCounts' => $pipelineCounts,
-            'maxPipelineCount' => $maxPipelineCount,
-            'toolsSummary' => $toolsSummary,
-            'recentActivities' => $recentActivities,
-            'totalSupervisors' => Supervisor::count(),
+            'maxPipelineCount' => $maxPipelineCount > 0 ? $maxPipelineCount : 1,
+        ];
+    }
+
+    /**
+     * @return array{total: int, available: int, checked_out: int, calibration_overdue: int}
+     */
+    private function getToolsSummary(Carbon $now): array
+    {
+        return [
+            'total' => Tool::count(),
+            'available' => Tool::where('status', 'Available')->count(),
+            'checked_out' => Tool::where('status', 'Checked Out')->count(),
+            'calibration_overdue' => Tool::whereNotNull('next_calibration')->where('next_calibration', '<', $now->toDateString())->count(),
         ];
     }
 }
