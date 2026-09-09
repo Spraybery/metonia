@@ -58,7 +58,10 @@ class Vehicle extends Model
 
     public function getDaysInCurrentStageAttribute(): int
     {
-        $latest = $this->latestTransition();
+        $latest = $this->relationLoaded('stageHistories')
+            ? $this->stageHistories->sortByDesc('transitioned_at')->first()
+            : $this->latestTransition();
+
         $date = $latest ? $latest->transitioned_at : $this->intake_date;
 
         if (! $date) {
@@ -78,7 +81,9 @@ class Vehicle extends Model
 
     public function totalPartsCost(): float
     {
-        return (float) $this->parts()->sum('cost');
+        return (float) ($this->relationLoaded('parts')
+            ? $this->parts->sum('cost')
+            : $this->parts()->sum('cost'));
     }
 
     public function totalCost(): float
