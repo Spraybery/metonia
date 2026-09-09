@@ -131,17 +131,16 @@
 
     /* Sign-off Blocks */
     .signatures-box {
-        margin-top: 40px;
+        margin-top: 36px;
         display: flex;
         justify-content: space-between;
         page-break-inside: avoid;
     }
 
     .sig-line {
-        width: 42%;
-        border-top: 1px solid #0f172a;
-        padding-top: 6px;
-        text-align: center;
+        width: 45%;
+        border-top: 2px solid #0f172a;
+        padding-top: 10px;
         font-size: 11px;
         font-weight: 600;
     }
