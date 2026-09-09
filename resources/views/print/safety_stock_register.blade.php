@@ -28,45 +28,34 @@
             <tr>
                 <th style="width: 30px;">#</th>
                 <th>Item Code</th>
-                <th>Equipment Description</th>
-                <th>Category</th>
-                <th>Unit</th>
-                <th class="text-center">Qty on Hand</th>
-                <th class="text-center">Reorder Level</th>
-                <th class="text-center">Stock Status</th>
-                <th>Supplier</th>
+                <th>Description</th>
+                <th>Register Type</th>
+                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
             @forelse($materials as $material)
             @php
-                $isDepleted = (float) $material->qty <= 0;
-                $isLow = $material->isLowStock();
+                $needed = max(0, (float)$material->low_stock - (float)$material->qty);
             @endphp
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $material->item_code }}</td>
                 <td><strong>{{ $material->name }}</strong></td>
-                <td>{{ $material->category }}</td>
-                <td>{{ $material->unit }}</td>
-                <td class="text-center {{ $isLow ? 'font-weight-bold' : '' }}">
-                    {{ (float)$material->qty == (int)$material->qty ? number_format($material->qty) : number_format($material->qty, 2) }} {{ $material->unit }}
+                <td>
+                    <span style="font-weight: bold; color: #dc2626;">
+                        Worker Safety &amp; PPE
+                    </span>
                 </td>
-                <td class="text-center">{{ (float)$material->low_stock == (int)$material->low_stock ? number_format($material->low_stock) : number_format($material->low_stock, 2) }}</td>
-                <td class="text-center">
-                    @if($isDepleted)
-                        <span style="color: #dc2626; font-weight: bold;">Out of Stock</span>
-                    @elseif($isLow)
-                        <span style="color: #d97706; font-weight: bold;">Low Stock Alert</span>
-                    @else
-                        <span style="color: #059669; font-weight: bold;">In Stock</span>
-                    @endif
+                <td class="text-center" style="font-weight: bold; color: {{ $needed > 0 ? '#b91c1c' : '#047857' }};">
+                    {{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }}
                 </td>
-                <td>{{ $material->supplier ?: '—' }}</td>
+                <td class="text-center">{{ $material->unit }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center" style="padding: 16px; color: #64748b;">No safety stock items match this register.</td>
+                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No safety stock items match this register.</td>
             </tr>
             @endforelse
         </tbody>

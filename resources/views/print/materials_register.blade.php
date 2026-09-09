@@ -28,29 +28,34 @@
             <tr>
                 <th style="width: 30px;">#</th>
                 <th>Item Code</th>
-                <th>Material Description</th>
-                <th>Category</th>
-                <th class="text-center">Qty on Hand</th>
-                <th class="text-center">Low-Stock Threshold</th>
-                <th class="text-right">Unit Cost (KES)</th>
-                <th>Supplier</th>
+                <th>Description</th>
+                <th>Register Type</th>
+                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
             @forelse($materials as $material)
+            @php
+                $needed = max(0, (float)$material->low_stock - (float)$material->qty);
+            @endphp
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $material->item_code }}</td>
                 <td><strong>{{ $material->name }}</strong></td>
-                <td>{{ $material->category }}</td>
-                <td class="text-center {{ $material->isLowStock() ? 'font-weight-bold' : '' }}">{{ number_format($material->qty, 2) }} {{ $material->unit }}</td>
-                <td class="text-center">{{ number_format($material->low_stock, 2) }}</td>
-                <td class="text-right">{{ number_format($material->unit_cost, 2) }}</td>
-                <td>{{ $material->supplier ?: '—' }}</td>
+                <td>
+                    <span style="font-weight: bold; color: {{ $material->isSafetyStock() ? '#dc2626' : '#059669' }};">
+                        {{ $material->isSafetyStock() ? 'Worker Safety & PPE' : 'Store Material / Part' }}
+                    </span>
+                </td>
+                <td class="text-center" style="font-weight: bold; color: {{ $needed > 0 ? '#b91c1c' : '#047857' }};">
+                    {{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }}
+                </td>
+                <td class="text-center">{{ $material->unit }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">No materials match this register.</td>
+                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No materials match this register.</td>
             </tr>
             @endforelse
         </tbody>

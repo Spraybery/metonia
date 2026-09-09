@@ -30,12 +30,8 @@
                 <th>Item Code</th>
                 <th>Description</th>
                 <th>Register Type</th>
-                <th>Category</th>
-                <th>Unit</th>
-                <th class="text-center">On Hand</th>
-                <th class="text-center">Reorder Level</th>
                 <th class="text-center">Quantity Needed</th>
-                <th>Supplier</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
@@ -53,22 +49,14 @@
                         {{ $isSafety ? 'Worker Safety & PPE' : 'Store Material / Part' }}
                     </span>
                 </td>
-                <td>{{ $item->category }}</td>
-                <td>{{ $item->unit }}</td>
-                <td class="text-center" style="color: #dc2626; font-weight: bold;">
-                    {{ (float)$item->qty == (int)$item->qty ? number_format($item->qty) : number_format($item->qty, 2) }}
-                </td>
-                <td class="text-center">
-                    {{ (float)$item->low_stock == (int)$item->low_stock ? number_format($item->low_stock) : number_format($item->low_stock, 2) }}
-                </td>
                 <td class="text-center" style="background-color: #fef2f2; color: #b91c1c; font-weight: bold;">
-                    +{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }} {{ $item->unit }}
+                    +{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }}
                 </td>
-                <td>{{ $item->supplier ?: '—' }}</td>
+                <td class="text-center">{{ $item->unit }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="10" class="text-center" style="padding: 16px; color: #64748b;">All items are sufficiently stocked above reorder safety limits. No restock needed.</td>
+                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">All items are sufficiently stocked above reorder safety limits. No restock needed.</td>
             </tr>
             @endforelse
         </tbody>

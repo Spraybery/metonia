@@ -27,30 +27,32 @@
         <thead>
             <tr>
                 <th style="width: 30px;">#</th>
-                <th>Date</th>
-                <th>Safety Equipment / PPE</th>
-                <th class="text-center">Quantity Issued</th>
-                <th>Issued To (Worker)</th>
-                <th>Issued By</th>
-                <th>Note</th>
+                <th>Item Code</th>
+                <th>Description</th>
+                <th>Register Type</th>
+                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
             @forelse($safetyIssuances as $movement)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $movement->date ? $movement->date->format('d M Y') : $movement->created_at->format('d M Y') }}</td>
+                <td>{{ $movement->material->item_code ?? '—' }}</td>
                 <td><strong>{{ $movement->material_name }}</strong></td>
-                <td class="text-center" style="color: #dc2626; font-weight: bold;">
-                    {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }} {{ $movement->unit }}
+                <td>
+                    <span style="font-weight: bold; color: #dc2626;">
+                        Safety PPE Issuance
+                    </span>
                 </td>
-                <td><strong>{{ $movement->issued_to ?: ($movement->person ?: 'Worker') }}</strong></td>
-                <td>{{ $movement->issued_by ?: '—' }}</td>
-                <td class="font-size-sm">{{ $movement->note ?: '—' }}</td>
+                <td class="text-center font-weight-bold">
+                    {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }}
+                </td>
+                <td class="text-center">{{ $movement->unit }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="text-center" style="padding: 16px; color: #64748b;">No worker safety gear issuances logged in this register.</td>
+                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No safety equipment issuance records match this register.</td>
             </tr>
             @endforelse
         </tbody>

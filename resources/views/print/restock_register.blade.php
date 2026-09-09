@@ -27,22 +27,28 @@
         <thead>
             <tr>
                 <th style="width: 30px;">#</th>
-                <th>Date</th>
-                <th>Material</th>
-                <th class="text-center">Quantity Received</th>
-                <th>Receiving Officer</th>
-                <th>Delivery Note</th>
+                <th>Item Code</th>
+                <th>Description</th>
+                <th>Register Type</th>
+                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
             @forelse($restockMovements as $movement)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $movement->date->format('d M Y') }}</td>
+                <td>{{ $movement->material->item_code ?? '—' }}</td>
                 <td><strong>{{ $movement->material_name }}</strong></td>
-                <td class="text-center">{{ number_format($movement->qty, 2) }} {{ $movement->unit }}</td>
-                <td>{{ $movement->person ?: ($movement->issued_by ?: '—') }}</td>
-                <td class="font-size-sm">{{ $movement->note ?: '—' }}</td>
+                <td>
+                    <span style="font-weight: bold; color: #059669;">
+                        Supplier Restock
+                    </span>
+                </td>
+                <td class="text-center font-weight-bold">
+                    {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }}
+                </td>
+                <td class="text-center">{{ $movement->unit }}</td>
             </tr>
             @empty
             <tr>

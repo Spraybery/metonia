@@ -27,30 +27,32 @@
         <thead>
             <tr>
                 <th style="width: 30px;">#</th>
-                <th>Date</th>
-                <th>Material</th>
-                <th class="text-center">Quantity</th>
-                <th>Vehicle / Job Card</th>
-                <th>Issued By</th>
-                <th>Issued To</th>
-                <th>Note</th>
+                <th>Item Code</th>
+                <th>Description</th>
+                <th>Register Type</th>
+                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Unit</th>
             </tr>
         </thead>
         <tbody>
             @forelse($outwardMovements as $movement)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $movement->date->format('d M Y') }}</td>
+                <td>{{ $movement->material->item_code ?? '—' }}</td>
                 <td><strong>{{ $movement->material_name }}</strong></td>
-                <td class="text-center">{{ number_format($movement->qty, 2) }} {{ $movement->unit }}</td>
-                <td>{{ $movement->vehicle_label ?: 'General Stock' }}</td>
-                <td>{{ $movement->issued_by ?: '—' }}</td>
-                <td>{{ $movement->issued_to ?: '—' }}</td>
-                <td class="font-size-sm">{{ $movement->note ?: '—' }}</td>
+                <td>
+                    <span style="font-weight: bold; color: #0284c7;">
+                        Store Issuance
+                    </span>
+                </td>
+                <td class="text-center font-weight-bold">
+                    {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }}
+                </td>
+                <td class="text-center">{{ $movement->unit }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">No outward issuance records match this register.</td>
+                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No material issuance records match this register.</td>
             </tr>
             @endforelse
         </tbody>
