@@ -11,6 +11,7 @@ use App\Models\Tool;
 use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
@@ -30,6 +31,28 @@ class DashboardController extends Controller
         return response()->json($this->getDashboardData());
     }
 
+    /**
+     * Get aggregated dashboard analytics, vehicle stages, stock alerts, and tool metrics.
+     *
+     * @return array{
+     *     totalActiveVehicles: int,
+     *     stuckVehicles: Collection<int, Vehicle>,
+     *     lowStockMaterials: Collection<int, Material>,
+     *     lowStockSafetyMaterials: Collection<int, Material>,
+     *     totalStoreUnitsNeeded: float,
+     *     totalSafetyUnitsNeeded: float,
+     *     totalStockValue: float,
+     *     monthlyStockIssuedValue: float,
+     *     monthlyStockRestockedValue: float,
+     *     monthlyNetStockValuationChange: float,
+     *     stages: array<int, string>,
+     *     pipelineCounts: array<string, int>,
+     *     maxPipelineCount: int,
+     *     toolsSummary: array{total: int, available: int, checked_out: int, calibration_overdue: int},
+     *     recentActivities: \Illuminate\Database\Eloquent\Collection<int, ActivityLog>,
+     *     totalSupervisors: int
+     * }
+     */
     private function getDashboardData(): array
     {
         $now = Carbon::now();
