@@ -105,4 +105,24 @@ class RestockFinanceTest extends TestCase
         $response->assertSee('Est. Requisition Budget');
         $response->assertSee('Monthly Restock Expenditure Tracker');
     }
+
+    public function test_storekeeper_creating_material_cannot_set_unit_cost(): void
+    {
+        $storekeeper = User::factory()->create(['role' => 'Storekeeper']);
+
+        $response = $this->actingAs($storekeeper)->post(route('materials.store'), [
+            'name' => 'Aluminium Sheet 2mm',
+            'category' => 'Aluminium',
+            'unit' => 'Pieces',
+            'qty' => 10,
+            'low_stock' => 5,
+            'unit_cost' => 4500.00,
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('materials', [
+            'name' => 'Aluminium Sheet 2mm',
+            'unit_cost' => 0.00,
+        ]);
+    }
 }

@@ -515,7 +515,7 @@ class MaterialController extends Controller
             || stripos($validated['name'], 'safety') !== false
             || stripos($validated['name'], 'ppe') !== false;
 
-        if ($isSafety) {
+        if ($isSafety || ! Auth::user()->canEditRestockFinance()) {
             $validated['unit_cost'] = 0.00;
         }
 
@@ -577,6 +577,8 @@ class MaterialController extends Controller
 
         if ($isSafety) {
             $validated['unit_cost'] = 0.00;
+        } elseif (! Auth::user()->canEditRestockFinance()) {
+            unset($validated['unit_cost']);
         }
 
         $material->update($validated);
