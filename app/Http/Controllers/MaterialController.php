@@ -260,6 +260,30 @@ class MaterialController extends Controller
         }
 
         $totalShortageUnits = $items->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
+        $totalEstimatedBudget = (float) $items->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty) * (float) $m->unit_cost);
+
+        // Calculate Monthly Restock Expenditure Tracker (All 'in' Movements Grouped by Month)
+        $allRestockMovements = MaterialMovement::where('type', 'in')
+            ->with('material')
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
+
+        $monthlyExpenditures = $allRestockMovements->groupBy(fn (MaterialMovement $m) => Carbon::parse($m->date)->format('Y-m'))
+            ->map(function ($movements, $yearMonth) {
+                $dateObj = Carbon::createFromFormat('Y-m', $yearMonth);
+                $totalCost = (float) $movements->sum(fn (MaterialMovement $m) => $m->total_cost);
+                $totalUnits = (float) $movements->sum('qty');
+
+                return [
+                    'year_month' => $yearMonth,
+                    'month_name' => $dateObj->format('F Y'),
+                    'transaction_count' => $movements->count(),
+                    'total_units' => $totalUnits,
+                    'total_cost' => $totalCost,
+                    'movements' => $movements,
+                ];
+            })->values();
 
         return view('materials.restock_needed', compact(
             'items',
@@ -267,7 +291,9 @@ class MaterialController extends Controller
             'lowStockMaterials',
             'lowStockSafety',
             'allLowStock',
-            'totalShortageUnits'
+            'totalShortageUnits',
+            'totalEstimatedBudget',
+            'monthlyExpenditures'
         ));
     }
 
@@ -315,7 +341,30 @@ class MaterialController extends Controller
             })->values();
         }
 
-        return view('print.restock_needed_register', compact('items', 'type', 'reportTitle'));
+        $totalEstimatedBudget = (float) $items->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty) * (float) $m->unit_cost);
+
+        return view('print.restock_needed_register', compact('items', 'type', 'reportTitle', 'totalEstimatedBudget'));
+    }
+
+    public function updateRestockPrice(Request $request, $id)
+    {
+        if (! Auth::user()->canEditRestockFinance()) {
+            abort(403, 'Only Accountants and Admins can enter or update restock price estimates.');
+        }
+
+        $material = Material::findOrFail($id);
+
+        $validated = $request->validate([
+            'unit_cost' => 'required|numeric|min:0',
+        ]);
+
+        $material->update([
+            'unit_cost' => $validated['unit_cost'],
+        ]);
+
+        ActivityLog::record(Auth::user()->name, "Updated restock price estimate for '{$material->name}' ({$material->item_code}) to KES ".number_format($validated['unit_cost'], 2).'.');
+
+        return back()->with('flash_success', "Restock price estimate for '{$material->name}' updated to KES ".number_format($validated['unit_cost'], 2).'.');
     }
 
     public function safetyStock(Request $request)
@@ -612,6 +661,7 @@ class MaterialController extends Controller
                 'material_name' => $material->name,
                 'type' => $validated['type'],
                 'qty' => $qty,
+                'unit_cost' => $material->unit_cost,
                 'unit' => $material->unit,
                 'date' => $validated['date'],
                 'person' => $issuedTo,

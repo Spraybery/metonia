@@ -32,6 +32,8 @@
                 <th>Register Type</th>
                 <th class="text-center">Quantity Needed</th>
                 <th class="text-center">Unit</th>
+                <th class="text-right">Est. Unit Price</th>
+                <th class="text-right">Est. Cost Needed</th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +41,7 @@
             @php
                 $isSafety = $item->isSafetyStock();
                 $needed = max(0, (float)$item->low_stock - (float)$item->qty);
+                $estTotalCost = $needed * (float)$item->unit_cost;
             @endphp
             <tr>
                 <td>{{ $loop->iteration }}</td>
@@ -53,13 +56,25 @@
                     +{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }}
                 </td>
                 <td class="text-center">{{ $item->unit }}</td>
+                <td class="text-right">KES {{ number_format($item->unit_cost, 2) }}</td>
+                <td class="text-right" style="font-weight: bold; color: #047857;">KES {{ number_format($estTotalCost, 2) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">All items are sufficiently stocked above reorder safety limits. No restock needed.</td>
+                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">All items are sufficiently stocked above reorder safety limits. No restock needed.</td>
             </tr>
             @endforelse
         </tbody>
+        @if($items->count() > 0)
+        <tfoot>
+            <tr style="background-color: #f8fafc; font-weight: bold;">
+                <td colspan="6" class="text-right" style="text-transform: uppercase; font-size: 11px;">Grand Total Estimated Requisition Budget:</td>
+                <td colspan="2" class="text-right" style="font-size: 13px; color: #047857;">
+                    KES {{ number_format($totalEstimatedBudget, 2) }}
+                </td>
+            </tr>
+        </tfoot>
+        @endif
     </table>
 
     @include('print.document_signatures')

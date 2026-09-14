@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->isAdmin();
     }
+
+    public function canEditRestockFinance(): bool
+    {
+        return $this->isAdmin() || $this->isAccountant();
+    }
 }

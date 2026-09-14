@@ -17,6 +17,7 @@ class MaterialMovement extends Model
         'material_name',
         'type',
         'qty',
+        'unit_cost',
         'unit',
         'date',
         'person',
@@ -31,9 +32,17 @@ class MaterialMovement extends Model
     {
         return [
             'qty' => 'decimal:2',
+            'unit_cost' => 'decimal:2',
             'date' => 'date',
             'created_at' => 'datetime',
         ];
+    }
+
+    public function getTotalCostAttribute(): float
+    {
+        $costPerUnit = $this->unit_cost ?? ($this->material ? $this->material->unit_cost : 0);
+
+        return (float) $this->qty * (float) $costPerUnit;
     }
 
     public function material(): BelongsTo
