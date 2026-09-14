@@ -88,6 +88,7 @@
                             <th>Unit</th>
                             <th class="text-center">On Hand</th>
                             <th class="text-center">Reorder Level</th>
+                            <th class="text-right">Unit Price (KES)</th>
                             <th>Supplier</th>
                             @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 80px;">Action</th>
@@ -122,6 +123,9 @@
                             </td>
                             <td class="text-center text-muted font-size-xs">
                                 {{ number_format($row->low_stock, 2) }}
+                            </td>
+                            <td class="text-right font-weight-semibold text-dark">
+                                KES {{ number_format($row->unit_cost, 2) }}
                             </td>
                             <td class="font-size-sm">{{ $row->supplier ?: '—' }}</td>
                             @if(Auth::user()->canEdit('materials') || Auth::user()->canDelete())
@@ -196,10 +200,22 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Low-Stock Reorder Threshold <span class="text-danger">*</span></label>
-                                                        <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
-                                                        <input type="hidden" name="unit_cost" value="{{ $row->unit_cost ?: '0.00' }}">
+                                                    <div class="form-row">
+                                                        <div class="col-md-6 form-group">
+                                                            <label class="font-weight-semibold">Reorder Threshold <span class="text-danger">*</span></label>
+                                                            <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
+                                                        </div>
+                                                        <div class="col-md-6 form-group">
+                                                            <label class="font-weight-semibold">Unit Cost / Price (KES)</label>
+                                                            @if(Auth::user()->canEditRestockFinance())
+                                                                <input type="number" step="0.01" min="0" name="unit_cost" class="form-control font-weight-bold border-success text-success" value="{{ $row->unit_cost }}" required>
+                                                                <small class="form-text text-success font-weight-semibold"><i class="icon-shield-check mr-1"></i> Accountant price control active</small>
+                                                            @else
+                                                                <input type="text" class="form-control" value="KES {{ number_format($row->unit_cost, 2) }}" readonly>
+                                                                <input type="hidden" name="unit_cost" value="{{ $row->unit_cost ?: '0.00' }}">
+                                                                <small class="form-text text-muted">Only Accountants can edit item prices.</small>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <label class="font-weight-semibold">Supplier Name</label>
