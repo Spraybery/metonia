@@ -75,7 +75,6 @@
                 </form>
             </div>
 
-
             {{-- Standard DataTables --}}
             <div class="table-responsive">
                 <table class="table datatable-button-html5-columns table-striped table-hover">
@@ -141,7 +140,7 @@
                                             </a>
                                             @if(Auth::user()->canEdit('materials'))
                                             <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-edit-{{ $row->id }}">
-                                                <i class="icon-pencil"></i> Edit Item
+                                                <i class="icon-pencil"></i> Edit Item Specifications
                                             </a>
                                             <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-stock-{{ $row->id }}">
                                                 <i class="icon-transmission"></i> Quick Movement
@@ -159,133 +158,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- Edit Modal for this item --}}
-                                @if(Auth::user()->canEdit('materials'))
-                                <div id="modal-edit-{{ $row->id }}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content text-left">
-                                            <div class="modal-header bg-slate-800 text-white">
-                                                <h6 class="modal-title font-weight-bold">Edit Item: {{ $row->name }}</h6>
-                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <form action="{{ route('materials.update', $row->id) }}" method="POST">
-                                                @csrf @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="form-row">
-                                                        <div class="col-md-5 form-group">
-                                                            <label class="font-weight-semibold">Item Code / SKU</label>
-                                                            <input type="text" name="item_code" class="form-control" value="{{ $row->item_code }}" placeholder="e.g. MAT-0012">
-                                                        </div>
-                                                        <div class="col-md-7 form-group">
-                                                            <label class="font-weight-semibold">Item Name <span class="text-danger">*</span></label>
-                                                            <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Category <span class="text-danger">*</span></label>
-                                                            <select name="category" class="form-control" required>
-                                                                @foreach($categories as $cat)
-                                                                    <option value="{{ $cat }}" {{ $row->category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Unit of Measurement <span class="text-danger">*</span></label>
-                                                            <select name="unit" class="form-control" required>
-                                                                @foreach($units as $u)
-                                                                    <option value="{{ $u }}" {{ $row->unit === $u ? 'selected' : '' }}>{{ $u }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Reorder Threshold <span class="text-danger">*</span></label>
-                                                            <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Unit Cost / Price (KES)</label>
-                                                            @if(Auth::user()->canEditRestockFinance())
-                                                                <input type="number" step="0.01" min="0" name="unit_cost" class="form-control font-weight-bold border-success text-success" value="{{ $row->unit_cost }}" required>
-                                                                <small class="form-text text-success font-weight-semibold"><i class="icon-shield-check mr-1"></i> Accountant price control active</small>
-                                                            @else
-                                                                <input type="text" class="form-control" value="KES {{ number_format($row->unit_cost, 2) }}" readonly>
-                                                                <input type="hidden" name="unit_cost" value="{{ $row->unit_cost ?: '0.00' }}">
-                                                                <small class="form-text text-muted">Only Accountants can edit item prices.</small>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Supplier Name</label>
-                                                        <input type="text" name="supplier" class="form-control" value="{{ $row->supplier }}">
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary font-weight-semibold">Save Changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Quick Movement Modal for this item --}}
-                                <div id="modal-stock-{{ $row->id }}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content text-left">
-                                            <div class="modal-header bg-slate-800 text-white">
-                                                <h6 class="modal-title font-weight-bold">Stock Movement: {{ $row->name }}</h6>
-                                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <form action="{{ route('materials.movement', $row->id) }}" method="POST">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Movement Type <span class="text-danger">*</span></label>
-                                                        <select name="type" class="form-control" required>
-                                                            <option value="in">🟢 Stock In (Restock / Supplier Delivery)</option>
-                                                            <option value="out">🔴 Stock Out (Issuance / Adjustment / Scrap)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-row">
-                                                        <div class="col-6 form-group">
-                                                            <label class="font-weight-semibold">Quantity ({{ $row->unit }}) <span class="text-danger">*</span></label>
-                                                            <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
-                                                        </div>
-                                                        <div class="col-6 form-group">
-                                                            <label class="font-weight-semibold">Date <span class="text-danger">*</span></label>
-                                                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Person Responsible / Staff <span class="text-danger">*</span></label>
-                                                        <input type="text" name="person" class="form-control" value="{{ Auth::user()->name }}" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Linked Job Card (Optional)</label>
-                                                        <select name="vehicle_id" class="form-control">
-                                                            <option value="">-- None / General Store Movement --</option>
-                                                            @foreach($activeVehicles as $v)
-                                                                <option value="{{ $v->id }}">{{ $v->plate }} — {{ $v->make }} {{ $v->model }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Reason / Movement Note</label>
-                                                        <textarea name="note" class="form-control" rows="2" placeholder="e.g. Delivery note #9841 or emergency chassis reinforcement"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary font-weight-semibold">Record Movement</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
                             </td>
                             @endif
                         </tr>
@@ -365,6 +237,136 @@
 
 </div>
 
+{{-- Item Modals (Rendered Outside Table for DataTables Compatibility) --}}
+@if(Auth::user()->canEdit('materials'))
+    @foreach($materials as $row)
+    {{-- Edit Modal for this item --}}
+    <div id="modal-edit-{{ $row->id }}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content text-left">
+                <div class="modal-header bg-slate-800 text-white">
+                    <h6 class="modal-title font-weight-bold">Edit Item Specifications: {{ $row->name }}</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <form action="{{ route('materials.update', $row->id) }}" method="POST">
+                    @csrf @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-md-5 form-group">
+                                <label class="font-weight-semibold">Item Code / SKU</label>
+                                <input type="text" name="item_code" class="form-control" value="{{ $row->item_code }}" placeholder="e.g. MAT-0012">
+                            </div>
+                            <div class="col-md-7 form-group">
+                                <label class="font-weight-semibold">Item Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" value="{{ $row->name }}" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Category <span class="text-danger">*</span></label>
+                                <select name="category" class="form-control" required>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat }}" {{ $row->category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Unit of Measurement <span class="text-danger">*</span></label>
+                                <select name="unit" class="form-control" required>
+                                    @foreach($units as $u)
+                                        <option value="{{ $u }}" {{ $row->unit === $u ? 'selected' : '' }}>{{ $u }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Reorder Threshold <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" name="low_stock" class="form-control" value="{{ $row->low_stock }}" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Unit Cost / Price (KES)</label>
+                                @if(Auth::user()->canEditRestockFinance())
+                                    <input type="number" step="0.01" min="0" name="unit_cost" class="form-control font-weight-bold border-success text-success" value="{{ $row->unit_cost }}" required>
+                                    <small class="form-text text-success font-weight-semibold"><i class="icon-shield-check mr-1"></i> Accountant price control active</small>
+                                @else
+                                    <input type="text" class="form-control" value="KES {{ number_format($row->unit_cost, 2) }}" readonly>
+                                    <input type="hidden" name="unit_cost" value="{{ $row->unit_cost ?: '0.00' }}">
+                                    <small class="form-text text-muted">Only Accountants can edit item prices.</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Supplier Name</label>
+                            <input type="text" name="supplier" class="form-control" value="{{ $row->supplier }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary font-weight-semibold">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Quick Movement Modal for this item --}}
+    <div id="modal-stock-{{ $row->id }}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content text-left">
+                <div class="modal-header bg-slate-800 text-white">
+                    <h6 class="modal-title font-weight-bold">Stock Movement: {{ $row->name }}</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <form action="{{ route('materials.movement', $row->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Movement Type <span class="text-danger">*</span></label>
+                            <select name="type" class="form-control" required>
+                                <option value="in">🟢 Stock In (Restock / Supplier Delivery)</option>
+                                <option value="out">🔴 Stock Out (Issuance / Adjustment / Scrap)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-6 form-group">
+                                <label class="font-weight-semibold">Quantity ({{ $row->unit }}) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
+                            </div>
+                            <div class="col-6 form-group">
+                                <label class="font-weight-semibold">Date <span class="text-danger">*</span></label>
+                                <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Person Responsible / Staff <span class="text-danger">*</span></label>
+                            <input type="text" name="person" class="form-control" value="{{ Auth::user()->name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Linked Job Card (Optional)</label>
+                            <select name="vehicle_id" class="form-control">
+                                <option value="">-- None / General Store Movement --</option>
+                                @foreach($activeVehicles as $v)
+                                    <option value="{{ $v->id }}">{{ $v->plate }} — {{ $v->make }} {{ $v->model }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Reason / Movement Note</label>
+                            <textarea name="note" class="form-control" rows="2" placeholder="e.g. Delivery note #9841 or emergency chassis reinforcement"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary font-weight-semibold">Record Movement</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+@endif
+
 {{-- Add Material Modal --}}
 <div id="modal-add-material" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
@@ -439,252 +441,8 @@
     </div>
 </div>
 
-
-{{-- Global Stock Movement Modal --}}
-<div id="modal-movement" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-slate-800 text-white">
-                <h6 class="modal-title font-weight-bold">
-                    <i class="icon-transmission mr-2"></i> Record Store Stock Movement
-                </h6>
-                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-            </div>
-            <form id="global-movement-form" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Select Store Material <span class="text-danger">*</span></label>
-                        <select id="global-mat-select" class="form-control select-search" required onchange="updateMovementAction(this.value)">
-                            <option value="">-- Choose Store Item --</option>
-                            @foreach($materials as $m)
-                                <option value="{{ $m->id }}">{{ $m->name }} ({{ $m->qty }} {{ $m->unit }} in stock)</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Movement Type <span class="text-danger">*</span></label>
-                        <select name="type" class="form-control" required>
-                            <option value="in">🟢 Stock In (Supplier Delivery / Restock)</option>
-                            <option value="out">🔴 Stock Out (Plant Issuance / Deduction)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
-                        </div>
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Movement Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Staff Member / Receiver <span class="text-danger">*</span></label>
-                        <input type="text" name="person" class="form-control" value="{{ Auth::user()->name }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Linked Vehicle Job Card (Optional)</label>
-                        <select name="vehicle_id" class="form-control">
-                            <option value="">-- General Stock (No Job Card) --</option>
-                            @foreach($activeVehicles as $v)
-                                <option value="{{ $v->id }}">{{ $v->plate }} — {{ $v->make }} {{ $v->model }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Movement Note</label>
-                        <textarea name="note" class="form-control" rows="2" placeholder="Delivery reference or issuance context..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary font-weight-semibold">
-                        <i class="icon-checkmark mr-1"></i> Submit Movement
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- Manager Modal: Restock from Supplier --}}
-<div id="modal-supplier-restock" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h6 class="modal-title font-weight-bold">
-                    <i class="icon-arrow-down5 mr-2"></i> Record Supplier Delivery / Stock In (Manager)
-                </h6>
-                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-            </div>
-            <form id="restock-movement-form" method="POST">
-                @csrf
-                <input type="hidden" name="type" value="in">
-                <div class="modal-body">
-                    <div class="alert alert-success py-2 font-size-sm">
-                        <i class="icon-info22 mr-1"></i> Record incoming materials from suppliers and automatically update store inventory.
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Select Store Material <span class="text-danger">*</span></label>
-                        <select id="restock-mat-select" class="form-control select-search" required onchange="updateRestockAction(this.value)">
-                            <option value="">-- Choose Store Item --</option>
-                            @foreach($materials as $m)
-                                <option value="{{ $m->id }}" data-supplier="{{ $m->supplier }}">
-                                    {{ $m->name }} (Current: {{ $m->qty }} {{ $m->unit }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Supplier / Vendor Name <span class="text-danger">*</span></label>
-                        <input type="text" name="supplier" id="restock-supplier-input" class="form-control" placeholder="e.g. Apex Steel Kenya Ltd" required>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Quantity Received <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
-                        </div>
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Delivery Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Receiving Manager / Staff <span class="text-danger">*</span></label>
-                        <input type="text" name="person" class="form-control" value="{{ Auth::user()->name }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Delivery Note / Invoice Note</label>
-                        <textarea name="note" class="form-control" rows="2" placeholder="e.g. Delivery note #DN-8842, consignment checked and certified."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success font-weight-semibold">
-                        <i class="icon-checkmark mr-1"></i> Receive Stock into Inventory
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- Shopkeeper Modal: Issue Material Out of Store --}}
-<div id="modal-issue-vehicle" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h6 class="modal-title font-weight-bold">
-                    <i class="icon-arrow-up5 mr-2"></i> Issue Store Material Out of Inventory (Storekeeper)
-                </h6>
-                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-            </div>
-            <form id="issue-movement-form" method="POST">
-                @csrf
-                <input type="hidden" name="type" value="out">
-                <div class="modal-body">
-                    <div class="alert alert-info py-2 font-size-sm">
-                        <i class="icon-info22 mr-1"></i> Record outward material issuance. Stock is immediately deducted and registered to the target vehicle's Job Card.
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Material Description <span class="text-danger">*</span></label>
-                        <select id="issue-mat-select" class="form-control select-search" required onchange="updateIssueAction(this.value)">
-                            <option value="">-- Select Material Description --</option>
-                            @foreach($materials as $m)
-                                <option value="{{ $m->id }}" {{ $m->qty <= 0 ? 'disabled' : '' }}>
-                                    {{ $m->name }} (Available: {{ $m->qty }} {{ $m->unit }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Vehicle Name / Destination <span class="text-danger">*</span></label>
-                        <select name="vehicle_id" class="form-control" required id="issue-vehicle-select" onchange="autoFillTechnician(this)">
-                            <option value="">-- Choose Target Vehicle --</option>
-                            @foreach($activeVehicles as $v)
-                                <option value="{{ $v->id }}" data-lead="{{ $v->assigned_to }}">
-                                    {{ $v->plate }} — {{ $v->make }} {{ $v->model }} (Stage: {{ $v->stage }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0.01" name="qty" class="form-control" required placeholder="0.00">
-                        </div>
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Date Materials Issued <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Issued By (Storekeeper) <span class="text-danger">*</span></label>
-                            <input type="text" name="issued_by" class="form-control" value="{{ Auth::user()->name }}" required>
-                        </div>
-                        <div class="col-6 form-group">
-                            <label class="font-weight-semibold">Issued To (Technician) <span class="text-danger">*</span></label>
-                            <input type="text" name="issued_to" id="technician-person-input" class="form-control" placeholder="e.g. Eng. Peter Kimani" required>
-                            <input type="hidden" name="person" id="person-fallback-input">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="font-weight-semibold">Issuance Purpose / Workshop Note</label>
-                        <textarea name="note" class="form-control" rows="2" placeholder="e.g. Chassis cross-member structural fabrication"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary font-weight-semibold">
-                        <i class="icon-checkmark mr-1"></i> Confirm Outward Store Issuance
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 @push('scripts')
 <script>
-    function updateMovementAction(matId) {
-        if (matId) {
-            document.getElementById('global-movement-form').action = '/materials/' + matId + '/movement';
-        }
-    }
-
-    function updateRestockAction(matId) {
-        if (matId) {
-            document.getElementById('restock-movement-form').action = '/materials/' + matId + '/movement';
-            var opt = document.querySelector('#restock-mat-select option[value="' + matId + '"]');
-            if (opt && opt.dataset.supplier) {
-                document.getElementById('restock-supplier-input').value = opt.dataset.supplier;
-            }
-        }
-    }
-
-    function updateIssueAction(matId) {
-        if (matId) {
-            document.getElementById('issue-movement-form').action = '/materials/' + matId + '/movement';
-        }
-    }
-
     function autoFillTechnician(selectElem) {
         var opt = selectElem.options[selectElem.selectedIndex];
         if (opt && opt.dataset.lead) {

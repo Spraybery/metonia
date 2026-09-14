@@ -175,53 +175,6 @@
                                         </a>
                                     @endif
                                 </div>
-
-                                {{-- Accountant Price Edit Modal --}}
-                                @if(Auth::user()->canEditRestockFinance())
-                                <div class="modal fade" id="editPriceModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editPriceModalLabel{{ $row->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content text-left">
-                                            <form method="POST" action="{{ route('materials.update_restock_price', $row->id) }}">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-header bg-success text-white">
-                                                    <h6 class="modal-title font-weight-bold" id="editPriceModalLabel{{ $row->id }}">
-                                                        <i class="icon-coin-dollar mr-2"></i> Accountant Restock Price Estimation
-                                                    </h6>
-                                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="alert alert-info border-0 font-size-sm py-2">
-                                                        <i class="icon-info22 mr-1"></i> Enter the estimated unit price needed for <strong>{{ $row->name }}</strong> ({{ $row->item_code }}).
-                                                    </div>
-                                                    <div class="form-group mb-2">
-                                                        <label class="font-weight-semibold">Item Name:</label>
-                                                        <input type="text" class="form-control" value="{{ $row->name }}" readonly>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Deficit Qty Needed:</label>
-                                                            <input type="text" class="form-control" value="{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }} {{ $row->unit }}" readonly>
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Unit Price (KES): <span class="text-danger">*</span></label>
-                                                            <input type="number" step="0.01" min="0" name="unit_cost" class="form-control font-weight-bold" value="{{ old('unit_cost', $row->unit_cost) }}" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer bg-light py-2">
-                                                    <button type="button" class="btn btn-light font-weight-semibold" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-success font-weight-bold">
-                                                        <i class="icon-checkmark-circle mr-1"></i> Save Estimated Price
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
                             </td>
                         </tr>
                         @empty
@@ -338,4 +291,57 @@
     </div>
 
 </div>
+
+{{-- Accountant Price Edit Modals (Rendered Outside Table for DataTables Compatibility) --}}
+@if(Auth::user()->canEditRestockFinance())
+    @foreach($items as $row)
+    @php
+        $needed = max(0, (float)$row->low_stock - (float)$row->qty);
+    @endphp
+    <div class="modal fade" id="editPriceModal{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="editPriceModalLabel{{ $row->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-left">
+                <form method="POST" action="{{ route('materials.update_restock_price', $row->id) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header bg-success text-white">
+                        <h6 class="modal-title font-weight-bold" id="editPriceModalLabel{{ $row->id }}">
+                            <i class="icon-coin-dollar mr-2"></i> Accountant Restock Price Estimation
+                        </h6>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info border-0 font-size-sm py-2">
+                            <i class="icon-info22 mr-1"></i> Enter the estimated unit price needed for <strong>{{ $row->name }}</strong> ({{ $row->item_code }}).
+                        </div>
+                        <div class="form-group mb-2">
+                            <label class="font-weight-semibold">Item Name:</label>
+                            <input type="text" class="form-control" value="{{ $row->name }}" readonly>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Deficit Qty Needed:</label>
+                                <input type="text" class="form-control" value="{{ (float)$needed == (int)$needed ? number_format($needed) : number_format($needed, 2) }} {{ $row->unit }}" readonly>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-semibold">Unit Price (KES): <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0" name="unit_cost" class="form-control font-weight-bold" value="{{ old('unit_cost', $row->unit_cost) }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light py-2">
+                        <button type="button" class="btn btn-light font-weight-semibold" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success font-weight-bold">
+                            <i class="icon-checkmark-circle mr-1"></i> Save Estimated Price
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+@endif
+
 @endsection
