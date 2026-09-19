@@ -274,6 +274,56 @@ html[data-theme="dark"] .border-right {
     border-color: #334155 !important;
 }
 
+/* --------------------------------------------------------------------------
+   9. ALERTS, TABS & LIGHT BADGES
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .alert-success {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #6ee7b7 !important;
+}
+
+html[data-theme="dark"] .alert-danger {
+    background-color: rgba(245, 82, 70, 0.15) !important;
+    border-color: rgba(245, 82, 70, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .alert-info {
+    background-color: rgba(20, 193, 215, 0.15) !important;
+    border-color: rgba(20, 193, 215, 0.4) !important;
+    color: #67e8f9 !important;
+}
+
+html[data-theme="dark"] .alert .close {
+    color: inherit !important;
+    text-shadow: none !important;
+    opacity: 0.75;
+}
+
+html[data-theme="dark"] .badge-light {
+    background-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .nav-tabs {
+    border-bottom-color: #334155 !important;
+}
+
+html[data-theme="dark"] .nav-tabs .nav-link {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .nav-tabs .nav-link:hover {
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .nav-tabs .nav-link.active {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 #334155 #1e293b !important;
+}
+
 /* Theme Toggle Button Styling */
 .btn-theme-toggle {
     display: inline-flex;
