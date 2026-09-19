@@ -74,7 +74,7 @@
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item mr-3">
                     <button type="button" class="btn-theme-toggle" id="theme-toggle-btn" onclick="toggleAppTheme()" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode">
-                        <i class="icon-moon2" id="theme-toggle-icon"></i>
+                        <i class="icon-contrast" id="theme-toggle-icon"></i>
                     </button>
                 </li>
                 @auth
@@ -391,7 +391,7 @@
                 icon.className = 'icon-sun3';
                 if (btn) btn.title = 'Switch to Light Mode';
             } else {
-                icon.className = 'icon-moon2';
+                icon.className = 'icon-contrast';
                 if (btn) btn.title = 'Switch to Dark Mode';
             }
         }
