@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Qs;
 use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -40,6 +41,19 @@ class AuthController extends Controller
                 $query->whereRaw('LOWER(username) = ?', [strtolower($identifier)]);
             }
         })->first();
+
+        if ($user && Hash::check($validated['password'], $user->password) && $user->isPending()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'ok' => false,
+                    'msg' => 'Your account request is still awaiting administrator approval.',
+                ], 403);
+            }
+
+            return back()->withErrors([
+                'identifier' => 'Your account request is still awaiting administrator approval. Please check back once it has been reviewed.',
+            ])->onlyInput('identifier');
+        }
 
         if ($user && Hash::check($validated['password'], $user->password)) {
             Auth::login($user, $request->boolean('remember'));
@@ -103,6 +117,39 @@ class AuthController extends Controller
         ActivityLog::record($user->name, "{$user->name} updated account password.");
 
         return back()->with('flash_success', 'Password updated successfully.');
+    }
+
+    public function showSignupForm()
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('auth.signup', ['roles' => Qs::getSelfSignupRoles()]);
+    }
+
+    public function signup(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|unique:users,username|max:255',
+            'email' => 'required|string|email|unique:users,email|max:255',
+            'role' => 'required|string|in:'.implode(',', Qs::getSelfSignupRoles()),
+            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()],
+        ]);
+
+        $user = User::create([
+            'name' => trim($validated['name']),
+            'username' => trim($validated['username']),
+            'email' => trim($validated['email']),
+            'role' => $validated['role'],
+            'password' => Hash::make($validated['password']),
+            'status' => 'Pending',
+        ]);
+
+        ActivityLog::record($user->name, "{$user->name} requested a new '{$user->role}' account — pending administrator approval.");
+
+        return redirect()->route('login')->with('flash_success', 'Your account request has been submitted. An administrator will review it and activate your account shortly.');
     }
 
     public function showForgotPasswordForm()

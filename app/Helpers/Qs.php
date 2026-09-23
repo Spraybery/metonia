@@ -168,4 +168,17 @@ class Qs
             'Accountant',
         ];
     }
+
+    /**
+     * Roles a first-time visitor may request for themselves on the public
+     * sign-up form. Deliberately excludes Admin and Manager — those accounts
+     * are only ever created by an existing Admin from System Users & RBAC.
+     */
+    public static function getSelfSignupRoles(): array
+    {
+        return [
+            'Storekeeper',
+            'Accountant',
+        ];
+    }
 }

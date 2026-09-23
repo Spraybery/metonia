@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Plant Portal Sign In | {{ Qs::getSystemName() }}</title>
+    <title>Create Account | {{ Qs::getSystemName() }}</title>
 
     <link rel="icon" href="{{ Qs::getSystemLogo() }}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -35,7 +35,7 @@
 
     <div class="container my-4">
         <div class="row justify-content-center">
-            <div class="col-md-5 col-lg-4">
+            <div class="col-md-6 col-lg-5">
 
                 <!-- Brand Card -->
                 <div class="text-center mb-3 position-relative">
@@ -51,59 +51,85 @@
                     <div class="text-white-50 font-size-sm">Nairobi Assembly Plant #1 Operations Floor</div>
                 </div>
 
-                <!-- Login Card -->
+                <!-- Sign Up Card -->
                 <div class="card shadow-lg mb-3 border-0" style="border-radius: 8px;">
                     <div class="card-body p-4">
                         <div class="text-center mb-3">
                             <h6 class="font-weight-bold text-dark text-uppercase mb-1">
-                                <i class="icon-lock text-success mr-1"></i> Authorized Staff Sign In
+                                <i class="icon-user-plus text-success mr-1"></i> Request Staff Account
                             </h6>
-                            <span class="text-muted font-size-sm">Enter your Plant ID / Username or Email</span>
+                            <span class="text-muted font-size-sm">First time here? Sign up to request plant floor access</span>
                         </div>
 
                         @include('partials.flash_message')
 
-                        <form action="{{ route('login.post') }}" method="POST" autocomplete="off">
+                        <div class="alert alert-info py-2 font-size-sm">
+                            <i class="icon-info22 mr-1"></i> New account requests are reviewed by an administrator before you can sign in.
+                        </div>
+
+                        <form action="{{ route('signup.post') }}" method="POST" autocomplete="off">
                             @csrf
-                            <!-- Dummy inputs to prevent browser password managers from auto-filling saved credentials -->
-                            <input type="text" name="fake_username_remembered" style="display:none;" tabindex="-1" aria-hidden="true" autocomplete="off">
-                            <input type="password" name="fake_password_remembered" style="display:none;" tabindex="-1" aria-hidden="true" autocomplete="new-password">
 
                             <div class="form-group form-group-feedback form-group-feedback-left">
-                                <input type="text" name="identifier" id="login-identifier" class="form-control" placeholder="Username or email (e.g. admin)" value="" required autofocus autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" oninput="this.dataset.userInteracted='true';">
+                                <input type="text" name="name" class="form-control" placeholder="Full Name (e.g. Jane Wanjiru)" value="{{ old('name') }}" required autofocus>
                                 <div class="form-control-feedback">
                                     <i class="icon-user text-muted"></i>
                                 </div>
                             </div>
 
+                            <div class="form-row">
+                                <div class="col-md-6 form-group form-group-feedback form-group-feedback-left">
+                                    <input type="text" name="username" class="form-control" placeholder="Username" value="{{ old('username') }}" required>
+                                    <div class="form-control-feedback">
+                                        <i class="icon-profile text-muted"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 form-group form-group-feedback form-group-feedback-left">
+                                    <input type="email" name="email" class="form-control" placeholder="Email Address" value="{{ old('email') }}" required>
+                                    <div class="form-control-feedback">
+                                        <i class="icon-envelope text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-feedback form-group-feedback-left">
+                                <select name="role" class="form-control" required>
+                                    <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select the role you're requesting...</option>
+                                    @foreach($roles as $r)
+                                        <option value="{{ $r }}" {{ old('role') === $r ? 'selected' : '' }}>{{ $r }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="form-control-feedback">
+                                    <i class="icon-briefcase text-muted"></i>
+                                </div>
+                            </div>
+
                             <div class="form-group form-group-feedback form-group-feedback-left position-relative">
-                                <input type="password" name="password" id="login-password" class="form-control pr-5" placeholder="Account Password" value="" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" oninput="this.dataset.userInteracted='true';">
+                                <input type="password" name="password" id="signup-password" class="form-control pr-5" placeholder="Password (min 8, upper &amp; lower case, a number)" required autocomplete="new-password">
                                 <div class="form-control-feedback">
                                     <i class="icon-lock2 text-muted"></i>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-light border-0 position-absolute" style="right: 6px; top: 50%; transform: translateY(-50%); z-index: 5; background: transparent; cursor: pointer; font-size: 15px;" onclick="togglePasswordVisibility('login-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
+                                <button type="button" class="btn btn-sm btn-light border-0 position-absolute" style="right: 6px; top: 50%; transform: translateY(-50%); z-index: 5; background: transparent; cursor: pointer; font-size: 15px;" onclick="togglePasswordVisibility('signup-password', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
                                     👁️
                                 </button>
                             </div>
 
-                            <div class="form-group d-flex align-items-center justify-content-between mb-3">
-                                <div class="form-check mb-0">
-                                    <label class="form-check-label font-size-sm text-muted">
-                                        <input type="checkbox" name="remember" value="1" class="form-check-input"> Remember session
-                                    </label>
+                            <div class="form-group form-group-feedback form-group-feedback-left">
+                                <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm Password" required autocomplete="new-password">
+                                <div class="form-control-feedback">
+                                    <i class="icon-lock2 text-muted"></i>
                                 </div>
-                                <a href="{{ route('password.request') }}" class="font-size-xs">Forgot password?</a>
                             </div>
 
                             <div class="form-group mb-0">
                                 <button type="submit" class="btn btn-primary btn-block font-weight-bold py-2">
-                                    <i class="icon-enter2 mr-1"></i> Authenticate &amp; Proceed
+                                    <i class="icon-paperplane mr-1"></i> Submit Account Request
                                 </button>
                             </div>
                         </form>
 
                         <div class="text-center mt-3 font-size-sm">
-                            First time here? <a href="{{ route('signup') }}" class="font-weight-semibold">Create an account</a>
+                            Already have an account? <a href="{{ route('login') }}" class="font-weight-semibold">Sign In</a>
                         </div>
                     </div>
                 </div>
@@ -118,24 +144,6 @@
     <script src="{{ asset('global_assets/js/main/jquery.min.js') }}"></script>
     <script src="{{ asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
     <script>
-        function setCreds(user) {
-            const idInput = document.getElementById('login-identifier');
-            const passInput = document.getElementById('login-password');
-            if (idInput) { idInput.removeAttribute('readonly'); idInput.value = user; idInput.dataset.userInteracted = 'true'; }
-            if (passInput) { passInput.removeAttribute('readonly'); passInput.value = 'password'; passInput.dataset.userInteracted = 'true'; }
-        }
-
-        function forceClearLoginInputs() {
-            const idInput = document.getElementById('login-identifier');
-            const passInput = document.getElementById('login-password');
-            if (idInput && !idInput.dataset.userInteracted) {
-                idInput.value = '';
-            }
-            if (passInput && !passInput.dataset.userInteracted) {
-                passInput.value = '';
-            }
-        }
-
         function updateThemeToggleUI(theme) {
             const btn = document.getElementById('theme-toggle-btn');
             const icon = document.getElementById('theme-toggle-icon');
@@ -152,14 +160,14 @@
         function toggleAppTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+
             document.documentElement.setAttribute('data-theme', newTheme);
             if (newTheme === 'dark') {
                 document.documentElement.classList.add('dark-mode');
             } else {
                 document.documentElement.classList.remove('dark-mode');
             }
-            
+
             localStorage.setItem('metonia_theme', newTheme);
             updateThemeToggleUI(newTheme);
         }
@@ -167,13 +175,6 @@
         window.addEventListener('DOMContentLoaded', function() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             updateThemeToggleUI(currentTheme);
-            forceClearLoginInputs();
-            setTimeout(forceClearLoginInputs, 50);
-            setTimeout(forceClearLoginInputs, 200);
-            setTimeout(forceClearLoginInputs, 500);
-        });
-        window.addEventListener('pageshow', function(e) {
-            forceClearLoginInputs();
         });
 
         function togglePasswordVisibility(inputId, toggleEl) {

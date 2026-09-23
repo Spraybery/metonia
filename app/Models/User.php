@@ -18,6 +18,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
     ];
 
     protected $hidden = [
@@ -56,6 +57,16 @@ class User extends Authenticatable
     public function isAccountant(): bool
     {
         return $this->role === 'Accountant';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'Pending';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'Active';
     }
 
     public function canView(string $module): bool

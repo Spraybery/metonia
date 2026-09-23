@@ -17,14 +17,15 @@ class UserController extends Controller
             abort(403, 'Only administrators can manage system users.');
         }
 
-        $users = User::orderBy('name')->get();
+        $users = User::where('status', '!=', 'Pending')->orderBy('name')->get();
+        $pendingUsers = User::where('status', 'Pending')->orderBy('created_at')->get();
         $roles = Qs::getUserRoles();
 
         if ($request->wantsJson()) {
-            return response()->json($users);
+            return response()->json(['users' => $users, 'pending' => $pendingUsers]);
         }
 
-        return view('users.index', compact('users', 'roles'));
+        return view('users.index', compact('users', 'pendingUsers', 'roles'));
     }
 
     public function store(Request $request)
@@ -45,6 +46,7 @@ class UserController extends Controller
         $validated['username'] = trim($validated['username']);
         $validated['email'] = trim($validated['email']);
         $validated['password'] = Hash::make($validated['password']);
+        $validated['status'] = 'Active';
 
         $user = User::create($validated);
         ActivityLog::record(Auth::user()->name, "Created user account '{$user->username}' ({$user->role}).");
@@ -90,6 +92,45 @@ class UserController extends Controller
         }
 
         return back()->with('flash_success', "User account '{$user->name}' updated.");
+    }
+
+    public function approve($id)
+    {
+        if (! Auth::user()->isAdmin()) {
+            abort(403, 'Only administrators can approve account requests.');
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! $user->isPending()) {
+            return back()->with('flash_danger', 'That account request has already been reviewed.');
+        }
+
+        $user->update(['status' => 'Active']);
+        ActivityLog::record(Auth::user()->name, "Approved account request for '{$user->username}' ({$user->role}).");
+
+        return back()->with('flash_success', "Account for '{$user->name}' has been approved and can now sign in.");
+    }
+
+    public function reject($id)
+    {
+        if (! Auth::user()->isAdmin()) {
+            abort(403, 'Only administrators can reject account requests.');
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! $user->isPending()) {
+            return back()->with('flash_danger', 'That account request has already been reviewed.');
+        }
+
+        $username = $user->username;
+        $name = $user->name;
+        $user->delete();
+
+        ActivityLog::record(Auth::user()->name, "Rejected account request for '{$username}' ({$name}).");
+
+        return back()->with('flash_success', "Account request for '{$name}' has been rejected.");
     }
 
     public function destroy($id)

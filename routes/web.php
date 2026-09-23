@@ -15,6 +15,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::post('/api/login', [AuthController::class, 'login']);
 
+    // First-Time User Sign Up
+    Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
+    Route::post('/signup', [AuthController::class, 'signup'])->middleware('throttle:6,1')->name('signup.post');
+
     // Forgot / Reset Password
     Route::get('/password/forgot', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
     Route::post('/password/forgot', [AuthController::class, 'sendResetLinkEmail'])->middleware('throttle:6,1')->name('password.email');
@@ -89,6 +93,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::put('/users/{id}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::delete('/users/{id}/reject', [UserController::class, 'reject'])->name('users.reject');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });

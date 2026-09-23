@@ -4,6 +4,72 @@
 @section('content')
 <div class="content">
 
+    @if($pendingUsers->count() > 0)
+    <div class="card border-warning">
+        <div class="card-header header-elements-inline" style="background-color: #fffbeb;">
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-user-plus mr-2 text-warning"></i> Pending Account Requests
+                <span class="badge badge-warning badge-pill ml-1">{{ $pendingUsers->count() }}</span>
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="bg-light">
+                            <th style="width: 50px;">#</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Email Address</th>
+                            <th class="text-center">Requested Role</th>
+                            <th class="text-center">Requested On</th>
+                            <th class="text-center" style="width: 190px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pendingUsers as $pending)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td class="font-weight-bold text-dark">{{ $pending->name }}</td>
+                            <td><span class="badge badge-secondary">{{ $pending->username }}</span></td>
+                            <td>{{ $pending->email }}</td>
+                            <td class="text-center">
+                                @php
+                                    $pendingRoleBadge = match($pending->role) {
+                                        'Storekeeper', 'Store Keeper', 'Shopkeeper' => 'badge-warning',
+                                        'Accountant' => 'badge-success',
+                                        default => 'badge-secondary'
+                                    };
+                                @endphp
+                                <span class="badge {{ $pendingRoleBadge }} font-weight-bold">{{ $pending->role }}</span>
+                            </td>
+                            <td class="text-center text-muted font-size-xs">{{ $pending->created_at ? $pending->created_at->format('d M Y') : '—' }}</td>
+                            <td class="text-center">
+                                <div class="d-inline-flex align-items-center" style="gap: 4px;">
+                                    <form method="POST" action="{{ route('users.approve', $pending->id) }}" id="approve-user-{{ $pending->id }}" class="d-inline">
+                                        @csrf @method('PUT')
+                                    </form>
+                                    <button type="button" onclick="document.getElementById('approve-user-{{ $pending->id }}').submit();" class="btn btn-xs btn-success font-weight-semibold px-2" title="Approve Account">
+                                        <i class="icon-checkmark3 mr-1"></i> Approve
+                                    </button>
+
+                                    <form method="POST" action="{{ route('users.reject', $pending->id) }}" id="reject-user-{{ $pending->id }}" class="d-inline">
+                                        @csrf @method('DELETE')
+                                    </form>
+                                    <button type="button" onclick="if(confirm('Reject the account request from \'{{ $pending->username }}\'? This cannot be undone.')) { document.getElementById('reject-user-{{ $pending->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Reject Account">
+                                        <i class="icon-cross mr-1"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="card">
         <div class="card-header header-elements-inline">
             <h6 class="card-title font-weight-bold">
