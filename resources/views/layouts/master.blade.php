@@ -301,6 +301,7 @@
                         <div class="form-group">
                             <label class="font-weight-semibold">Username <span class="text-danger">*</span></label>
                             <input type="text" name="username" class="form-control" value="{{ Auth::user()->username }}" required>
+                            <small class="form-text text-muted">Can be shared with teammates in the same role — your email keeps your account unique.</small>
                         </div>
                         <div class="form-group mb-0">
                             <label class="font-weight-semibold">Email Address <span class="text-danger">*</span></label>

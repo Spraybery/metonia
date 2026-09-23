@@ -33,14 +33,17 @@ class AuthController extends Controller
         $identifier = trim($validated['identifier']);
         $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
 
-        // Perform case-insensitive lookup for both username and email
-        $user = User::where(function ($query) use ($identifier, $isEmail) {
-            if ($isEmail) {
-                $query->whereRaw('LOWER(email) = ?', [strtolower($identifier)]);
-            } else {
-                $query->whereRaw('LOWER(username) = ?', [strtolower($identifier)]);
-            }
-        })->first();
+        if ($isEmail) {
+            // Email is always unique, so a single case-insensitive lookup is enough.
+            $user = User::whereRaw('LOWER(email) = ?', [strtolower($identifier)])->first();
+        } else {
+            // Multiple accounts may share the same username (e.g. several people
+            // holding the Accountant role) — the password is what disambiguates
+            // which of those accounts is actually signing in.
+            $user = User::whereRaw('LOWER(username) = ?', [strtolower($identifier)])
+                ->get()
+                ->first(fn (User $candidate) => Hash::check($validated['password'], $candidate->password));
+        }
 
         if ($user && Hash::check($validated['password'], $user->password) && $user->isPending()) {
             if ($request->wantsJson()) {
@@ -103,7 +106,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
+            'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
         ]);
 
@@ -154,7 +157,7 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|unique:users,username|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email|max:255',
             'role' => 'required|string|in:'.implode(',', Qs::getSelfSignupRoles()),
             'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()],

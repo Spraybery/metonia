@@ -36,7 +36,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|unique:users,username|max:255',
+            'username' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email|max:255',
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:'.implode(',', Qs::getUserRoles()),

@@ -202,6 +202,7 @@
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Username <span class="text-danger">*</span></label>
                             <input type="text" name="username" class="form-control" placeholder="smutiso" required>
+                            <small class="form-text text-muted">Can be shared across staff in the same role (e.g. several Accountants) — email keeps each account unique.</small>
                         </div>
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Email Address <span class="text-danger">*</span></label>
