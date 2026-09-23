@@ -96,6 +96,28 @@ class AuthController extends Controller
         return redirect()->route('login')->with('flash_success', 'You have been safely signed out.');
     }
 
+    public function updateProfile(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+        ]);
+
+        $user->update([
+            'name' => trim($validated['name']),
+            'username' => trim($validated['username']),
+            'email' => trim($validated['email']),
+        ]);
+
+        ActivityLog::record($user->name, "{$user->name} updated their own account details.");
+
+        return back()->with('flash_success', 'Your account details have been updated.');
+    }
+
     public function changePassword(Request $request)
     {
         $validated = $request->validate([

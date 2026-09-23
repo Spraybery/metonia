@@ -100,6 +100,9 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
+                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-my-account">
+                            <i class="icon-profile text-success"></i> My Account
+                        </a>
                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal-password">
                             <i class="icon-lock2 text-success"></i> Change Password
                         </a>
@@ -279,6 +282,39 @@
         <!-- /main content area -->
     </div>
     <!-- /page content container -->
+
+    <!-- My Account Modal -->
+    <div id="modal-my-account" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-slate-800 text-white">
+                    <h6 class="modal-title font-weight-bold"><i class="icon-profile mr-2"></i> My Account</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <form action="{{ route('account.update') }}" method="POST">
+                    @csrf @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold">Username <span class="text-danger">*</span></label>
+                            <input type="text" name="username" class="form-control" value="{{ Auth::user()->username }}" required>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="font-weight-semibold">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" value="{{ Auth::user()->email }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light btn-sm" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm font-weight-semibold">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Change Password Modal -->
     <div id="modal-password" class="modal fade" tabindex="-1">

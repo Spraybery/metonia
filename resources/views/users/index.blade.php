@@ -124,8 +124,8 @@
                             <td class="text-center text-muted font-size-xs">{{ $user->created_at ? $user->created_at->format('d M Y') : '—' }}</td>
                             <td class="text-center">
                                 <div class="d-inline-flex align-items-center" style="gap: 4px;">
-                                    <button type="button" class="btn btn-xs btn-outline-info font-weight-semibold px-2" data-toggle="modal" data-target="#modal-edit-user-{{ $user->id }}" title="Edit Account">
-                                        <i class="icon-pencil mr-1"></i> Edit
+                                    <button type="button" class="btn btn-xs btn-outline-info font-weight-semibold px-2" data-toggle="modal" data-target="#modal-edit-user-{{ $user->id }}" title="Change RBAC Role">
+                                        <i class="icon-pencil mr-1"></i> Role
                                     </button>
 
                                     @if(Auth::id() !== $user->id)
@@ -138,32 +138,21 @@
                                     @endif
                                 </div>
 
-                                {{-- Edit Modal --}}
+                                {{-- Change Role Modal --}}
                                 <div id="modal-edit-user-{{ $user->id }}" class="modal fade" tabindex="-1">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-sm">
                                         <div class="modal-content text-left">
                                             <div class="modal-header bg-slate-800 text-white">
-                                                <h6 class="modal-title font-weight-bold">Edit User Account: {{ $user->username }}</h6>
+                                                <h6 class="modal-title font-weight-bold">Change RBAC Role: {{ $user->username }}</h6>
                                                 <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                                             </div>
                                             <form action="{{ route('users.update', $user->id) }}" method="POST">
                                                 @csrf @method('PUT')
                                                 <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">Full Staff Name <span class="text-danger">*</span></label>
-                                                        <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
-                                                    </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Username <span class="text-danger">*</span></label>
-                                                            <input type="text" name="username" class="form-control" value="{{ $user->username }}" required>
-                                                        </div>
-                                                        <div class="col-md-6 form-group">
-                                                            <label class="font-weight-semibold">Email Address <span class="text-danger">*</span></label>
-                                                            <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
+                                                    <p class="text-muted font-size-sm">
+                                                        Name, username, email, and password belong to <strong>{{ $user->name }}</strong>'s own account and can only be changed by them from their "My Account" settings. As Admin you may only reassign their system role here.
+                                                    </p>
+                                                    <div class="form-group mb-0">
                                                         <label class="font-weight-semibold">System RBAC Role <span class="text-danger">*</span></label>
                                                         <select name="role" class="form-control" required>
                                                             @foreach($roles as $r)
@@ -171,19 +160,10 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label class="font-weight-semibold">New Password</label>
-                                                        <div class="input-group">
-                                                            <input type="password" name="password" id="edit-user-pass-{{ $user->id }}" class="form-control" placeholder="Leave blank to preserve existing password" minlength="6">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn-light border" onclick="togglePasswordVisibility('edit-user-pass-{{ $user->id }}', this)" title="Show/Hide Password">👁️</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary font-weight-semibold">Save Changes</button>
+                                                    <button type="submit" class="btn btn-primary font-weight-semibold">Save Role</button>
                                                 </div>
                                             </form>
                                         </div>

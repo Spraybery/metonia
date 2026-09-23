@@ -66,26 +66,17 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
 
+        // Section: Account Ownership Guard — an Admin manages RBAC (the role a
+        // user holds), not the account itself. Name, username, email, and
+        // password belong to the account owner and can only be changed by
+        // that user, from their own "My Account" settings.
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'nullable|string|min:6',
             'role' => 'required|string|in:'.implode(',', Qs::getUserRoles()),
         ]);
 
-        $validated['name'] = trim($validated['name']);
-        $validated['username'] = trim($validated['username']);
-        $validated['email'] = trim($validated['email']);
-
-        if (! empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
-        }
-
+        $previousRole = $user->role;
         $user->update($validated);
-        ActivityLog::record(Auth::user()->name, "Updated user account details for '{$user->username}'.");
+        ActivityLog::record(Auth::user()->name, "Changed RBAC role for '{$user->username}' from {$previousRole} to {$user->role}.");
 
         if ($request->wantsJson()) {
             return response()->json(['ok' => true, 'user' => $user]);

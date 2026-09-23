@@ -29,6 +29,7 @@ Route::middleware('guest')->group(function () {
 // Authenticated Application Routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::put('/account', [AuthController::class, 'updateProfile'])->name('account.update');
     Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
 
     Route::get('/', function () {
