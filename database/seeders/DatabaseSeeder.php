@@ -34,14 +34,14 @@ class DatabaseSeeder extends Seeder
                 'username' => 'storekeeper',
                 'email' => 'storekeeper@metonia.co.ke',
                 'password' => Hash::make('password'),
-                'role' => 'Shopkeeper',
+                'role' => 'Storekeeper',
             ],
             [
                 'name' => 'David Omondi (Legacy)',
                 'username' => 'shopkeeper',
                 'email' => 'shopkeeper@metonia.co.ke',
                 'password' => Hash::make('password'),
-                'role' => 'Shopkeeper',
+                'role' => 'Storekeeper',
             ],
             [
                 'name' => 'Alice Wambui',
