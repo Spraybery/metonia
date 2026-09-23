@@ -68,7 +68,7 @@
 
         <div class="collapse navbar-collapse" id="navbar-mobile">
             <span class="badge badge-success ml-md-3 mr-md-auto font-weight-semibold" style="background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #a7f3d0;">
-                <i class="icon-pulse mr-1 text-success"></i> Nairobi Plant #1 Online
+                <i class="icon-pulse2 mr-1 text-success"></i> Nairobi Plant #1 Online
             </span>
 
             <ul class="navbar-nav align-items-center">
@@ -167,7 +167,7 @@
                         @if(Auth::user() && Auth::user()->canView('materials'))
                         <li class="nav-item nav-item-submenu {{ request()->routeIs('materials.*') ? 'nav-item-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('materials.*') ? 'active' : '' }}">
-                                <i class="icon-boxes"></i>
+                                <i class="icon-box"></i>
                                 <span>Store Inventory</span>
                             </a>
                             <ul class="nav nav-group-sub" data-submenu-title="Store Inventory" style="{{ request()->routeIs('materials.*') ? 'display: block;' : '' }}">
