@@ -164,7 +164,7 @@ class Qs
         return [
             'Admin',
             'Manager',
-            'Storekeeper',
+            'Shopkeeper',
             'Accountant',
         ];
     }
@@ -177,7 +177,7 @@ class Qs
     public static function getSelfSignupRoles(): array
     {
         return [
-            'Storekeeper',
+            'Shopkeeper',
             'Accountant',
         ];
     }
