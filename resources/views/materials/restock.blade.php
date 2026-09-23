@@ -81,6 +81,7 @@
                             <th style="width: 120px;">Item Code</th>
                             <th>Material Description</th>
                             <th class="text-center">Quantity Received</th>
+                            <th class="text-center">Amount Still Needed</th>
                             <th>Supplier / Vendor Name</th>
                             <th>Received By</th>
                             <th>Delivery Date</th>
@@ -104,6 +105,20 @@
                             </td>
                             <td class="text-center font-weight-bold text-success">
                                 +{{ number_format($m->qty, 2) }} {{ $m->unit }}
+                            </td>
+                            <td class="text-center">
+                                @php
+                                    $stillNeeded = $m->material ? max(0, (float) $m->material->low_stock - (float) $m->material->qty) : 0;
+                                @endphp
+                                @if($stillNeeded > 0)
+                                    <span class="badge badge-warning text-dark font-weight-bold px-2 py-1">
+                                        {{ (float)$stillNeeded == (int)$stillNeeded ? number_format($stillNeeded) : number_format($stillNeeded, 2) }} {{ $m->unit }} Needed
+                                    </span>
+                                @else
+                                    <span class="badge badge-success font-weight-semibold px-2 py-1">
+                                        <i class="icon-checkmark mr-1"></i> Stocked Up
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 <span class="font-weight-semibold text-primary">{{ $m->material?->supplier ?: ($m->note ? Str::after($m->note, 'Supplier: ') : 'Apex Steel Kenya Ltd') }}</span>
@@ -200,7 +215,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted p-4">
+                            <td colspan="9" class="text-center text-muted p-4">
                                 No supplier restock deliveries logged in the register yet.
                             </td>
                         </tr>

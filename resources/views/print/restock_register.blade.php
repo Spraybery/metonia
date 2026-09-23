@@ -30,12 +30,16 @@
                 <th>Item Code</th>
                 <th>Description</th>
                 <th>Register Type</th>
-                <th class="text-center">Quantity Needed</th>
+                <th class="text-center">Quantity Received</th>
                 <th class="text-center">Unit</th>
+                <th class="text-center">Amount Still Needed</th>
             </tr>
         </thead>
         <tbody>
             @forelse($restockMovements as $movement)
+            @php
+                $stillNeeded = $movement->material ? max(0, (float) $movement->material->low_stock - (float) $movement->material->qty) : 0;
+            @endphp
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $movement->material->item_code ?? '—' }}</td>
@@ -49,10 +53,13 @@
                     {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }}
                 </td>
                 <td class="text-center">{{ $movement->unit }}</td>
+                <td class="text-center font-weight-bold" style="color: {{ $stillNeeded > 0 ? '#b45309' : '#059669' }};">
+                    {{ $stillNeeded > 0 ? ((float)$stillNeeded == (int)$stillNeeded ? number_format($stillNeeded) : number_format($stillNeeded, 2)) : 'Stocked Up' }}
+                </td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No supplier restock records match this register.</td>
+                <td colspan="7" class="text-center" style="padding: 16px; color: #64748b;">No supplier restock records match this register.</td>
             </tr>
             @endforelse
         </tbody>
