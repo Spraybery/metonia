@@ -336,6 +336,26 @@ class VehicleController extends Controller
         return back()->with('flash_success', 'Stage and supervisor assignments updated successfully.');
     }
 
+    public function updateFinance(Request $request, $id)
+    {
+        if (! Auth::user()->canEditVehicleFinance()) {
+            abort(403, 'Only Admins, Managers, and Accountants can record job card financials.');
+        }
+
+        $vehicle = Vehicle::findOrFail($id);
+
+        $validated = $request->validate([
+            'labor_cost' => 'required|numeric|min:0',
+            'invoice_total' => 'required|numeric|min:0',
+        ]);
+
+        $vehicle->update($validated);
+
+        ActivityLog::record(Auth::user()->name, "Updated job card financials for {$vehicle->plate}: labor cost KES ".number_format($validated['labor_cost'], 2).', invoice total KES '.number_format($validated['invoice_total'], 2).'.');
+
+        return back()->with('flash_success', "Financial summary for {$vehicle->plate} updated.");
+    }
+
     public function updateChecklist(Request $request, $id)
     {
         if (! Auth::user()->canEdit('vehicles')) {

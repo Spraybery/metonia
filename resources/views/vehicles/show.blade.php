@@ -43,6 +43,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="#tab-finance" class="nav-link" data-toggle="tab">
+                        <i class="icon-coins mr-2"></i> Financial Summary
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#tab-history" class="nav-link" data-toggle="tab">
                         <i class="icon-history mr-2"></i> Transition History ({{ $vehicle->stageHistories->count() }})
                     </a>
@@ -243,6 +248,71 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                {{-- Tab: Financial Summary --}}
+                <div class="tab-pane fade" id="tab-finance">
+                    @php
+                        $partsCost = $vehicle->totalPartsCost();
+                        $totalCost = $vehicle->totalCost();
+                        $margin = $vehicle->grossMargin();
+                    @endphp
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="border rounded p-3 text-center h-100">
+                                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Labor Cost</div>
+                                <div class="h5 font-weight-bold text-dark mb-0">KES {{ number_format($vehicle->labor_cost, 2) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="border rounded p-3 text-center h-100">
+                                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Parts Cost</div>
+                                <div class="h5 font-weight-bold text-dark mb-0">KES {{ number_format($partsCost, 2) }}</div>
+                                <div class="text-muted font-size-xs mt-1">{{ $vehicle->parts->count() }} item(s) issued</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="border rounded p-3 text-center h-100">
+                                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Invoice Total</div>
+                                <div class="h5 font-weight-bold text-dark mb-0">KES {{ number_format($vehicle->invoice_total, 2) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="border rounded p-3 text-center h-100 {{ $margin >= 0 ? 'border-success' : 'border-danger' }}">
+                                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Gross Margin</div>
+                                <div class="h5 font-weight-bold {{ $margin >= 0 ? 'text-success' : 'text-danger' }} mb-0">
+                                    {{ $margin >= 0 ? '+' : '' }}KES {{ number_format($margin, 2) }}
+                                </div>
+                                <div class="text-muted font-size-xs mt-1">Invoice &minus; (Labor + Parts)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(Auth::user()->canEditVehicleFinance())
+                    <div class="border rounded p-3 bg-light">
+                        <h6 class="font-weight-bold text-uppercase mb-3">
+                            <i class="icon-pencil mr-1 text-primary"></i> Update Labor Cost &amp; Invoice Total
+                        </h6>
+                        <form action="{{ route('vehicles.update_finance', $vehicle->id) }}" method="POST">
+                            @csrf @method('PUT')
+                            <div class="form-row align-items-end">
+                                <div class="col-md-4 form-group mb-2">
+                                    <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Labor Cost (KES)</label>
+                                    <input type="number" step="0.01" min="0" name="labor_cost" class="form-control" value="{{ $vehicle->labor_cost }}" required>
+                                </div>
+                                <div class="col-md-4 form-group mb-2">
+                                    <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Invoice Total (KES)</label>
+                                    <input type="number" step="0.01" min="0" name="invoice_total" class="form-control" value="{{ $vehicle->invoice_total }}" required>
+                                </div>
+                                <div class="col-md-4 form-group mb-2">
+                                    <button type="submit" class="btn btn-primary font-weight-semibold btn-block">
+                                        <i class="icon-checkmark mr-1"></i> Save Financials
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    @endif
                 </div>
 
                 {{-- Tab 3: Stage History Timeline --}}

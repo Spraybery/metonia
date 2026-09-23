@@ -99,4 +99,14 @@ class User extends Authenticatable
     {
         return $this->isAdmin() || $this->isAccountant();
     }
+
+    /**
+     * Whether the user may record a vehicle's labor cost and invoice total.
+     * Broader than canEdit('vehicles') — an Accountant cannot touch the
+     * build pipeline itself, but owns the financial figures for each job.
+     */
+    public function canEditVehicleFinance(): bool
+    {
+        return $this->isAdmin() || $this->isManager() || $this->isAccountant();
+    }
 }

@@ -31,18 +31,24 @@
 
     {{-- Summary KPI Stat Bars (Section 5 Standard) --}}
     <div class="row mb-3">
-        <div class="col-md-6 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
+        <div class="col-md-4 col-sm-6 mb-2">
+            <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Catalog SKUs</div>
                 <div class="h4 font-weight-bold text-dark mb-0">{{ number_format($materials->count()) }}</div>
             </div>
         </div>
-        <div class="col-md-6 col-sm-6 mb-2">
-            <div class="bg-light border rounded p-3 text-center">
+        <div class="col-md-4 col-sm-6 mb-2">
+            <div class="bg-light border rounded p-3 text-center h-100">
                 <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Low-Stock Items</div>
                 <div class="h4 font-weight-bold {{ $lowStockCount > 0 ? 'text-danger' : 'text-success' }} mb-0">
                     {{ number_format($lowStockCount) }}
                 </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-2">
+            <div class="bg-light border rounded p-3 text-center h-100">
+                <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Catalog Value</div>
+                <div class="h4 font-weight-bold text-success mb-0">KES {{ number_format($totalStockValue, 2) }}</div>
             </div>
         </div>
     </div>

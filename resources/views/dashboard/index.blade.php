@@ -61,6 +61,52 @@
         </div>
     </div>
 
+    {{-- 2. Financial Snapshot --}}
+    <div class="card mb-3">
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title font-weight-bold">
+                <i class="icon-coins mr-2 text-success"></i> Financial Snapshot
+            </h6>
+            <div class="header-elements">
+                <span class="badge badge-light border">{{ now()->format('F Y') }}, Month-to-Date</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
+                    <div class="border rounded p-3 text-center h-100">
+                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Store Inventory Value</div>
+                        <div class="h4 font-weight-bold text-dark mb-0">KES {{ number_format($totalStockValue, 2) }}</div>
+                        <div class="text-muted font-size-xs mt-1">Raw materials &amp; parts on hand</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
+                    <div class="border rounded p-3 text-center h-100">
+                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stock Issued (MTD)</div>
+                        <div class="h4 font-weight-bold text-danger mb-0">KES {{ number_format($monthlyStockIssuedValue, 2) }}</div>
+                        <div class="text-muted font-size-xs mt-1">Materials consumed on job cards</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
+                    <div class="border rounded p-3 text-center h-100">
+                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stock Restocked (MTD)</div>
+                        <div class="h4 font-weight-bold text-success mb-0">KES {{ number_format($monthlyStockRestockedValue, 2) }}</div>
+                        <div class="text-muted font-size-xs mt-1">Supplier deliveries received</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6">
+                    <div class="border rounded p-3 text-center h-100">
+                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Net Valuation Change (MTD)</div>
+                        <div class="h4 font-weight-bold {{ $monthlyNetStockValuationChange >= 0 ? 'text-success' : 'text-danger' }} mb-0">
+                            {{ $monthlyNetStockValuationChange >= 0 ? '+' : '' }}KES {{ number_format($monthlyNetStockValuationChange, 2) }}
+                        </div>
+                        <div class="text-muted font-size-xs mt-1">Restocked minus issued</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- 3. Plant Build Pipeline Stage Distribution --}}
     <div class="card mb-3">
         <div class="card-header header-elements-inline">
