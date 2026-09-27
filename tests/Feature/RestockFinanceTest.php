@@ -244,4 +244,21 @@ class RestockFinanceTest extends TestCase
 
         $this->assertSame(850.0, $restock->fresh()->total_cost);
     }
+
+    public function test_dashboard_tracks_restock_spend_but_not_issued_stock_value(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        $this->createRestock(now()->toDateString())->update(['amount_spent' => 1800]);
+        $this->createRestock(now()->toDateString());
+        $this->createRestock(now()->toDateString())->update(['type' => 'out']);
+
+        $response = $this->actingAs($accountant)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertViewHas('monthlyRestockSpend', 1800.0);
+        $response->assertViewHas('monthlyRestocksAwaitingAmount', 1);
+        $response->assertSee('Money Spent on Restocks (MTD)');
+        $response->assertDontSee('Stock Issued (MTD)');
+        $response->assertDontSee('Net Valuation Change');
+    }
 }

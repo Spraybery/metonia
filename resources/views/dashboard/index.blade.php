@@ -73,35 +73,24 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
+                <div class="col-sm-6 mb-2 mb-sm-0">
                     <div class="border rounded p-3 text-center h-100">
                         <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Total Store Inventory Value</div>
                         <div class="h4 font-weight-bold text-dark mb-0">KES {{ number_format($totalStockValue, 2) }}</div>
                         <div class="text-muted font-size-xs mt-1">Raw materials &amp; parts on hand</div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
-                    <div class="border rounded p-3 text-center h-100">
-                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stock Issued (MTD)</div>
-                        <div class="h4 font-weight-bold text-danger mb-0">KES {{ number_format($monthlyStockIssuedValue, 2) }}</div>
-                        <div class="text-muted font-size-xs mt-1">Materials consumed on job cards</div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 mb-2 mb-xl-0">
-                    <div class="border rounded p-3 text-center h-100">
-                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Stock Restocked (MTD)</div>
-                        <div class="h4 font-weight-bold text-success mb-0">KES {{ number_format($monthlyStockRestockedValue, 2) }}</div>
-                        <div class="text-muted font-size-xs mt-1">Supplier deliveries received</div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6">
-                    <div class="border rounded p-3 text-center h-100">
-                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Net Valuation Change (MTD)</div>
-                        <div class="h4 font-weight-bold {{ $monthlyNetStockValuationChange >= 0 ? 'text-success' : 'text-danger' }} mb-0">
-                            {{ $monthlyNetStockValuationChange >= 0 ? '+' : '' }}KES {{ number_format($monthlyNetStockValuationChange, 2) }}
+                <div class="col-sm-6">
+                    <a href="{{ route('materials.restock') }}" class="d-block border rounded p-3 text-center h-100 text-body">
+                        <div class="text-muted font-size-sm font-weight-semibold text-uppercase">Money Spent on Restocks (MTD)</div>
+                        <div class="h4 font-weight-bold text-success mb-0">KES {{ number_format($monthlyRestockSpend, 2) }}</div>
+                        <div class="text-muted font-size-xs mt-1">
+                            Amounts recorded by Accountants
+                            @if($monthlyRestocksAwaitingAmount > 0)
+                                &middot; <span class="text-warning font-weight-semibold">{{ $monthlyRestocksAwaitingAmount }} restock(s) awaiting amount</span>
+                            @endif
                         </div>
-                        <div class="text-muted font-size-xs mt-1">Restocked minus issued</div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

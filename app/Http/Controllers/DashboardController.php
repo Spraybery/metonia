@@ -42,9 +42,8 @@ class DashboardController extends Controller
      *     totalStoreUnitsNeeded: float,
      *     totalSafetyUnitsNeeded: float,
      *     totalStockValue: float,
-     *     monthlyStockIssuedValue: float,
-     *     monthlyStockRestockedValue: float,
-     *     monthlyNetStockValuationChange: float,
+     *     monthlyRestockSpend: float,
+     *     monthlyRestocksAwaitingAmount: int,
      *     stages: array<int, string>,
      *     pipelineCounts: array<string, int>,
      *     maxPipelineCount: int,
@@ -61,7 +60,7 @@ class DashboardController extends Controller
         return array_merge(
             $this->getVehicleMetrics(),
             $this->getMaterialStockAlerts(),
-            $this->getStockValuationMetrics($now),
+            $this->getRestockSpendMetrics($now),
             $this->getPipelineMetrics($stages),
             [
                 'toolsSummary' => $this->getToolsSummary($now),
@@ -135,32 +134,20 @@ class DashboardController extends Controller
     }
 
     /**
-     * @return array{
-     *     monthlyStockIssuedValue: float,
-     *     monthlyStockRestockedValue: float,
-     *     monthlyNetStockValuationChange: float
-     * }
+     * Money spent on supplier restocks delivered this month, as recorded by Accountants.
+     *
+     * @return array{monthlyRestockSpend: float, monthlyRestocksAwaitingAmount: int}
      */
-    private function getStockValuationMetrics(Carbon $now): array
+    private function getRestockSpendMetrics(Carbon $now): array
     {
-        $mtdMovements = MaterialMovement::with('material')
+        $mtdRestocks = MaterialMovement::where('type', 'in')
             ->whereYear('date', $now->year)
             ->whereMonth('date', $now->month)
-            ->get()
-            ->reject(fn (MaterialMovement $m) => $m->material && $m->material->isSafetyStock());
-
-        $monthlyStockIssuedValue = (float) $mtdMovements
-            ->where('type', 'out')
-            ->sum(fn (MaterialMovement $m) => (float) $m->qty * (float) ($m->material->unit_cost ?? 0));
-
-        $monthlyStockRestockedValue = (float) $mtdMovements
-            ->where('type', 'in')
-            ->sum(fn (MaterialMovement $m) => (float) $m->qty * (float) ($m->material->unit_cost ?? 0));
+            ->get(['amount_spent']);
 
         return [
-            'monthlyStockIssuedValue' => $monthlyStockIssuedValue,
-            'monthlyStockRestockedValue' => $monthlyStockRestockedValue,
-            'monthlyNetStockValuationChange' => $monthlyStockRestockedValue - $monthlyStockIssuedValue,
+            'monthlyRestockSpend' => (float) $mtdRestocks->sum('amount_spent'),
+            'monthlyRestocksAwaitingAmount' => $mtdRestocks->whereNull('amount_spent')->count(),
         ];
     }
 
