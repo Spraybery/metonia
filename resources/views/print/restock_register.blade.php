@@ -32,6 +32,8 @@
                 <th>Register Type</th>
                 <th class="text-center">Quantity Needed</th>
                 <th class="text-center">Unit</th>
+                <th>Delivery Date</th>
+                <th class="text-right">Amount Spent</th>
             </tr>
         </thead>
         <tbody>
@@ -49,14 +51,43 @@
                     {{ (float)$movement->qty == (int)$movement->qty ? number_format($movement->qty) : number_format($movement->qty, 2) }}
                 </td>
                 <td class="text-center">{{ $movement->unit }}</td>
+                <td>{{ $movement->date->format('d M Y') }}</td>
+                <td class="text-right">{{ $movement->hasRecordedSpend() ? 'KES '.number_format($movement->amount_spent, 2) : 'Not recorded' }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center" style="padding: 16px; color: #64748b;">No supplier restock records match this register.</td>
+                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">No supplier restock records match this register.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
+
+    @if($monthlyRestockSpend->isNotEmpty())
+    <table class="doc-grid" style="margin-top: 16px;">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th class="text-center">Deliveries</th>
+                <th class="text-center">Awaiting Amount</th>
+                <th class="text-right">Total Money Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($monthlyRestockSpend as $month)
+            <tr>
+                <td><strong>{{ $month['month_name'] }}</strong></td>
+                <td class="text-center">{{ $month['restock_count'] }}</td>
+                <td class="text-center">{{ $month['awaiting_cost_count'] }}</td>
+                <td class="text-right font-weight-bold">KES {{ number_format($month['amount_spent'], 2) }}</td>
+            </tr>
+            @endforeach
+            <tr>
+                <td colspan="3" class="text-right"><strong>Grand Total</strong></td>
+                <td class="text-right font-weight-bold">KES {{ number_format($monthlyRestockSpend->sum('amount_spent'), 2) }}</td>
+            </tr>
+        </tbody>
+    </table>
+    @endif
 
     @include('print.document_signatures')
 

@@ -31,22 +31,31 @@
 
     {{-- Summary Stats Bar --}}
     <div class="row mb-3">
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-3 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Total Restock Deliveries</div>
                 <div class="h4 font-weight-bold text-success mb-0">{{ number_format($restockMovements->count()) }}</div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-3 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Unique Suppliers Recorded</div>
                 <div class="h4 font-weight-bold text-primary mb-0">{{ number_format($materials->pluck('supplier')->filter()->unique()->count()) }}</div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-2">
+        <div class="col-md-3 col-sm-6 mb-2">
             <div class="bg-white border rounded p-3 shadow-xs">
                 <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Catalog Items Available</div>
                 <div class="h4 font-weight-bold text-dark mb-0">{{ number_format($materials->count()) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-2">
+            <div class="bg-white border rounded p-3 shadow-xs">
+                <div class="text-muted font-size-xs font-weight-semibold text-uppercase">Money Spent This Month</div>
+                <div class="h4 font-weight-bold text-success mb-0">KES {{ number_format($currentMonthSpend['amount_spent'] ?? 0, 2) }}</div>
+                @if(($currentMonthSpend['awaiting_cost_count'] ?? 0) > 0)
+                <div class="text-warning font-size-xs font-weight-semibold">{{ $currentMonthSpend['awaiting_cost_count'] }} restock(s) awaiting amount</div>
+                @endif
             </div>
         </div>
     </div>
@@ -81,6 +90,7 @@
                             <th style="width: 120px;">Item Code</th>
                             <th>Material Description</th>
                             <th class="text-center">Quantity Received</th>
+                            <th class="text-right">Amount Spent</th>
                             <th>Supplier / Vendor Name</th>
                             <th>Received By</th>
                             <th>Delivery Date</th>
@@ -104,6 +114,21 @@
                             </td>
                             <td class="text-center font-weight-bold text-success">
                                 +{{ number_format($m->qty, 2) }} {{ $m->unit }}
+                            </td>
+                            <td class="text-right" data-order="{{ $m->amount_spent ?? -1 }}">
+                                @if($m->hasRecordedSpend())
+                                    <span class="font-weight-bold text-success">KES {{ number_format($m->amount_spent, 2) }}</span>
+                                    <div class="text-muted font-size-xs">by {{ $m->amount_spent_recorded_by ?: '—' }}</div>
+                                @else
+                                    <span class="badge badge-light border text-warning font-weight-semibold">Not recorded</span>
+                                @endif
+                                @if(Auth::user()->canEditRestockFinance())
+                                <div class="mt-1">
+                                    <a href="#" class="btn btn-sm {{ $m->hasRecordedSpend() ? 'btn-light' : 'btn-success' }} font-weight-semibold py-0 px-2" data-toggle="modal" data-target="#modal-restock-spend-{{ $m->id }}">
+                                        <i class="icon-coin-dollar mr-1"></i> {{ $m->hasRecordedSpend() ? 'Edit Amount' : 'Enter Amount' }}
+                                    </a>
+                                </div>
+                                @endif
                             </td>
                             <td>
                                 <span class="font-weight-semibold text-primary">{{ $m->material?->supplier ?: ($m->note ? Str::after($m->note, 'Supplier: ') : 'Apex Steel Kenya Ltd') }}</span>
@@ -200,7 +225,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted p-4">
+                            <td colspan="10" class="text-center text-muted p-4">
                                 No supplier restock deliveries logged in the register yet.
                             </td>
                         </tr>
@@ -211,7 +236,91 @@
         </div>
     </div>
 
+    {{-- Monthly Restock Spend (actual amounts recorded by Accountants) --}}
+    <div class="card border">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h6 class="card-title font-weight-bold mb-0">
+                <i class="icon-calendar3 mr-2 text-success"></i> Monthly Money Spent on Restocks
+            </h6>
+            <span class="badge badge-success font-weight-semibold">
+                All Months: KES {{ number_format($monthlyRestockSpend->sum('amount_spent'), 2) }}
+            </span>
+        </div>
+        <div class="card-body">
+            @if($monthlyRestockSpend->isNotEmpty())
+            <div class="table-responsive">
+                <table class="table table-striped table-hover border mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Month</th>
+                            <th class="text-center">Restock Deliveries</th>
+                            <th class="text-center">Amount Recorded</th>
+                            <th class="text-center">Awaiting Amount</th>
+                            <th class="text-right">Total Money Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($monthlyRestockSpend as $month)
+                        <tr>
+                            <td class="font-weight-semibold text-dark">{{ $month['month_name'] }}</td>
+                            <td class="text-center">{{ number_format($month['restock_count']) }}</td>
+                            <td class="text-center text-success font-weight-semibold">{{ number_format($month['costed_count']) }}</td>
+                            <td class="text-center {{ $month['awaiting_cost_count'] > 0 ? 'text-warning font-weight-bold' : 'text-muted' }}">{{ number_format($month['awaiting_cost_count']) }}</td>
+                            <td class="text-right font-weight-bold text-success">KES {{ number_format($month['amount_spent'], 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted font-size-xs mb-0 mt-2">
+                <i class="icon-info22 mr-1"></i> Totals include only amounts entered by Accountants. Restocks awaiting an amount are not counted until it is entered.
+            </p>
+            @else
+            <div class="text-center text-muted p-3">No supplier restocks recorded yet.</div>
+            @endif
+        </div>
+    </div>
+
 </div>
+
+{{-- Accountant Modals: Record Amount Spent (outside table for DataTables compatibility) --}}
+@if(Auth::user()->canEditRestockFinance())
+    @foreach($restockMovements as $m)
+    <div id="modal-restock-spend-{{ $m->id }}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h6 class="modal-title font-weight-bold">
+                        <i class="icon-coin-dollar mr-1"></i> Amount Spent: {{ $m->material_name }}
+                    </h6>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <form action="{{ route('materials.movement.amount_spent', $m->id) }}" method="POST">
+                    @csrf @method('PUT')
+                    <div class="modal-body">
+                        <div class="alert alert-light border py-2 font-size-sm mb-3">
+                            Delivered <strong>{{ $m->date->format('d M Y') }}</strong> &middot;
+                            <strong>+{{ number_format($m->qty, 2) }} {{ $m->unit }}</strong>
+                            @if($m->material?->supplier) from <strong>{{ $m->material->supplier }}</strong>@endif
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="font-weight-semibold">Total Amount Paid for this Restock (KES) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" min="0" name="amount_spent" class="form-control font-weight-bold" value="{{ $m->amount_spent }}" placeholder="0.00" required>
+                            <span class="form-text text-muted font-size-xs">This is counted in {{ $m->date->format('F Y') }}'s total.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success font-weight-semibold">
+                            <i class="icon-checkmark mr-1"></i> Save Amount
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+@endif
 
 {{-- Manager Modal: Restock from Supplier --}}
 <div id="modal-supplier-restock" class="modal fade" tabindex="-1">

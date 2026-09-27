@@ -125,4 +125,123 @@ class RestockFinanceTest extends TestCase
             'unit_cost' => 0.00,
         ]);
     }
+
+    private function createRestock(string $date, float $qty = 10): MaterialMovement
+    {
+        $material = Material::firstOrCreate(['item_code' => 'MAT-0100'], [
+            'name' => 'Steel Rod 12mm',
+            'category' => 'Metals',
+            'unit' => 'Pieces',
+            'qty' => 0,
+            'low_stock' => 5,
+            'unit_cost' => 100.00,
+        ]);
+
+        return MaterialMovement::create([
+            'material_id' => $material->id,
+            'material_name' => $material->name,
+            'type' => 'in',
+            'qty' => $qty,
+            'unit' => 'Pieces',
+            'unit_cost' => 100.00,
+            'date' => $date,
+            'person' => 'Store Keeper',
+        ]);
+    }
+
+    public function test_accountant_can_record_amount_spent_on_restock(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        $restock = $this->createRestock(now()->toDateString());
+
+        $response = $this->actingAs($accountant)->put(route('materials.movement.amount_spent', $restock->id), [
+            'amount_spent' => 1250.75,
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_success');
+        $this->assertDatabaseHas('material_movements', [
+            'id' => $restock->id,
+            'amount_spent' => 1250.75,
+            'amount_spent_recorded_by' => $accountant->name,
+        ]);
+    }
+
+    public function test_storekeeper_cannot_record_amount_spent_on_restock(): void
+    {
+        $storekeeper = User::factory()->create(['role' => 'Storekeeper']);
+        $restock = $this->createRestock(now()->toDateString());
+
+        $this->actingAs($storekeeper)
+            ->put(route('materials.movement.amount_spent', $restock->id), ['amount_spent' => 500])
+            ->assertForbidden();
+
+        $this->assertNull($restock->fresh()->amount_spent);
+    }
+
+    public function test_amount_spent_cannot_be_recorded_on_an_issuance(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        $issuance = $this->createRestock(now()->toDateString());
+        $issuance->update(['type' => 'out']);
+
+        $this->actingAs($accountant)
+            ->put(route('materials.movement.amount_spent', $issuance->id), ['amount_spent' => 500])
+            ->assertNotFound();
+    }
+
+    public function test_amount_spent_must_be_a_non_negative_number(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        $restock = $this->createRestock(now()->toDateString());
+
+        $this->actingAs($accountant)
+            ->put(route('materials.movement.amount_spent', $restock->id), ['amount_spent' => -10])
+            ->assertSessionHasErrors('amount_spent');
+    }
+
+    public function test_restock_page_totals_recorded_spend_per_month(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        $thisMonth = now()->startOfMonth();
+        $lastMonth = now()->startOfMonth()->subMonth();
+
+        $this->createRestock($thisMonth->toDateString())->update(['amount_spent' => 1000]);
+        $this->createRestock($thisMonth->copy()->addDay()->toDateString())->update(['amount_spent' => 2500.50]);
+        $this->createRestock($thisMonth->copy()->addDays(2)->toDateString());
+        $this->createRestock($lastMonth->toDateString())->update(['amount_spent' => 400]);
+
+        $response = $this->actingAs($accountant)->get(route('materials.restock'));
+
+        $response->assertOk();
+        $response->assertSee('Monthly Money Spent on Restocks');
+        $response->assertViewHas('currentMonthSpend', fn (array $month) => $month['amount_spent'] === 3500.5
+            && $month['restock_count'] === 3
+            && $month['awaiting_cost_count'] === 1);
+        $response->assertViewHas('monthlyRestockSpend', fn ($months) => $months->pluck('amount_spent')->all() === [3500.5, 400.0]
+            && $months->pluck('year_month')->all() === [$thisMonth->format('Y-m'), $lastMonth->format('Y-m')]);
+        $response->assertSee('Enter Amount');
+    }
+
+    public function test_storekeeper_does_not_see_enter_amount_control(): void
+    {
+        $storekeeper = User::factory()->create(['role' => 'Storekeeper']);
+        $this->createRestock(now()->toDateString());
+
+        $this->actingAs($storekeeper)
+            ->get(route('materials.restock'))
+            ->assertOk()
+            ->assertDontSee('Enter Amount');
+    }
+
+    public function test_recorded_amount_spent_overrides_estimated_restock_cost(): void
+    {
+        $restock = $this->createRestock(now()->toDateString(), qty: 10);
+
+        $this->assertSame(1000.0, $restock->total_cost);
+
+        $restock->update(['amount_spent' => 850]);
+
+        $this->assertSame(850.0, $restock->fresh()->total_cost);
+    }
 }

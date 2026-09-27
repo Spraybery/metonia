@@ -10,6 +10,7 @@ use App\Models\Vehicle;
 use App\Models\VehiclePart;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -197,7 +198,63 @@ class MaterialController extends Controller
 
         $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
 
-        return view('materials.restock', compact('materials', 'categories', 'units', 'restockMovements'));
+        $monthlyRestockSpend = $this->summarizeMonthlyRestockSpend(
+            MaterialMovement::where('type', 'in')->orderByDesc('date')->get()
+        );
+        $currentMonthSpend = $monthlyRestockSpend->firstWhere('year_month', now()->format('Y-m'));
+
+        return view('materials.restock', compact('materials', 'categories', 'units', 'restockMovements', 'monthlyRestockSpend', 'currentMonthSpend'));
+    }
+
+    /**
+     * Group restock deliveries by delivery month and total the money
+     * Accountants recorded as actually spent on them.
+     *
+     * @param  Collection<int, MaterialMovement>  $restockMovements
+     * @return Collection<int, array{year_month: string, month_name: string, restock_count: int, costed_count: int, awaiting_cost_count: int, amount_spent: float}>
+     */
+    private function summarizeMonthlyRestockSpend(Collection $restockMovements): Collection
+    {
+        return $restockMovements
+            ->groupBy(fn (MaterialMovement $m) => $m->date->format('Y-m'))
+            ->map(function ($movements, $yearMonth) {
+                $costedCount = $movements->filter(fn (MaterialMovement $m) => $m->hasRecordedSpend())->count();
+
+                return [
+                    'year_month' => $yearMonth,
+                    'month_name' => Carbon::createFromFormat('Y-m', $yearMonth)->format('F Y'),
+                    'restock_count' => $movements->count(),
+                    'costed_count' => $costedCount,
+                    'awaiting_cost_count' => $movements->count() - $costedCount,
+                    'amount_spent' => (float) $movements->sum(fn (MaterialMovement $m) => (float) $m->amount_spent),
+                ];
+            })
+            ->sortKeysDesc()
+            ->values();
+    }
+
+    public function recordRestockSpend(Request $request, $id)
+    {
+        if (! Auth::user()->canEditRestockFinance()) {
+            abort(403, 'Only Accountants and Admins can record the amount spent on a restock.');
+        }
+
+        $movement = MaterialMovement::where('type', 'in')->findOrFail($id);
+
+        $validated = $request->validate([
+            'amount_spent' => 'required|numeric|min:0|max:9999999999.99',
+        ]);
+
+        $movement->update([
+            'amount_spent' => $validated['amount_spent'],
+            'amount_spent_recorded_by' => Auth::user()->name,
+        ]);
+
+        $amountLabel = 'KES '.number_format($validated['amount_spent'], 2);
+
+        ActivityLog::record(Auth::user()->name, "Recorded {$amountLabel} spent on restock of '{$movement->material_name}' delivered {$movement->date->format('d M Y')}.");
+
+        return back()->with('flash_success', "Recorded {$amountLabel} spent on the '{$movement->material_name}' restock.");
     }
 
     public function printRestock(Request $request)
@@ -214,8 +271,9 @@ class MaterialController extends Controller
         }
 
         $restockMovements = $query->orderByDesc('date')->orderByDesc('id')->get();
+        $monthlyRestockSpend = $this->summarizeMonthlyRestockSpend($restockMovements);
 
-        return view('print.restock_register', compact('restockMovements'));
+        return view('print.restock_register', compact('restockMovements', 'monthlyRestockSpend'));
     }
 
     public function restockNeeded(Request $request)

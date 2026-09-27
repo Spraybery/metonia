@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/materials/{id}', [MaterialController::class, 'update'])->name('materials.update');
     Route::post('/materials/{id}/movement', [MaterialController::class, 'stockMovement'])->name('materials.movement');
     Route::put('/materials/{id}/restock-price', [MaterialController::class, 'updateRestockPrice'])->name('materials.update_restock_price');
+    Route::put('/materials/movement/{id}/amount-spent', [MaterialController::class, 'recordRestockSpend'])->name('materials.movement.amount_spent');
     Route::put('/materials/movement/{id}', [MaterialController::class, 'updateMovement'])->name('materials.movement.update');
     Route::delete('/materials/movement/{id}', [MaterialController::class, 'destroyMovement'])->name('materials.movement.destroy');
     Route::get('/materials/{id}/movements', [MaterialController::class, 'movements'])->name('materials.movements');

@@ -267,8 +267,8 @@
                                                 <td>{{ \Carbon\Carbon::parse($mv->date)->format('M d') }}</td>
                                                 <td><span class="font-weight-semibold">{{ $mv->material_name }}</span></td>
                                                 <td class="text-center">{{ (float)$mv->qty }} {{ $mv->unit }}</td>
-                                                <td class="text-right">KES {{ number_format($mv->unit_cost ?? ($mv->material->unit_cost ?? 0), 2) }}</td>
-                                                <td class="text-right font-weight-bold text-success">KES {{ number_format($mv->total_cost, 2) }}</td>
+                                                <td class="text-right">KES {{ number_format($mv->hasRecordedSpend() && (float) $mv->qty > 0 ? $mv->total_cost / (float) $mv->qty : ($mv->unit_cost ?? ($mv->material->unit_cost ?? 0)), 2) }}</td>
+                                                <td class="text-right font-weight-bold text-success">KES {{ number_format($mv->total_cost, 2) }}@unless($mv->hasRecordedSpend())<div class="text-muted font-weight-normal">est.</div>@endunless</td>
                                             </tr>
                                             @endforeach
                                         </tbody>
