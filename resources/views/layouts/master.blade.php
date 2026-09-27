@@ -138,9 +138,6 @@
                             </div>
                             <div class="media-body">
                                 <div class="media-title font-weight-semibold">{{ Auth::user()->name ?? 'Guest' }}</div>
-                                <div class="font-size-xs opacity-75">
-                                    <i class="icon-pin font-size-sm mr-1"></i> Nairobi Assembly Plant #1
-                                </div>
                             </div>
                         </div>
                     </div>
