@@ -48,7 +48,6 @@
                         <img src="{{ Qs::getSystemLogo() }}" alt="Metonia" style="height: 38px;">
                     </div>
                     <h5 class="text-white font-weight-bold mb-0">Metonia Enterprise Limited</h5>
-                    <div class="text-white-50 font-size-sm">Nairobi Assembly Plant #1 Operations Floor</div>
                 </div>
 
                 <!-- Sign Up Card -->

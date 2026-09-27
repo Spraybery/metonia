@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Tools &amp; Equipment Asset Register — Metonia Assembly Plant #1</title>
+    <title>Tools &amp; Equipment Asset Register — Metonia Enterprise Limited</title>
     @include('print.master_document_styles')
 </head>
 <body>

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Lead Supervisors Roster — Metonia Assembly Plant #1</title>
+    <title>Lead Supervisors Roster — Metonia Enterprise Limited</title>
     @include('print.master_document_styles')
 </head>
 <body>

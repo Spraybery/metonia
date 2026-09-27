@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Job Card #{{ $vehicle->plate }} — Metonia Assembly Plant #1</title>
+    <title>Job Card #{{ $vehicle->plate }} — Metonia Enterprise Limited</title>
     @include('print.master_document_styles')
 </head>
 <body>

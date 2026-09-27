@@ -68,7 +68,7 @@
 
         <div class="collapse navbar-collapse" id="navbar-mobile">
             <span class="badge badge-success ml-md-3 mr-md-auto font-weight-semibold" style="background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #a7f3d0;">
-                <i class="icon-pulse2 mr-1 text-success"></i> Nairobi Plant #1 Online
+                <i class="icon-pulse2 mr-1 text-success"></i> System Online
             </span>
 
             <ul class="navbar-nav align-items-center">
@@ -267,7 +267,7 @@
                 </div>
                 <div class="navbar-collapse collapse" id="navbar-footer">
                     <span class="navbar-text">
-                        &copy; {{ date('Y') }} <strong>Metonia Enterprise Limited</strong> — Nairobi Assembly Plant #1.
+                        &copy; {{ date('Y') }} <strong>Metonia Enterprise Limited</strong>.
                     </span>
                     <ul class="navbar-nav ml-lg-auto">
                         <li class="nav-item"><span class="navbar-text text-muted font-size-sm">System Ver 1.0.0 (Data-First Architecture)</span></li>

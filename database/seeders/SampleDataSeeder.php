@@ -457,7 +457,7 @@ class SampleDataSeeder extends Seeder
 
         // 5. Seed Activity Logs
         $activities = [
-            ['actor' => 'Eng. Martin Kariuki', 'message' => 'System initialized and Nairobi Plant #1 calibrated.'],
+            ['actor' => 'Eng. Martin Kariuki', 'message' => 'System initialized and calibrated.'],
             ['actor' => 'David Omondi', 'message' => 'Restocked 320 Liters of Hydraulic Fluid ISO VG 46.'],
             ['actor' => 'Grace Nduta', 'message' => 'Job card created for MET-2026-8849102 (Metonia Titan 4x4 Heavy Hauler).'],
             ['actor' => 'Eng. Peter Kimani', 'message' => 'MET-2026-8849102 moved to 2. Structural & Frame.'],
