@@ -465,6 +465,19 @@
                 }
             }
         }
+
+        // Clicking the calendar icon beside a date field opens that field's date picker.
+        document.addEventListener('click', function (event) {
+            const trigger = event.target.closest('.date-picker-trigger');
+            if (!trigger) return;
+            const input = trigger.parentElement.querySelector('input[type="date"]');
+            if (!input) return;
+            try {
+                input.showPicker();
+            } catch (e) {
+                input.focus();
+            }
+        });
     </script>
 
     @stack('scripts')

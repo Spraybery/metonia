@@ -197,7 +197,12 @@
                                                         </div>
                                                         <div class="col-6 form-group">
                                                             <label class="font-weight-semibold">Delivery Date <span class="text-danger">*</span></label>
-                                                            <input type="date" name="date" class="form-control" value="{{ $m->date ? $m->date->format('Y-m-d') : date('Y-m-d') }}" required>
+                                                            <div class="input-group">
+                                                                <span class="input-group-prepend date-picker-trigger" style="cursor: pointer;" title="Pick a date">
+                                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                                                </span>
+                                                                <input type="date" name="date" class="form-control" value="{{ $m->date ? $m->date->format('Y-m-d') : date('Y-m-d') }}" required>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -371,7 +376,12 @@
                         </div>
                         <div class="col-6 form-group">
                             <label class="font-weight-semibold">Delivery Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            <div class="input-group">
+                                <span class="input-group-prepend date-picker-trigger" style="cursor: pointer;" title="Pick a date">
+                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                </span>
+                                <input type="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            </div>
                         </div>
                     </div>
 

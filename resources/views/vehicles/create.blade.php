@@ -105,15 +105,30 @@
                             <div class="form-row">
                                 <div class="col-md-4 form-group">
                                     <label class="font-weight-semibold">Date In <span class="text-danger">*</span></label>
-                                    <input type="date" name="intake_date" class="form-control" value="{{ old('intake_date', date('Y-m-d')) }}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend date-picker-trigger" style="cursor: pointer;" title="Pick a date">
+                                            <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                        </span>
+                                        <input type="date" name="intake_date" class="form-control" value="{{ old('intake_date', date('Y-m-d')) }}" required>
+                                    </div>
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label class="font-weight-semibold">Date Out</label>
-                                    <input type="date" name="date_out" class="form-control" value="{{ old('date_out') }}">
+                                    <div class="input-group">
+                                        <span class="input-group-prepend date-picker-trigger" style="cursor: pointer;" title="Pick a date">
+                                            <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                        </span>
+                                        <input type="date" name="date_out" class="form-control" value="{{ old('date_out') }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label class="font-weight-semibold">Delivery Date</label>
-                                    <input type="date" name="delivery_date" class="form-control" value="{{ old('delivery_date') }}">
+                                    <div class="input-group">
+                                        <span class="input-group-prepend date-picker-trigger" style="cursor: pointer;" title="Pick a date">
+                                            <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                        </span>
+                                        <input type="date" name="delivery_date" class="form-control" value="{{ old('delivery_date') }}">
+                                    </div>
                                 </div>
                             </div>
 
