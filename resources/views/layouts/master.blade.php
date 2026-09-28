@@ -384,7 +384,7 @@
         $(document).ready(function() {
             // Initialize DataTables with HTML5 export buttons matching SkullU standard
             // Export cell text only: leave out the Action column and any in-cell buttons/forms
-            // (e.g. Approve, Revoke, Enter Amount) so spreadsheets contain just the data.
+            // such as approval or amount-entry buttons, so spreadsheets contain just the data.
             var tableExportOptions = {
                 columns: ':not(.no-export)',
                 format: {
