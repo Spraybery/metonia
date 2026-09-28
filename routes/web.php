@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/vehicles/{id}/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::put('/vehicles/{id}', [VehicleController::class, 'update'])->name('vehicles.update');
     Route::put('/vehicles/{id}/stage', [VehicleController::class, 'updateStage'])->name('vehicles.update_stage');
+    Route::put('/vehicles/{id}/approval', [VehicleController::class, 'approve'])->name('vehicles.approve');
+    Route::delete('/vehicles/{id}/approval', [VehicleController::class, 'revokeApproval'])->name('vehicles.revoke_approval');
     Route::put('/vehicles/{id}/finance', [VehicleController::class, 'updateFinance'])->name('vehicles.update_finance');
     Route::put('/vehicles/{id}/checklist', [VehicleController::class, 'updateChecklist'])->name('vehicles.update_checklist');
     Route::post('/vehicles/{id}/parts', [VehicleController::class, 'issuePart'])->name('vehicles.issue_part');

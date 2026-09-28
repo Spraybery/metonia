@@ -66,6 +66,9 @@
                             <th>Date of Intake</th>
                             <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
+                            <th>Prepared By</th>
+                            <th>Approved By</th>
+                            <th>Date of Approval</th>
                             @if(Auth::user()->canEdit('vehicles') || Auth::user()->canDelete())
                             <th class="text-center no-export" style="width: 170px;">Action</th>
                             @endif
@@ -106,6 +109,34 @@
                             </td>
                             <td>
                                 <span class="font-weight-semibold text-dark">{{ $row->assigned_to ?: 'Unassigned' }}</span>
+                            </td>
+                            <td>
+                                <span class="font-weight-semibold text-dark">{{ $row->prepared_by ?: '—' }}</span>
+                            </td>
+                            <td>
+                                @if($row->isApproved())
+                                    <span class="font-weight-semibold text-success"><i class="icon-checkmark-circle mr-1"></i>{{ $row->approved_by }}</span>
+                                @else
+                                    <span class="badge badge-light border text-warning font-weight-semibold">Pending approval</span>
+                                @endif
+                                @if(Auth::user()->canApproveJobCards())
+                                <div class="mt-1">
+                                    @if($row->isApproved())
+                                        <form method="POST" action="{{ route('vehicles.revoke_approval', $row->id) }}" class="d-inline" onsubmit="return confirm('Revoke approval of Job Card #{{ $row->plate }}?');">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn btn-xs btn-link text-danger p-0 font-weight-semibold">Revoke</button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('vehicles.approve', $row->id) }}" class="d-inline">
+                                            @csrf @method('PUT')
+                                            <button type="submit" class="btn btn-xs btn-success font-weight-semibold py-0 px-2"><i class="icon-checkmark mr-1"></i> Approve</button>
+                                        </form>
+                                    @endif
+                                </div>
+                                @endif
+                            </td>
+                            <td class="font-size-sm text-muted" data-order="{{ $row->approved_at?->timestamp ?? 0 }}">
+                                {{ $row->approved_at ? $row->approved_at->format('d M Y') : '—' }}
                             </td>
                             @if(Auth::user()->canEdit('vehicles') || Auth::user()->canDelete())
                             <td class="text-center">

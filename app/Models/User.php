@@ -118,6 +118,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Whether the user may sign off (approve) a job card.
+     */
+    public function canApproveJobCards(): bool
+    {
+        return $this->isAdmin() || $this->isManager();
+    }
+
+    /**
      * Whether the user may record a vehicle's labor cost and invoice total.
      * Broader than canEdit('vehicles') — an Accountant cannot touch the
      * build pipeline itself, but owns the financial figures for each job.

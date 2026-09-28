@@ -100,6 +100,7 @@ class VehicleController extends Controller
         ]);
 
         $validated['intake_date'] = Carbon::now();
+        $validated['prepared_by'] = Auth::user()->name;
         $validated['labor_cost'] = $validated['labor_cost'] ?? 0.00;
         $validated['invoice_total'] = $validated['invoice_total'] ?? 0.00;
         $validated['checklist_done'] = $validated['checklist_done'] ?? 0;
@@ -334,6 +335,46 @@ class VehicleController extends Controller
         }
 
         return back()->with('flash_success', 'Stage and supervisor assignments updated successfully.');
+    }
+
+    public function approve($id)
+    {
+        if (! Auth::user()->canApproveJobCards()) {
+            abort(403, 'Only Admins and Managers can approve job cards.');
+        }
+
+        $vehicle = Vehicle::findOrFail($id);
+
+        if ($vehicle->isApproved()) {
+            return back()->with('flash_danger', "Job Card #{$vehicle->plate} was already approved by {$vehicle->approved_by}.");
+        }
+
+        $vehicle->update([
+            'approved_by' => Auth::user()->name,
+            'approved_at' => Carbon::now(),
+        ]);
+
+        ActivityLog::record(Auth::user()->name, "Approved Job Card #{$vehicle->plate}.");
+
+        return back()->with('flash_success', "Job Card #{$vehicle->plate} approved.");
+    }
+
+    public function revokeApproval($id)
+    {
+        if (! Auth::user()->canApproveJobCards()) {
+            abort(403, 'Only Admins and Managers can revoke job card approval.');
+        }
+
+        $vehicle = Vehicle::findOrFail($id);
+
+        $vehicle->update([
+            'approved_by' => null,
+            'approved_at' => null,
+        ]);
+
+        ActivityLog::record(Auth::user()->name, "Revoked approval of Job Card #{$vehicle->plate}.");
+
+        return back()->with('flash_success', "Approval of Job Card #{$vehicle->plate} revoked.");
     }
 
     public function updateFinance(Request $request, $id)

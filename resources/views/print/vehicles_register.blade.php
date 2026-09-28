@@ -33,6 +33,9 @@
                 <th>Current Stage</th>
                 <th>Supervisor</th>
                 <th class="text-center">Days in Stage</th>
+                <th>Prepared By</th>
+                <th>Approved By</th>
+                <th>Date of Approval</th>
                 <th class="text-right">Invoice (KES)</th>
             </tr>
         </thead>
@@ -46,11 +49,14 @@
                 <td>{{ $vehicle->stage }}</td>
                 <td>{{ $vehicle->assigned_to ?: 'Unassigned' }}</td>
                 <td class="text-center">{{ $vehicle->days_in_current_stage }}</td>
+                <td>{{ $vehicle->prepared_by ?: '—' }}</td>
+                <td>{{ $vehicle->approved_by ?: 'Pending' }}</td>
+                <td>{{ $vehicle->approved_at ? $vehicle->approved_at->format('d M Y') : '—' }}</td>
                 <td class="text-right">{{ number_format($vehicle->invoice_total, 2) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">No vehicles match this register.</td>
+                <td colspan="11" class="text-center" style="padding: 16px; color: #64748b;">No vehicles match this register.</td>
             </tr>
             @endforelse
         </tbody>

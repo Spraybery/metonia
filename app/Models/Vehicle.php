@@ -27,6 +27,9 @@ class Vehicle extends Model
         'labor_cost',
         'invoice_total',
         'completed_at',
+        'prepared_by',
+        'approved_by',
+        'approved_at',
     ];
 
     protected function casts(): array
@@ -34,11 +37,17 @@ class Vehicle extends Model
         return [
             'intake_date' => 'datetime',
             'completed_at' => 'datetime',
+            'approved_at' => 'datetime',
             'checklist_done' => 'integer',
             'checklist_total' => 'integer',
             'labor_cost' => 'decimal:2',
             'invoice_total' => 'decimal:2',
         ];
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->approved_at !== null;
     }
 
     public function stageHistories(): HasMany
