@@ -31,14 +31,26 @@
         <tr>
             <td class="meta-label">Vehicle Plate / VIN:</td>
             <td class="meta-value" style="color: #10B981;">{{ $vehicle->plate }}</td>
-            <td class="meta-label">Plant Intake Date:</td>
-            <td class="meta-value">{{ $vehicle->intake_date ? $vehicle->intake_date->format('d M Y, H:i') : '—' }}</td>
+            <td class="meta-label">Date In:</td>
+            <td class="meta-value">{{ $vehicle->intake_date ? $vehicle->intake_date->format('d M Y') : '—' }}</td>
         </tr>
         <tr>
             <td class="meta-label">Make &amp; Model:</td>
             <td class="meta-value">{{ $vehicle->make }} {{ $vehicle->model }} ({{ $vehicle->year ?: date('Y') }})</td>
             <td class="meta-label">Lead Supervisor:</td>
             <td class="meta-value">{{ $vehicle->assigned_to ?: 'Unassigned' }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Engine No.:</td>
+            <td class="meta-value">{{ $vehicle->engine_no ?: '—' }}</td>
+            <td class="meta-label">Date Out:</td>
+            <td class="meta-value">{{ $vehicle->date_out ? $vehicle->date_out->format('d M Y') : '—' }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Bus Category:</td>
+            <td class="meta-value">{{ $vehicle->bus_category ?: '—' }}</td>
+            <td class="meta-label">Delivery Date:</td>
+            <td class="meta-value">{{ $vehicle->delivery_date ? $vehicle->delivery_date->format('d M Y') : '—' }}</td>
         </tr>
         <tr>
             <td class="meta-label">Client Account:</td>

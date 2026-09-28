@@ -59,6 +59,17 @@
                                 </div>
                             </div>
 
+                            <div class="form-row">
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-semibold">Engine No.</label>
+                                    <input type="text" name="engine_no" class="form-control text-uppercase" placeholder="e.g. 4HK1-123456" value="{{ old('engine_no', $vehicle->engine_no) }}">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-semibold">Bus Category</label>
+                                    <input type="text" name="bus_category" class="form-control" placeholder="e.g. 33-Seater Mini Bus" value="{{ old('bus_category', $vehicle->bus_category) }}">
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="font-weight-semibold">Assigned Lead Supervisor</label>
                                 <select name="assigned_to" class="form-control select-search">
@@ -89,6 +100,21 @@
                                 <input type="text" name="customer_phone" class="form-control" value="{{ old('customer_phone', $vehicle->customer_phone) }}">
                                 <input type="hidden" name="labor_cost" value="{{ $vehicle->labor_cost }}">
                                 <input type="hidden" name="invoice_total" value="{{ $vehicle->invoice_total }}">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-4 form-group">
+                                    <label class="font-weight-semibold">Date In <span class="text-danger">*</span></label>
+                                    <input type="date" name="intake_date" class="form-control" value="{{ old('intake_date', ($vehicle->intake_date ?? $vehicle->created_at)->format('Y-m-d')) }}" required>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label class="font-weight-semibold">Date Out</label>
+                                    <input type="date" name="date_out" class="form-control" value="{{ old('date_out', $vehicle->date_out?->format('Y-m-d')) }}">
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label class="font-weight-semibold">Delivery Date</label>
+                                    <input type="date" name="delivery_date" class="form-control" value="{{ old('delivery_date', $vehicle->delivery_date?->format('Y-m-d')) }}">
+                                </div>
                             </div>
 
                             <div class="form-group">

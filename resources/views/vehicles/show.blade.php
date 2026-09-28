@@ -455,8 +455,24 @@
                                         <td>{{ $vehicle->year ?: '—' }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">Plant Intake Date:</td>
-                                        <td>{{ $vehicle->intake_date ? $vehicle->intake_date->format('d M Y, H:i') : '—' }}</td>
+                                        <td class="text-muted">Engine No.:</td>
+                                        <td>{{ $vehicle->engine_no ?: '—' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Bus Category:</td>
+                                        <td>{{ $vehicle->bus_category ?: '—' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Date In:</td>
+                                        <td>{{ $vehicle->intake_date ? $vehicle->intake_date->format('d M Y') : '—' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Date Out:</td>
+                                        <td>{{ $vehicle->date_out ? $vehicle->date_out->format('d M Y') : '—' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Delivery Date:</td>
+                                        <td>{{ $vehicle->delivery_date ? $vehicle->delivery_date->format('d M Y') : '—' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Lead Supervisor:</td>

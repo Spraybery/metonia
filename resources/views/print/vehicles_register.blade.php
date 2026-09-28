@@ -29,10 +29,15 @@
                 <th style="width: 30px;">#</th>
                 <th>Chassis / Plate</th>
                 <th>Vehicle</th>
+                <th>Engine No.</th>
+                <th>Bus Category</th>
                 <th>Client Account</th>
                 <th>Current Stage</th>
                 <th>Supervisor</th>
                 <th class="text-center">Days in Stage</th>
+                <th>Date In</th>
+                <th>Date Out</th>
+                <th>Delivery Date</th>
                 <th class="text-right">Invoice (KES)</th>
             </tr>
         </thead>
@@ -42,15 +47,20 @@
                 <td>{{ $loop->iteration }}</td>
                 <td><strong>{{ $vehicle->plate }}</strong></td>
                 <td>{{ $vehicle->make }} {{ $vehicle->model }}</td>
+                <td>{{ $vehicle->engine_no ?: '—' }}</td>
+                <td>{{ $vehicle->bus_category ?: '—' }}</td>
                 <td>{{ $vehicle->customer_name ?: '—' }}</td>
                 <td>{{ $vehicle->stage }}</td>
                 <td>{{ $vehicle->assigned_to ?: 'Unassigned' }}</td>
                 <td class="text-center">{{ $vehicle->days_in_current_stage }}</td>
+                <td>{{ ($vehicle->intake_date ?? $vehicle->created_at)->format('d M Y') }}</td>
+                <td>{{ $vehicle->date_out ? $vehicle->date_out->format('d M Y') : '—' }}</td>
+                <td>{{ $vehicle->delivery_date ? $vehicle->delivery_date->format('d M Y') : '—' }}</td>
                 <td class="text-right">{{ number_format($vehicle->invoice_total, 2) }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center" style="padding: 16px; color: #64748b;">No vehicles match this register.</td>
+                <td colspan="13" class="text-center" style="padding: 16px; color: #64748b;">No vehicles match this register.</td>
             </tr>
             @endforelse
         </tbody>

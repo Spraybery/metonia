@@ -32,6 +32,7 @@ class JobCardApprovalTest extends TestCase
             'make' => 'Isuzu',
             'model' => 'NQR',
             'stage' => '1. Intake & Diagnosis',
+            'intake_date' => now()->toDateString(),
         ])->assertRedirect();
 
         $this->assertDatabaseHas('vehicles', [

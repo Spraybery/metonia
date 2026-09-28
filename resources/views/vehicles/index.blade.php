@@ -62,8 +62,12 @@
                             <th style="width: 50px;">#</th>
                             <th>Chassis Number</th>
                             <th>Vehicle Name</th>
+                            <th>Engine No.</th>
+                            <th>Bus Category</th>
                             <th>Job Number</th>
-                            <th>Date of Intake</th>
+                            <th>Date In</th>
+                            <th>Date Out</th>
+                            <th>Delivery Date</th>
                             <th>Current Stage of Vehicle</th>
                             <th>Supervisor</th>
                             <th>Prepared By</th>
@@ -91,11 +95,19 @@
                                     <span class="text-muted font-size-xs">({{ $row->year }})</span>
                                 @endif
                             </td>
+                            <td class="font-size-sm">{{ $row->engine_no ?: '—' }}</td>
+                            <td class="font-size-sm">{{ $row->bus_category ?: '—' }}</td>
                             <td>
                                 <span class="badge badge-light border font-weight-semibold text-primary">#JC-{{ str_pad($row->id, 5, '0', STR_PAD_LEFT) }}</span>
                             </td>
                             <td class="font-size-sm text-muted">
                                 {{ $row->intake_date ? $row->intake_date->format('d M Y') : $row->created_at->format('d M Y') }}
+                            </td>
+                            <td class="font-size-sm text-muted" data-order="{{ $row->date_out?->timestamp ?? 0 }}">
+                                {{ $row->date_out ? $row->date_out->format('d M Y') : '—' }}
+                            </td>
+                            <td class="font-size-sm text-muted" data-order="{{ $row->delivery_date?->timestamp ?? 0 }}">
+                                {{ $row->delivery_date ? $row->delivery_date->format('d M Y') : '—' }}
                             </td>
                             <td>
                                 @php

@@ -88,6 +88,11 @@ class VehicleController extends Controller
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
             'year' => 'nullable|string|max:4',
+            'engine_no' => 'nullable|string|max:255',
+            'bus_category' => 'nullable|string|max:255',
+            'intake_date' => 'required|date',
+            'date_out' => 'nullable|date|after_or_equal:intake_date',
+            'delivery_date' => 'nullable|date',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:255',
             'stage' => 'required|string|in:'.implode(',', Qs::getStages()),
@@ -99,7 +104,7 @@ class VehicleController extends Controller
             'invoice_total' => 'nullable|numeric|min:0',
         ]);
 
-        $validated['intake_date'] = Carbon::now();
+        $validated['intake_date'] = Carbon::parse($validated['intake_date'])->setTimeFrom(Carbon::now());
         $validated['prepared_by'] = Auth::user()->name;
         $validated['labor_cost'] = $validated['labor_cost'] ?? 0.00;
         $validated['invoice_total'] = $validated['invoice_total'] ?? 0.00;
@@ -252,6 +257,11 @@ class VehicleController extends Controller
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
             'year' => 'nullable|string|max:4',
+            'engine_no' => 'nullable|string|max:255',
+            'bus_category' => 'nullable|string|max:255',
+            'intake_date' => 'required|date',
+            'date_out' => 'nullable|date|after_or_equal:intake_date',
+            'delivery_date' => 'nullable|date',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:255',
             'stage' => 'required|string|in:'.implode(',', Qs::getStages()),
@@ -262,6 +272,11 @@ class VehicleController extends Controller
             'labor_cost' => 'nullable|numeric|min:0',
             'invoice_total' => 'nullable|numeric|min:0',
         ]);
+
+        $intakeDate = Carbon::parse($validated['intake_date']);
+        $validated['intake_date'] = $vehicle->intake_date && $vehicle->intake_date->isSameDay($intakeDate)
+            ? $vehicle->intake_date
+            : $intakeDate->setTimeFrom($vehicle->intake_date ?? Carbon::now());
 
         $stageChanged = ($vehicle->stage !== $validated['stage']);
         $oldStage = $vehicle->stage;
