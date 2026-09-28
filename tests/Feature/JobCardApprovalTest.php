@@ -97,7 +97,7 @@ class JobCardApprovalTest extends TestCase
         $this->assertNull($jobCard->fresh()->approved_at);
     }
 
-    public function test_register_screen_and_printout_show_prepared_and_approved_details(): void
+    public function test_register_screen_shows_prepared_and_approved_details(): void
     {
         $manager = User::factory()->create(['role' => 'Manager']);
         $this->createJobCard(['approved_by' => 'Peter Approver', 'approved_at' => '2026-09-20 10:00:00']);
@@ -112,11 +112,17 @@ class JobCardApprovalTest extends TestCase
             ->assertSee('Pending approval')
             ->assertSee('Approve');
 
+    }
+
+    public function test_printed_register_has_dated_sign_off_instead_of_approval_columns(): void
+    {
+        $manager = User::factory()->create(['role' => 'Manager']);
+        $this->createJobCard(['approved_by' => 'Peter Approver', 'approved_at' => '2026-09-20 10:00:00']);
+
         $this->actingAs($manager)->get(route('vehicles.print_register'))
             ->assertOk()
-            ->assertSeeInOrder(['Prepared By', 'Approved By', 'Date of Approval'])
-            ->assertSee('Sam Preparer')
-            ->assertSee('Peter Approver')
-            ->assertSee('20 Sep 2026');
+            ->assertDontSee('Date of Approval')
+            ->assertDontSee('Peter Approver')
+            ->assertSeeInOrder(['Prepared By', 'Signature:', 'Date:', 'Approved By', 'Signature:', 'Date:']);
     }
 }
