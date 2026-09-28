@@ -126,4 +126,22 @@ class JobCardApprovalTest extends TestCase
             ->assertDontSee('Peter Approver')
             ->assertSeeInOrder(['Prepared By', 'Signature:', 'Date:', 'Approved By', 'Signature:', 'Date:']);
     }
+
+    public function test_admin_delete_button_is_wired_to_the_delete_form_and_deletes_the_job_card(): void
+    {
+        $admin = User::factory()->create(['role' => 'Admin']);
+        $jobCard = $this->createJobCard();
+
+        $this->actingAs($admin)->get(route('vehicles.index'))
+            ->assertOk()
+            ->assertSee('data-confirm-form="del-veh-'.$jobCard->id.'"', false)
+            ->assertSee('id="del-veh-'.$jobCard->id.'"', false)
+            ->assertDontSee('if(confirm(', false);
+
+        $this->actingAs($admin)
+            ->delete(route('vehicles.destroy', $jobCard->id))
+            ->assertRedirect(route('vehicles.index'));
+
+        $this->assertModelMissing($jobCard);
+    }
 }

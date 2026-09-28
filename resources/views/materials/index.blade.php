@@ -157,7 +157,7 @@
                                             <form method="POST" action="{{ route('materials.destroy', $row->id) }}" id="del-mat-{{ $row->id }}">
                                                 @csrf @method('DELETE')
                                             </form>
-                                            <a href="#" onclick="if(confirm('Delete {{ $row->name }}?')) { document.getElementById('del-mat-{{ $row->id }}').submit(); }" class="dropdown-item text-danger">
+                                            <a href="#" data-confirm="Delete {{ $row->name }}?" data-confirm-form="del-mat-{{ $row->id }}" class="dropdown-item text-danger">
                                                 <i class="icon-trash text-danger"></i> Delete Item
                                             </a>
                                             @endif

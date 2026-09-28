@@ -139,7 +139,7 @@
                                             <form method="POST" action="{{ route('materials.movement.destroy', $m->id) }}" id="del-issuance-{{ $m->id }}">
                                                 @csrf @method('DELETE')
                                             </form>
-                                            <a href="#" onclick="if(confirm('Delete issuance record of {{ $m->material_name }}? Stock will be reverted.')) { document.getElementById('del-issuance-{{ $m->id }}').submit(); }" class="dropdown-item text-danger">
+                                            <a href="#" data-confirm="Delete issuance record of {{ $m->material_name }}? Stock will be reverted." data-confirm-form="del-issuance-{{ $m->id }}" class="dropdown-item text-danger">
                                                 <i class="icon-trash text-danger"></i> Delete Issuance
                                             </a>
                                             @endif

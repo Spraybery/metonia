@@ -134,9 +134,9 @@
                                 @if(Auth::user()->canApproveJobCards())
                                 <div class="mt-1">
                                     @if($row->isApproved())
-                                        <form method="POST" action="{{ route('vehicles.revoke_approval', $row->id) }}" class="d-inline" onsubmit="return confirm('Revoke approval of Job Card #{{ $row->plate }}?');">
+                                        <form method="POST" action="{{ route('vehicles.revoke_approval', $row->id) }}" class="d-inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-xs btn-link text-danger p-0 font-weight-semibold">Revoke</button>
+                                            <button type="button" data-confirm="Revoke approval of Job Card #{{ $row->plate }}?" data-confirm-label="Yes, Revoke" class="btn btn-xs btn-link text-danger p-0 font-weight-semibold">Revoke</button>
                                         </form>
                                     @else
                                         <form method="POST" action="{{ route('vehicles.approve', $row->id) }}" class="d-inline">
@@ -163,7 +163,7 @@
                                         <form method="POST" action="{{ route('vehicles.destroy', $row->id) }}" id="del-veh-{{ $row->id }}" class="d-inline">
                                             @csrf @method('DELETE')
                                         </form>
-                                        <button type="button" onclick="if(confirm('Delete Job Card #{{ $row->plate }}? This will permanently delete stage history and parts logs.')) { document.getElementById('del-veh-{{ $row->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Job Card">
+                                        <button type="button" data-confirm="Delete Job Card #{{ $row->plate }}? This will permanently delete stage history and parts logs." data-confirm-form="del-veh-{{ $row->id }}" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Job Card">
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif

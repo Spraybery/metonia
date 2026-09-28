@@ -134,7 +134,7 @@
                                         <form method="POST" action="{{ route('tools.destroy', $tool->id) }}" id="del-tool-{{ $tool->id }}" class="d-inline">
                                             @csrf @method('DELETE')
                                         </form>
-                                        <button type="button" onclick="if(confirm('Decommission equipment [{{ $tool->asset_tag }}]?')) { document.getElementById('del-tool-{{ $tool->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Decommission Equipment">
+                                        <button type="button" data-confirm="Decommission equipment [{{ $tool->asset_tag }}]?" data-confirm-form="del-tool-{{ $tool->id }}" data-confirm-label="Yes, Decommission" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Decommission Equipment">
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif

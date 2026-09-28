@@ -466,6 +466,31 @@
             }
         }
 
+        // Buttons with data-confirm ask in an in-page dialog before submitting their form
+        // (data-confirm-form names the form's id; otherwise the enclosing form is used).
+        // A page dialog is used instead of window.confirm(), which some embedded browsers block.
+        document.addEventListener('click', function (event) {
+            const trigger = event.target.closest('[data-confirm]');
+            if (!trigger) return;
+            event.preventDefault();
+
+            const form = trigger.dataset.confirmForm
+                ? document.getElementById(trigger.dataset.confirmForm)
+                : trigger.closest('form');
+            if (!form) return;
+
+            const modal = document.getElementById('modal-confirm-action');
+            modal.querySelector('.confirm-action-message').textContent = trigger.dataset.confirm;
+            const confirmButton = modal.querySelector('.confirm-action-ok');
+            confirmButton.textContent = trigger.dataset.confirmLabel || 'Yes, Delete';
+            confirmButton.onclick = function () {
+                confirmButton.disabled = true;
+                form.submit();
+            };
+            confirmButton.disabled = false;
+            $(modal).modal('show');
+        });
+
         // Clicking the calendar icon beside a date field opens that field's date picker.
         document.addEventListener('click', function (event) {
             const trigger = event.target.closest('.date-picker-trigger');
@@ -479,6 +504,25 @@
             }
         });
     </script>
+
+    {{-- Shared confirmation dialog for [data-confirm] buttons --}}
+    <div id="modal-confirm-action" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h6 class="modal-title font-weight-bold"><i class="icon-warning22 mr-2"></i> Please Confirm</h6>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="confirm-action-message mb-0"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger font-weight-semibold confirm-action-ok">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @stack('scripts')
 </body>

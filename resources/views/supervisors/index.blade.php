@@ -70,7 +70,7 @@
                                         <form method="POST" action="{{ route('supervisors.destroy', $sup->id) }}" id="del-sup-{{ $sup->id }}" class="d-inline">
                                             @csrf @method('DELETE')
                                         </form>
-                                        <button type="button" onclick="if(confirm('Remove {{ $sup->name }} from active supervisor roster?')) { document.getElementById('del-sup-{{ $sup->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Remove Supervisor">
+                                        <button type="button" data-confirm="Remove {{ $sup->name }} from active supervisor roster?" data-confirm-form="del-sup-{{ $sup->id }}" data-confirm-label="Yes, Remove" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Remove Supervisor">
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif

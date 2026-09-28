@@ -56,7 +56,7 @@
                                     <form method="POST" action="{{ route('users.reject', $pending->id) }}" id="reject-user-{{ $pending->id }}" class="d-inline">
                                         @csrf @method('DELETE')
                                     </form>
-                                    <button type="button" onclick="if(confirm('Reject the account request from \'{{ $pending->username }}\'? This cannot be undone.')) { document.getElementById('reject-user-{{ $pending->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Reject Account">
+                                    <button type="button" data-confirm="Reject the account request from '{{ $pending->username }}'? This cannot be undone." data-confirm-form="reject-user-{{ $pending->id }}" data-confirm-label="Yes, Reject" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Reject Account">
                                         <i class="icon-cross mr-1"></i> Reject
                                     </button>
                                 </div>
@@ -132,7 +132,7 @@
                                         <form method="POST" action="{{ route('users.destroy', $user->id) }}" id="del-user-{{ $user->id }}" class="d-inline">
                                             @csrf @method('DELETE')
                                         </form>
-                                        <button type="button" onclick="if(confirm('Delete user account \'{{ $user->username }}\'?')) { document.getElementById('del-user-{{ $user->id }}').submit(); }" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Account">
+                                        <button type="button" data-confirm="Delete user account '{{ $user->username }}'?" data-confirm-form="del-user-{{ $user->id }}" class="btn btn-xs btn-outline-danger font-weight-semibold px-2" title="Delete Account">
                                             <i class="icon-trash mr-1"></i> Delete
                                         </button>
                                     @endif

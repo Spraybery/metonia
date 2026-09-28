@@ -158,7 +158,7 @@
                                             <form method="POST" action="{{ route('materials.movement.destroy', $m->id) }}" id="del-restock-{{ $m->id }}">
                                                 @csrf @method('DELETE')
                                             </form>
-                                            <a href="#" onclick="if(confirm('Delete restock record of {{ $m->material_name }}? Received stock quantity will be deducted.')) { document.getElementById('del-restock-{{ $m->id }}').submit(); }" class="dropdown-item text-danger">
+                                            <a href="#" data-confirm="Delete restock record of {{ $m->material_name }}? Received stock quantity will be deducted." data-confirm-form="del-restock-{{ $m->id }}" class="dropdown-item text-danger">
                                                 <i class="icon-trash text-danger"></i> Delete Restock
                                             </a>
                                             @endif
