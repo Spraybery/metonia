@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ActivityLog;
 use App\Models\Material;
 use App\Models\MaterialMovement;
 use App\Models\User;
@@ -260,5 +261,46 @@ class RestockFinanceTest extends TestCase
         $response->assertSee('Money Spent on Restocks (MTD)');
         $response->assertDontSee('Stock Issued (MTD)');
         $response->assertDontSee('Net Valuation Change');
+    }
+
+    public function test_storekeeper_dashboard_hides_financial_snapshot_and_audit_trail(): void
+    {
+        $storekeeper = User::factory()->create(['role' => 'Storekeeper']);
+        ActivityLog::record('Admin', 'Sensitive audit event.');
+
+        $response = $this->actingAs($storekeeper)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertDontSee('Financial Snapshot');
+        $response->assertDontSee('Audit Trail');
+        $response->assertDontSee('Sensitive audit event.');
+        $response->assertViewMissing('totalStockValue');
+        $response->assertViewMissing('monthlyRestockSpend');
+    }
+
+    public function test_storekeeper_dashboard_json_omits_financial_figures_and_activity(): void
+    {
+        $storekeeper = User::factory()->create(['role' => 'Storekeeper']);
+        ActivityLog::record('Admin', 'Sensitive audit event.');
+
+        $this->actingAs($storekeeper)
+            ->getJson(route('api.db'))
+            ->assertOk()
+            ->assertJsonMissingPath('totalStockValue')
+            ->assertJsonMissingPath('monthlyRestockSpend')
+            ->assertJsonCount(0, 'recentActivities');
+    }
+
+    public function test_accountant_dashboard_shows_financial_snapshot_and_audit_trail(): void
+    {
+        $accountant = User::factory()->create(['role' => 'Accountant']);
+        ActivityLog::record('Admin', 'Visible audit event.');
+
+        $this->actingAs($accountant)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Financial Snapshot')
+            ->assertSee('Audit Trail')
+            ->assertSee('Visible audit event.');
     }
 }

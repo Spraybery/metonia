@@ -101,6 +101,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Whether the user may see the dashboard's Financial Snapshot of
+     * store value and restock spending. Storekeepers are kept out.
+     */
+    public function canViewFinancialSnapshot(): bool
+    {
+        return ! $this->isStorekeeper();
+    }
+
+    /**
+     * Whether the user may see the activity log (audit trail) of staff actions.
+     */
+    public function canViewAuditTrail(): bool
+    {
+        return ! $this->isStorekeeper();
+    }
+
+    /**
      * Whether the user may record a vehicle's labor cost and invoice total.
      * Broader than canEdit('vehicles') — an Accountant cannot touch the
      * build pipeline itself, but owns the financial figures for each job.

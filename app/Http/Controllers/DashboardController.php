@@ -12,6 +12,7 @@ use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -41,9 +42,9 @@ class DashboardController extends Controller
      *     lowStockSafetyMaterials: Collection<int, Material>,
      *     totalStoreUnitsNeeded: float,
      *     totalSafetyUnitsNeeded: float,
-     *     totalStockValue: float,
-     *     monthlyRestockSpend: float,
-     *     monthlyRestocksAwaitingAmount: int,
+     *     totalStockValue?: float,
+     *     monthlyRestockSpend?: float,
+     *     monthlyRestocksAwaitingAmount?: int,
      *     stages: array<int, string>,
      *     pipelineCounts: array<string, int>,
      *     maxPipelineCount: int,
@@ -56,15 +57,16 @@ class DashboardController extends Controller
     {
         $now = Carbon::now();
         $stages = Qs::getStages();
+        $user = Auth::user();
 
         return array_merge(
             $this->getVehicleMetrics(),
             $this->getMaterialStockAlerts(),
-            $this->getRestockSpendMetrics($now),
+            $user->canViewFinancialSnapshot() ? $this->getFinancialSnapshot($now) : [],
             $this->getPipelineMetrics($stages),
             [
                 'toolsSummary' => $this->getToolsSummary($now),
-                'recentActivities' => ActivityLog::orderByDesc('id')->take(10)->get(),
+                'recentActivities' => $user->canViewAuditTrail() ? ActivityLog::orderByDesc('id')->take(10)->get() : collect(),
                 'totalSupervisors' => Supervisor::count(),
             ]
         );
@@ -94,8 +96,7 @@ class DashboardController extends Controller
      *     lowStockMaterials: Collection<int, Material>,
      *     lowStockSafetyMaterials: Collection<int, Material>,
      *     totalStoreUnitsNeeded: float,
-     *     totalSafetyUnitsNeeded: float,
-     *     totalStockValue: float
+     *     totalSafetyUnitsNeeded: float
      * }
      */
     private function getMaterialStockAlerts(): array
@@ -122,30 +123,31 @@ class DashboardController extends Controller
         $totalStoreUnitsNeeded = (float) $lowStockMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
         $totalSafetyUnitsNeeded = (float) $lowStockSafetyMaterials->sum(fn (Material $m) => max(0, (float) $m->low_stock - (float) $m->qty));
 
-        $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(fn (Material $m) => $m->totalValue());
-
         return [
             'lowStockMaterials' => $lowStockMaterials,
             'lowStockSafetyMaterials' => $lowStockSafetyMaterials,
             'totalStoreUnitsNeeded' => $totalStoreUnitsNeeded,
             'totalSafetyUnitsNeeded' => $totalSafetyUnitsNeeded,
-            'totalStockValue' => $totalStockValue,
         ];
     }
 
     /**
-     * Money spent on supplier restocks delivered this month, as recorded by Accountants.
+     * Store inventory value and money spent on supplier restocks delivered
+     * this month, as recorded by Accountants.
      *
-     * @return array{monthlyRestockSpend: float, monthlyRestocksAwaitingAmount: int}
+     * @return array{totalStockValue: float, monthlyRestockSpend: float, monthlyRestocksAwaitingAmount: int}
      */
-    private function getRestockSpendMetrics(Carbon $now): array
+    private function getFinancialSnapshot(Carbon $now): array
     {
+        $totalStockValue = (float) Material::all()->reject(fn (Material $m) => $m->isSafetyStock())->sum(fn (Material $m) => $m->totalValue());
+
         $mtdRestocks = MaterialMovement::where('type', 'in')
             ->whereYear('date', $now->year)
             ->whereMonth('date', $now->month)
             ->get(['amount_spent']);
 
         return [
+            'totalStockValue' => $totalStockValue,
             'monthlyRestockSpend' => (float) $mtdRestocks->sum('amount_spent'),
             'monthlyRestocksAwaitingAmount' => $mtdRestocks->whereNull('amount_spent')->count(),
         ];

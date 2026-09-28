@@ -61,6 +61,7 @@
         </div>
     </div>
 
+    @if(Auth::user()->canViewFinancialSnapshot())
     {{-- 2. Financial Snapshot --}}
     <div class="card mb-3">
         <div class="card-header header-elements-inline">
@@ -95,6 +96,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     {{-- 3. Plant Build Pipeline Stage Distribution --}}
     <div class="card mb-3">
@@ -362,6 +364,7 @@
         </div>
     </div>
 
+    @if(Auth::user()->canViewAuditTrail())
     {{-- 7. Recent Activity Audit Trail --}}
     <div class="card mb-0">
         <div class="card-header header-elements-inline">
@@ -401,6 +404,7 @@
             </div>
         </div>
     </div>
+    @endif
 
 </div>
 @endsection
