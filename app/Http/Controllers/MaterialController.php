@@ -673,70 +673,86 @@ class MaterialController extends Controller
         $issuedBy = $validated['issued_by'] ?? Auth::user()->name;
         $issuedTo = $validated['issued_to'] ?? ($validated['person'] ?? Auth::user()->name);
 
-        if ($validated['type'] === 'out' && (float) $material->qty < $qty) {
-            return back()->with('flash_danger', "Insufficient stock: only {$material->qty} {$material->unit} available.")->withInput();
+        try {
+            DB::transaction(function () use ($material, $validated, $qty, $issuedBy, $issuedTo) {
+                $material = Material::whereKey($material->id)->lockForUpdate()->firstOrFail();
+
+                if ($validated['type'] === 'out' && (float) $material->qty < $qty) {
+                    throw new \RuntimeException("Insufficient stock: only {$material->qty} {$material->unit} available.");
+                }
+
+                $this->recordStockMovement($material, $validated, $qty, $issuedBy, $issuedTo);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('flash_danger', $e->getMessage())->withInput();
         }
 
-        DB::transaction(function () use ($material, $validated, $qty, $issuedBy, $issuedTo) {
-            $vehicleLabel = null;
-            if (! empty($validated['vehicle_id'])) {
-                $vehicle = Vehicle::find($validated['vehicle_id']);
-                if ($vehicle) {
-                    $vehicleLabel = "{$vehicle->plate} — {$vehicle->make} {$vehicle->model}";
-                }
-            }
-
-            if ($validated['type'] === 'in') {
-                $material->increment('qty', $qty);
-                if (! empty($validated['supplier'])) {
-                    $material->update(['supplier' => $validated['supplier']]);
-                }
-            } else {
-                $material->decrement('qty', $qty);
-
-                // If issued to a vehicle, automatically register into the vehicle's job card parts list
-                if (! empty($validated['vehicle_id'])) {
-                    $cost = round($qty * (float) $material->unit_cost, 2);
-                    VehiclePart::create([
-                        'vehicle_id' => $validated['vehicle_id'],
-                        'material_id' => $material->id,
-                        'material_name' => $material->name,
-                        'qty' => $qty,
-                        'unit_cost' => $material->unit_cost,
-                        'cost' => $cost,
-                        'issued_by' => $issuedBy,
-                        'issued_to' => $issuedTo,
-                        'issued_at' => Carbon::now(),
-                    ]);
-                }
-            }
-
-            $note = $validated['note'] ?? null;
-            if ($validated['type'] === 'in' && ! empty($validated['supplier'])) {
-                $note = trim(($note ? $note.' | ' : '').'Supplier: '.$validated['supplier']);
-            }
-
-            MaterialMovement::create([
-                'material_id' => $material->id,
-                'material_name' => $material->name,
-                'type' => $validated['type'],
-                'qty' => $qty,
-                'unit_cost' => $material->unit_cost,
-                'unit' => $material->unit,
-                'date' => $validated['date'],
-                'person' => $issuedTo,
-                'issued_by' => $issuedBy,
-                'issued_to' => $issuedTo,
-                'vehicle_id' => $validated['vehicle_id'] ?? null,
-                'vehicle_label' => $vehicleLabel,
-                'note' => $note,
-            ]);
-
-            $action = $validated['type'] === 'in' ? 'Restocked from supplier' : 'Issued/Dispatched';
-            ActivityLog::record(Auth::user()->name, "{$action} {$qty} {$material->unit} of '{$material->name}' (Issued By: {$issuedBy}, Issued To: {$issuedTo}".($vehicleLabel ? " for {$vehicleLabel}" : '').').');
-        });
-
         return back()->with('flash_success', 'Stock movement recorded successfully.');
+    }
+
+    /**
+     * Apply a stock in/out movement to a (locked) material and write its register entries.
+     *
+     * @param  array<string, mixed>  $validated
+     */
+    private function recordStockMovement(Material $material, array $validated, float $qty, string $issuedBy, string $issuedTo): void
+    {
+        $vehicleLabel = null;
+        if (! empty($validated['vehicle_id'])) {
+            $vehicle = Vehicle::find($validated['vehicle_id']);
+            if ($vehicle) {
+                $vehicleLabel = "{$vehicle->plate} — {$vehicle->make} {$vehicle->model}";
+            }
+        }
+
+        if ($validated['type'] === 'in') {
+            $material->increment('qty', $qty);
+            if (! empty($validated['supplier'])) {
+                $material->update(['supplier' => $validated['supplier']]);
+            }
+        } else {
+            $material->decrement('qty', $qty);
+
+            // If issued to a vehicle, automatically register into the vehicle's job card parts list
+            if (! empty($validated['vehicle_id'])) {
+                $cost = round($qty * (float) $material->unit_cost, 2);
+                VehiclePart::create([
+                    'vehicle_id' => $validated['vehicle_id'],
+                    'material_id' => $material->id,
+                    'material_name' => $material->name,
+                    'qty' => $qty,
+                    'unit_cost' => $material->unit_cost,
+                    'cost' => $cost,
+                    'issued_by' => $issuedBy,
+                    'issued_to' => $issuedTo,
+                    'issued_at' => Carbon::now(),
+                ]);
+            }
+        }
+
+        $note = $validated['note'] ?? null;
+        if ($validated['type'] === 'in' && ! empty($validated['supplier'])) {
+            $note = trim(($note ? $note.' | ' : '').'Supplier: '.$validated['supplier']);
+        }
+
+        MaterialMovement::create([
+            'material_id' => $material->id,
+            'material_name' => $material->name,
+            'type' => $validated['type'],
+            'qty' => $qty,
+            'unit_cost' => $material->unit_cost,
+            'unit' => $material->unit,
+            'date' => $validated['date'],
+            'person' => $issuedTo,
+            'issued_by' => $issuedBy,
+            'issued_to' => $issuedTo,
+            'vehicle_id' => $validated['vehicle_id'] ?? null,
+            'vehicle_label' => $vehicleLabel,
+            'note' => $note,
+        ]);
+
+        $action = $validated['type'] === 'in' ? 'Restocked from supplier' : 'Issued/Dispatched';
+        ActivityLog::record(Auth::user()->name, "{$action} {$qty} {$material->unit} of '{$material->name}' (Issued By: {$issuedBy}, Issued To: {$issuedTo}".($vehicleLabel ? " for {$vehicleLabel}" : '').').');
     }
 
     public function movements($id)
@@ -754,6 +770,11 @@ class MaterialController extends Controller
 
         $material = Material::findOrFail($id);
         $name = $material->name;
+
+        if (VehiclePart::where('material_id', $material->id)->exists()) {
+            return back()->with('flash_danger', "'{$name}' cannot be deleted because it has been issued to one or more job cards.");
+        }
+
         $material->delete();
 
         ActivityLog::record(Auth::user()->name, "Deleted store material '{$name}'.");
@@ -776,6 +797,7 @@ class MaterialController extends Controller
             'issued_to' => 'nullable|string|max:255',
             'person' => 'nullable|string|max:255',
             'vehicle_id' => 'nullable|exists:vehicles,id',
+            'supplier' => 'nullable|string|max:255',
             'note' => 'nullable|string',
         ]);
 
@@ -814,8 +836,16 @@ class MaterialController extends Controller
                         }
                     }
                 } elseif ($movement->type === 'in') {
+                    if ($material && $qtyDiff < 0 && (float) $material->qty < abs($qtyDiff)) {
+                        throw new \Exception('Cannot reduce this restock by '.abs($qtyDiff)." {$material->unit}: only {$material->qty} {$material->unit} of it is still in stock.");
+                    }
+
                     if ($material) {
                         $material->increment('qty', $qtyDiff);
+
+                        if (! empty($validated['supplier'])) {
+                            $material->update(['supplier' => $validated['supplier']]);
+                        }
                     }
                 }
 
@@ -842,13 +872,14 @@ class MaterialController extends Controller
                     'note' => $validated['note'] ?? $movement->note,
                 ]);
 
-                ActivityLog::record(Auth::user()->name, "Corrected material issuance record #{$movement->id} for '{$movement->material_name}' (New Qty: {$newQty}).");
+                $recordLabel = $movement->type === 'in' ? 'restock' : 'issuance';
+                ActivityLog::record(Auth::user()->name, "Corrected material {$recordLabel} record #{$movement->id} for '{$movement->material_name}' (New Qty: {$newQty}).");
             });
         } catch (\Exception $e) {
             return back()->with('flash_danger', $e->getMessage())->withInput();
         }
 
-        return back()->with('flash_success', 'Material issuance record updated successfully.');
+        return back()->with('flash_success', $movement->type === 'in' ? 'Restock record updated successfully.' : 'Material issuance record updated successfully.');
     }
 
     public function destroyMovement($id)
@@ -858,9 +889,13 @@ class MaterialController extends Controller
         }
 
         $movement = MaterialMovement::findOrFail($id);
+        $material = Material::find($movement->material_id);
 
-        DB::transaction(function () use ($movement) {
-            $material = Material::find($movement->material_id);
+        if ($movement->type === 'in' && $material && (float) $material->qty < (float) $movement->qty) {
+            return back()->with('flash_danger', "Cannot delete this restock: only {$material->qty} {$material->unit} of '{$material->name}' is still in stock, but the restock added {$movement->qty}. Some of it has already been issued.");
+        }
+
+        DB::transaction(function () use ($movement, $material) {
 
             if ($movement->type === 'out') {
                 if ($material) {
@@ -886,6 +921,6 @@ class MaterialController extends Controller
             ActivityLog::record(Auth::user()->name, "Deleted material movement record of {$qty} for '{$name}'. Stock reverted.");
         });
 
-        return back()->with('flash_success', 'Issuance record deleted and store stock reverted.');
+        return back()->with('flash_success', $movement->type === 'in' ? 'Restock record deleted and store stock reverted.' : 'Issuance record deleted and store stock reverted.');
     }
 }

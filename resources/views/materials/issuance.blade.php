@@ -91,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($outwardMovements as $m)
+                        @foreach($outwardMovements as $m)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
@@ -222,13 +222,7 @@
 @endif
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted p-4">
-                                No outward material issuances logged in the store register yet.
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

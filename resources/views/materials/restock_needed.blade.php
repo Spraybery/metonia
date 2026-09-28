@@ -108,7 +108,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($items as $row)
+                        @foreach($items as $row)
                         @php
                             $isSafety = $row->isSafetyStock();
                             $needed = max(0, (float)$row->low_stock - (float)$row->qty);
@@ -177,15 +177,7 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="13" class="text-center text-muted p-4">
-                                <i class="icon-checkmark-circle text-success mr-2" style="font-size: 24px;"></i>
-                                <div class="font-weight-semibold mt-1">All Stock Levels Sufficient</div>
-                                <div class="font-size-xs">There are no items matching this criteria currently below safety reorder levels.</div>
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                     @if($items->count() > 0)
                     <tfoot class="bg-light font-weight-bold">

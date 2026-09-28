@@ -53,7 +53,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($material->movements as $m)
+                        @foreach($material->movements as $m)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td class="font-size-sm">{{ $m->date ? $m->date->format('d M Y') : '—' }}</td>
@@ -88,11 +88,7 @@
                             </td>
                             <td class="font-size-sm text-muted">{{ $m->note ?: '—' }}</td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-muted p-4">No movement history recorded yet for this material.</td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

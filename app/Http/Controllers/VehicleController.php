@@ -29,7 +29,10 @@ class VehicleController extends Controller
             $s = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($s) {
                 $q->where('plate', 'like', $s)
+                    ->orWhere('make', 'like', $s)
                     ->orWhere('model', 'like', $s)
+                    ->orWhere('engine_no', 'like', $s)
+                    ->orWhere('bus_category', 'like', $s)
                     ->orWhere('customer_name', 'like', $s)
                     ->orWhere('assigned_to', 'like', $s);
             });
@@ -58,7 +61,10 @@ class VehicleController extends Controller
             $s = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($s) {
                 $q->where('plate', 'like', $s)
+                    ->orWhere('make', 'like', $s)
                     ->orWhere('model', 'like', $s)
+                    ->orWhere('engine_no', 'like', $s)
+                    ->orWhere('bus_category', 'like', $s)
                     ->orWhere('customer_name', 'like', $s)
                     ->orWhere('assigned_to', 'like', $s);
             });
@@ -71,6 +77,10 @@ class VehicleController extends Controller
 
     public function create()
     {
+        if (! Auth::user()->canEdit('vehicles')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $stages = Qs::getStages();
         $supervisors = Supervisor::orderBy('name')->get();
 
@@ -486,9 +496,12 @@ class VehicleController extends Controller
                     'material_name' => $material->name,
                     'type' => 'out',
                     'qty' => $requestedQty,
+                    'unit_cost' => $material->unit_cost,
                     'unit' => $material->unit,
                     'date' => Carbon::now()->toDateString(),
                     'person' => $personTakingPart,
+                    'issued_by' => Auth::user()->name,
+                    'issued_to' => $personTakingPart,
                     'vehicle_id' => $vehicle->id,
                     'vehicle_label' => "{$vehicle->plate} — {$vehicle->make} {$vehicle->model}",
                     'note' => "Issued by store to car #{$vehicle->plate}.",

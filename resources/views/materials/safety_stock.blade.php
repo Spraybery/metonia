@@ -93,7 +93,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($materials as $row)
+                        @foreach($materials as $row)
                         @php
                             $isDepleted = (float) $row->qty <= 0;
                             $isLow = $row->isLowStock();
@@ -233,13 +233,7 @@
                             </td>
                             @endif
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="9" class="text-center text-muted p-4">
-                                No worker safety equipment recorded in inventory yet. Click <strong>Add Safety Item</strong> to register safety gear.
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

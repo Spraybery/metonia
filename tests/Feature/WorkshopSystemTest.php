@@ -526,22 +526,25 @@ class WorkshopSystemTest extends TestCase
         $admin = User::where('username', 'admin')->first();
         $manager = User::where('username', 'manager')->first();
 
-        // Admin updates manager's username to "new_manager_handle"
-        $response = $this->actingAs($admin)->put("/users/{$manager->id}", [
+        // An Admin manages roles only; the username belongs to the account owner.
+        $this->actingAs($admin)->put("/users/{$manager->id}", [
+            'role' => $manager->role,
+            'username' => 'admin_chosen_handle',
+        ])->assertSessionHas('flash_success');
+        $this->assertEquals('manager', $manager->fresh()->username);
+
+        // The manager renames their own account from My Account settings.
+        $this->actingAs($manager)->put('/account', [
             'name' => $manager->name,
             'username' => ' new_manager_handle ',
             'email' => $manager->email,
-            'role' => $manager->role,
-        ]);
+        ])->assertSessionHas('flash_success');
 
-        $response->assertSessionHas('flash_success');
         $manager->refresh();
         $this->assertEquals('new_manager_handle', $manager->username);
 
-        // Sign out admin session so guest login can be tested
         $this->post('/logout');
 
-        // Authenticate with the newly assigned username
         $loginResponse = $this->post('/login', [
             'identifier' => 'new_manager_handle',
             'password' => 'password',

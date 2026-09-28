@@ -383,6 +383,19 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTables with HTML5 export buttons matching SkullU standard
+            // Export cell text only: leave out the Action column and any in-cell buttons/forms
+            // (e.g. Approve, Revoke, Enter Amount) so spreadsheets contain just the data.
+            var tableExportOptions = {
+                columns: ':not(.no-export)',
+                format: {
+                    body: function (data, row, column, node) {
+                        var cell = $(node).clone();
+                        cell.find('button, form, .btn').remove();
+                        return $.trim(cell.text().replace(/\s+/g, ' '));
+                    }
+                }
+            };
+
             $('.datatable-button-html5-columns').DataTable({
                 autoWidth: false,
                 dom: '<"datatable-header"fBl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
@@ -404,9 +417,9 @@
                     // export here — that used to dump the hidden Action column's
                     // dropdown/modal markup straight into the file.
                     buttons: [
-                        { extend: 'copyHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-copy3 mr-1"></i> Copy', exportOptions: { columns: ':not(.no-export)' } },
-                        { extend: 'csvHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-spreadsheet mr-1"></i> CSV', exportOptions: { columns: ':not(.no-export)' } },
-                        { extend: 'excelHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-excel mr-1"></i> Excel', exportOptions: { columns: ':not(.no-export)' } }
+                        { extend: 'copyHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-copy3 mr-1"></i> Copy', exportOptions: tableExportOptions },
+                        { extend: 'csvHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-spreadsheet mr-1"></i> CSV', exportOptions: tableExportOptions },
+                        { extend: 'excelHtml5', className: 'btn btn-light btn-sm', text: '<i class="icon-file-excel mr-1"></i> Excel', exportOptions: tableExportOptions }
                     ]
                 }
             });

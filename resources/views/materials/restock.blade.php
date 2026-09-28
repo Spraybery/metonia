@@ -101,7 +101,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($restockMovements as $m)
+                        @foreach($restockMovements as $m)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
@@ -228,13 +228,7 @@
                             </td>
                             @endif
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="10" class="text-center text-muted p-4">
-                                No supplier restock deliveries logged in the register yet.
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
