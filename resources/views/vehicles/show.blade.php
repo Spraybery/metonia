@@ -98,14 +98,12 @@
                                         <div class="form-row mb-2">
                                             <div class="col-md-7 mb-2">
                                                 <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Lead Supervisor / Technician:</label>
-                                                <select name="assigned_to" class="form-control">
-                                                    <option value="">-- Select Assigned Lead --</option>
+                                                <input type="text" name="assigned_to" class="form-control" list="supervisor-suggestions-advance" maxlength="255" autocomplete="off" placeholder="Type a name or pick from the roster" value="{{ $vehicle->assigned_to }}">
+                                                <datalist id="supervisor-suggestions-advance">
                                                     @foreach($supervisors as $sup)
-                                                        <option value="{{ $sup->name }}" {{ $vehicle->assigned_to === $sup->name ? 'selected' : '' }}>
-                                                            {{ $sup->name }}
-                                                        </option>
+                                                        <option value="{{ $sup->name }}">{{ $sup->title }} - {{ $sup->stage }}</option>
                                                     @endforeach
-                                                </select>
+                                                </datalist>
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-success font-weight-bold">
@@ -140,14 +138,12 @@
                                                 </div>
                                                 <div class="col-md-5 mb-2">
                                                     <label class="font-size-xs font-weight-semibold text-muted text-uppercase">Lead Supervisor / Technician:</label>
-                                                    <select name="assigned_to" class="form-control">
-                                                        <option value="">-- Select Assigned Lead --</option>
+                                                    <input type="text" name="assigned_to" class="form-control" list="supervisor-suggestions-stage" maxlength="255" autocomplete="off" placeholder="Type a name or pick from the roster" value="{{ $vehicle->assigned_to }}">
+                                                    <datalist id="supervisor-suggestions-stage">
                                                         @foreach($supervisors as $sup)
-                                                            <option value="{{ $sup->name }}" {{ $vehicle->assigned_to === $sup->name ? 'selected' : '' }}>
-                                                                {{ $sup->name }}
-                                                            </option>
+                                                            <option value="{{ $sup->name }}">{{ $sup->title }} - {{ $sup->stage }}</option>
                                                         @endforeach
-                                                    </select>
+                                                    </datalist>
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-light border font-weight-semibold btn-sm">

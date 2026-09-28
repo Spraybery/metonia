@@ -72,14 +72,12 @@
 
                             <div class="form-group">
                                 <label class="font-weight-semibold">Assigned Lead Supervisor</label>
-                                <select name="assigned_to" class="form-control select-search">
-                                    <option value="">-- Unassigned --</option>
+                                <input type="text" name="assigned_to" class="form-control" list="supervisor-suggestions" maxlength="255" autocomplete="off" placeholder="Type a name or pick from the roster" value="{{ old('assigned_to') }}">
+                                <datalist id="supervisor-suggestions">
                                     @foreach($supervisors as $sup)
-                                        <option value="{{ $sup->name }}" {{ old('assigned_to') === $sup->name ? 'selected' : '' }}>
-                                            {{ $sup->name }} ({{ $sup->title }} - {{ $sup->stage }})
-                                        </option>
+                                        <option value="{{ $sup->name }}">{{ $sup->title }} - {{ $sup->stage }}</option>
                                     @endforeach
-                                </select>
+                                </datalist>
                             </div>
                         </fieldset>
                     </div>

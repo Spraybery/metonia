@@ -102,4 +102,28 @@ class JobCardDetailsTest extends TestCase
             }
         }
     }
+
+    public function test_lead_supervisor_can_be_any_typed_name(): void
+    {
+        $manager = User::factory()->create(['role' => 'Manager']);
+
+        $this->actingAs($manager)
+            ->post(route('vehicles.store'), $this->jobCardPayload(['assigned_to' => '  Eng. Wanjiku Otieno  ']))
+            ->assertRedirect();
+
+        $jobCard = Vehicle::where('plate', 'MET-BUS-0001')->firstOrFail();
+        $this->assertSame('Eng. Wanjiku Otieno', $jobCard->assigned_to);
+
+        $this->actingAs($manager)
+            ->put(route('vehicles.update_stage', $jobCard->id), ['stage' => $jobCard->stage, 'assigned_to' => 'Night Shift Lead'])
+            ->assertRedirect();
+
+        $this->assertSame('Night Shift Lead', $jobCard->fresh()->assigned_to);
+
+        $this->actingAs($manager)->get(route('vehicles.edit', $jobCard->id))
+            ->assertOk()
+            ->assertSee('name="assigned_to"', false)
+            ->assertSee('list="supervisor-suggestions"', false)
+            ->assertSee('value="Night Shift Lead"', false);
+    }
 }
