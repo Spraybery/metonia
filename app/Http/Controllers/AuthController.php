@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Qs;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Rules\GmailAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -104,16 +105,24 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        $emailRules = ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id];
+
+        // Accounts created before the Gmail-only rule keep their current address
+        // until they choose to change it.
+        if (strtolower(trim((string) $request->input('email'))) !== strtolower($user->email)) {
+            $emailRules[] = new GmailAddress;
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'email' => $emailRules,
         ]);
 
         $user->update([
             'name' => trim($validated['name']),
             'username' => trim($validated['username']),
-            'email' => trim($validated['email']),
+            'email' => strtolower(trim($validated['email'])),
         ]);
 
         ActivityLog::record($user->name, "{$user->name} updated their own account details.");
@@ -158,7 +167,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email', new GmailAddress],
             'role' => 'required|string|in:'.implode(',', Qs::getSelfSignupRoles()),
             'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()],
         ]);
@@ -166,7 +175,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => trim($validated['name']),
             'username' => trim($validated['username']),
-            'email' => trim($validated['email']),
+            'email' => strtolower(trim($validated['email'])),
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
             'status' => 'Pending',

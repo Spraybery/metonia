@@ -85,7 +85,7 @@
                                     <small class="form-text text-muted">Can match a teammate's in the same role — your email keeps your account unique.</small>
                                 </div>
                                 <div class="col-md-6 form-group form-group-feedback form-group-feedback-left">
-                                    <input type="email" name="email" class="form-control" placeholder="Email Address" value="{{ old('email') }}" required>
+                                    <input type="email" name="email" class="form-control" placeholder="name9@gmail.com" value="{{ old('email') }}" required>
                                     <div class="form-control-feedback">
                                         <i class="icon-envelope text-muted"></i>
                                     </div>

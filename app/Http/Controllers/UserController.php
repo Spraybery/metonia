@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Qs;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Rules\GmailAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -37,14 +38,14 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email', new GmailAddress],
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:'.implode(',', Qs::getUserRoles()),
         ]);
 
         $validated['name'] = trim($validated['name']);
         $validated['username'] = trim($validated['username']);
-        $validated['email'] = trim($validated['email']);
+        $validated['email'] = strtolower(trim($validated['email']));
         $validated['password'] = Hash::make($validated['password']);
         $validated['status'] = 'Active';
 

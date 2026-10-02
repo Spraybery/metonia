@@ -598,4 +598,67 @@ class WorkshopSystemTest extends TestCase
         $response->assertSee('Worker Safety &amp; Personal Protective Equipment', false);
         $response->assertSee('Worker Safety Gear (PPE) Outward Issuance Log');
     }
+
+    public function test_admin_created_users_must_have_a_gmail_address(): void
+    {
+        $admin = User::where('username', 'admin')->first();
+        $payload = [
+            'name' => 'Jane Doe',
+            'username' => 'janedoe',
+            'password' => 'secret123',
+            'role' => 'Manager',
+        ];
+
+        $this->actingAs($admin)
+            ->post('/users', $payload + ['email' => 'jane@metonia.co.ke'])
+            ->assertSessionHasErrors('email');
+        $this->assertDatabaseMissing('users', ['username' => 'janedoe']);
+
+        $this->actingAs($admin)
+            ->post('/users', $payload + ['email' => ' Jane.Doe9@Gmail.com '])
+            ->assertSessionHas('flash_success');
+        $this->assertDatabaseHas('users', ['username' => 'janedoe', 'email' => 'jane.doe9@gmail.com']);
+    }
+
+    public function test_signup_requires_a_gmail_address(): void
+    {
+        $payload = [
+            'name' => 'Sam Kamau',
+            'username' => 'samk',
+            'role' => 'Accountant',
+            'password' => 'Secret123',
+            'password_confirmation' => 'Secret123',
+        ];
+
+        $this->post('/signup', $payload + ['email' => 'sam@yahoo.com'])->assertSessionHasErrors('email');
+        $this->assertDatabaseMissing('users', ['username' => 'samk']);
+
+        $this->post('/signup', $payload + ['email' => 'sam9@gmail.com'])->assertRedirect(route('login'));
+        $this->assertDatabaseHas('users', ['username' => 'samk', 'email' => 'sam9@gmail.com']);
+    }
+
+    public function test_my_account_requires_gmail_only_when_the_email_changes(): void
+    {
+        $manager = User::where('username', 'manager')->first();
+        $originalEmail = $manager->email;
+
+        $this->actingAs($manager)->put('/account', [
+            'name' => 'Renamed Manager',
+            'username' => $manager->username,
+            'email' => 'manager@yahoo.com',
+        ])->assertSessionHasErrors('email');
+
+        $this->actingAs($manager)->put('/account', [
+            'name' => 'Renamed Manager',
+            'username' => $manager->username,
+            'email' => $originalEmail,
+        ])->assertSessionHas('flash_success');
+
+        $this->actingAs($manager)->put('/account', [
+            'name' => 'Renamed Manager',
+            'username' => $manager->username,
+            'email' => 'manager9@gmail.com',
+        ])->assertSessionHas('flash_success');
+        $this->assertEquals('manager9@gmail.com', $manager->fresh()->email);
+    }
 }

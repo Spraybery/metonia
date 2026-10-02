@@ -46,7 +46,7 @@
                             @csrf
 
                             <div class="form-group form-group-feedback form-group-feedback-left">
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="you@metonia.co.ke" value="{{ old('email') }}" required autofocus>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="name9@gmail.com" value="{{ old('email') }}" required autofocus>
                                 <div class="form-control-feedback">
                                     <i class="icon-mail5 text-muted"></i>
                                 </div>

@@ -206,7 +206,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label class="font-weight-semibold">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control" placeholder="smutiso@metonia.co.ke" required>
+                            <input type="email" name="email" class="form-control" placeholder="name9@gmail.com" required>
                         </div>
                     </div>
 
